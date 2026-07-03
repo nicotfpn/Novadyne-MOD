@@ -33,31 +33,27 @@ public class NovaDyneMod {
         var chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if (!(chestStack.getItem() instanceof ExosuitTier1Item)) return;
 
-        long energy = chestStack.getOrDefault(ModDataComponents.EXOSUIT_ENERGY.get(), 0L);
-        if (energy <= 0) return;
+        event.addReductionModifier(net.neoforged.neoforge.common.damagesource.DamageContainer.Reduction.ARMOR, (container, baseReduction) -> {
+            long energy = chestStack.getOrDefault(ModDataComponents.EXOSUIT_ENERGY.get(), 0L);
+            if (energy <= 0) return baseReduction;
 
-        float damage = event.getAmount();
-        if (damage <= 0) return;
+            float damage = container.getNewDamage();
+            if (damage <= 0) return baseReduction;
 
-        // Calculate max damage that can be absorbed based on energy
-        float maxAbsorbDamageByEnergy = (float) energy / ENERGY_PER_DAMAGE_POINT;
-        // Calculate proportional absorption (50% of damage)
-        float proportionalAbsorb = damage * ABSORPTION_RATIO;
-        // Actual absorbed damage is the minimum of the two
-        float actualAbsorb = Math.min(maxAbsorbDamageByEnergy, proportionalAbsorb);
-        // Energy to consume (100 per point of damage absorbed)
-        long energyToConsume = (long) Math.round(actualAbsorb * ENERGY_PER_DAMAGE_POINT);
-        // Ensure we don't consume more energy than we have, and cap at max energy
-        long newEnergy = Math.max(0, Math.min(energy - energyToConsume, EXOSUIT_TIER1_MAX_ENERGY));
-        // Remaining damage after absorption
-        float remaining = damage - actualAbsorb;
+            // Calculate max damage that can be absorbed based on energy
+            float maxAbsorbDamageByEnergy = (float) energy / ENERGY_PER_DAMAGE_POINT;
+            // Calculate proportional absorption (50% of damage)
+            float proportionalAbsorb = damage * ABSORPTION_RATIO;
+            // Actual absorbed damage is the minimum of the two
+            float actualAbsorb = Math.min(maxAbsorbDamageByEnergy, proportionalAbsorb);
+            // Energy to consume (100 per point of damage absorbed)
+            long energyToConsume = (long) Math.round(actualAbsorb * ENERGY_PER_DAMAGE_POINT);
+            // Ensure we don't consume more energy than we have, and cap at max energy
+            long newEnergy = Math.max(0, Math.min(energy - energyToConsume, EXOSUIT_TIER1_MAX_ENERGY));
 
-        chestStack.set(ModDataComponents.EXOSUIT_ENERGY.get(), newEnergy);
+            chestStack.set(ModDataComponents.EXOSUIT_ENERGY.get(), newEnergy);
 
-        if (remaining <= 0.0f) {
-            event.setCanceled(true);
-        } else {
-            event.setAmount(remaining);
-        }
+            return baseReduction + actualAbsorb;
+        });
     }
 }
