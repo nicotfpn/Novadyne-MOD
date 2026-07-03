@@ -1,0 +1,14 @@
+{
+    "layers": {
+        "humanoid": [
+            {
+                "texture": "novadyne:exosuit_tier1"
+            }
+        ],
+        "humanoid_leggings": [
+            {
+                "texture": "novadyne:exosuit_tier1"
+            }
+        ]
+    }
+}
