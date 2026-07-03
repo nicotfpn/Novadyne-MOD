@@ -7,20 +7,20 @@ import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.util.GeckoLibUtil;
+import com.novadyne.ModArmorMaterials;
 import com.novadyne.client.renderer.ExosuitTier1ArmorRenderer;
 import com.novadyne.client.renderer.ExosuitTier1ItemRenderer;
 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.ArmorMaterials;
 import net.minecraft.world.item.equipment.ArmorType;
 
 public class ExosuitTier1Item extends Item implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public ExosuitTier1Item(Item.Properties properties) {
-        super(properties.humanoidArmor(ArmorMaterials.IRON, ArmorType.CHESTPLATE));
+        super(properties.humanoidArmor(ModArmorMaterials.EXOSUIT_TIER1, ArmorType.CHESTPLATE));
     }
 
     @Override
