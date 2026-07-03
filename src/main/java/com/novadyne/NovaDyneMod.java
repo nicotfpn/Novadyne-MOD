@@ -2,6 +2,7 @@ package com.novadyne;
 
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
+import com.novadyne.common.integration.energy.NovadyneCapabilities;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
@@ -11,9 +12,8 @@ public class NovaDyneMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public NovaDyneMod(IEventBus modEventBus) {
-        // Register ModItems
         ModItems.ITEMS.register(modEventBus);
-        // Register ModCreativeTabs
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        modEventBus.addListener(NovadyneCapabilities::onRegisterCapabilities);
     }
 }
