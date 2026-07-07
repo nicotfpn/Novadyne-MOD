@@ -26,11 +26,6 @@ public class NovaDyneArmorRenderer extends RenderLayer<AvatarRenderState, Player
 
     private enum Part { BODY, LEFT_ARM, RIGHT_ARM, LEFT_LEG, RIGHT_LEG, BOOTS_LEFT, BOOTS_RIGHT }
 
-    private OBJModel currentModel;
-    private int[] currentRange = new int[2];
-    private int currentLight;
-    private int currentOverlay;
-
     public NovaDyneArmorRenderer(RenderLayerParent<AvatarRenderState, PlayerModel> renderer) {
         super(renderer);
     }
@@ -46,10 +41,7 @@ public class NovaDyneArmorRenderer extends RenderLayer<AvatarRenderState, Player
         Map<String, int[]> ranges = OBJLoader.getObjectRanges(MODEL_PATH);
         if (model == null || ranges == null) return;
 
-        currentModel = model;
-        currentLight = packedLight;
-        currentOverlay = OverlayTexture.NO_OVERLAY;
-
+        int overlay = OverlayTexture.NO_OVERLAY;
         PlayerModel playerModel = getParentModel();
         OrderedSubmitNodeCollector ordered = collector.order(0);
 
@@ -60,19 +52,15 @@ public class NovaDyneArmorRenderer extends RenderLayer<AvatarRenderState, Player
 
             if (part == null) continue;
 
-            currentRange[0] = range[0];
-            currentRange[1] = range[1];
+            int rangeStart = range[0];
+            int rangeEnd = range[1];
 
             poseStack.pushPose();
             applyTransform(poseStack, playerModel, part);
             ordered.submitCustomGeometry(poseStack, RenderTypes.armorCutoutNoCull(texture),
-                    this::renderCurrentRange);
+                    (pose, consumer) -> model.renderRange(pose, consumer, rangeStart, rangeEnd, packedLight, overlay, 1.0F, 1.0F, 1.0F, 1.0F));
             poseStack.popPose();
         }
-    }
-
-    private void renderCurrentRange(PoseStack.Pose pose, VertexConsumer consumer) {
-        currentModel.renderRange(pose, consumer, currentRange[0], currentRange[1], currentLight, currentOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     private static Part getPart(String name) {

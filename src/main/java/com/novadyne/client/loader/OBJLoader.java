@@ -113,8 +113,9 @@ public final class OBJLoader {
                     objectRanges.put(currentObject, new int[]{objectStart, objectEnd});
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             NovaDyneMod.LOGGER.error("Failed to load OBJ model: {}", path, e);
+            OBJECT_RANGES_CACHE.put(path, new java.util.LinkedHashMap<>());
             return createFallbackModel();
         }
 
