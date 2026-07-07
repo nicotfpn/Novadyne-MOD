@@ -7,11 +7,14 @@ import com.novadyne.NovaDyneMod;
 import com.novadyne.client.loader.OBJLoader;
 import com.novadyne.client.model.OBJModel;
 import com.novadyne.items.ExosuitTier1Item;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -20,14 +23,19 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 
-public class NovaDyneArmorRenderer extends RenderLayer<AvatarRenderState, PlayerModel> {
+public class NovaDyneArmorRenderer extends HumanoidArmorLayer<AvatarRenderState, PlayerModel, PlayerModel> {
 
     private static final String MODEL_PATH = "models/entity/exosuit_tier1.obj";
+    private final boolean slim;
 
     private enum Part { BODY, LEFT_ARM, RIGHT_ARM, LEFT_LEG, RIGHT_LEG, BOOTS_LEFT, BOOTS_RIGHT }
 
-    public NovaDyneArmorRenderer(RenderLayerParent<AvatarRenderState, PlayerModel> renderer) {
-        super(renderer);
+    public NovaDyneArmorRenderer(RenderLayerParent<AvatarRenderState, PlayerModel> renderer,
+                                  ArmorModelSet<PlayerModel> armorModelSet,
+                                  EquipmentLayerRenderer equipmentRenderer,
+                                  boolean slim) {
+        super(renderer, armorModelSet, equipmentRenderer);
+        this.slim = slim;
     }
 
     @Override
@@ -91,30 +99,39 @@ public class NovaDyneArmorRenderer extends RenderLayer<AvatarRenderState, Player
         return null;
     }
 
+    private static void rotateAroundPivot(PoseStack poseStack, ModelPart part) {
+        float pivotX = part.x / 16F;
+        float pivotY = part.y / 16F;
+        float pivotZ = part.z / 16F;
+        poseStack.translate(pivotX, pivotY, pivotZ);
+        if (part.xRot != 0 || part.yRot != 0 || part.zRot != 0) {
+            poseStack.mulPose(new org.joml.Quaternionf().rotateZYX(part.zRot, part.yRot, part.xRot));
+        }
+        poseStack.translate(-pivotX, -pivotY, -pivotZ);
+    }
+
     private static void applyTransform(PoseStack poseStack, PlayerModel model, Part part) {
         switch (part) {
             case BODY:
-                model.body.translateAndRotate(poseStack);
+                rotateAroundPivot(poseStack, model.body);
                 break;
             case LEFT_ARM:
-                model.leftArm.translateAndRotate(poseStack);
+                rotateAroundPivot(poseStack, model.leftArm);
                 break;
             case RIGHT_ARM:
-                model.rightArm.translateAndRotate(poseStack);
+                rotateAroundPivot(poseStack, model.rightArm);
                 break;
             case LEFT_LEG:
-                model.leftLeg.translateAndRotate(poseStack);
+                rotateAroundPivot(poseStack, model.leftLeg);
                 break;
             case RIGHT_LEG:
-                model.rightLeg.translateAndRotate(poseStack);
+                rotateAroundPivot(poseStack, model.rightLeg);
                 break;
             case BOOTS_LEFT:
-                model.leftLeg.translateAndRotate(poseStack);
-                poseStack.translate(0.0D, -0.25D, 0.0D);
+                rotateAroundPivot(poseStack, model.leftLeg);
                 break;
             case BOOTS_RIGHT:
-                model.rightLeg.translateAndRotate(poseStack);
-                poseStack.translate(0.0D, -0.25D, 0.0D);
+                rotateAroundPivot(poseStack, model.rightLeg);
                 break;
         }
     }
