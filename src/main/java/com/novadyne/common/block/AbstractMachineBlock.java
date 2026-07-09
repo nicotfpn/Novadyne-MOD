@@ -43,10 +43,13 @@ public abstract class AbstractMachineBlock extends BaseEntityBlock {
         return true;
     }
 
+    protected abstract BlockEntityType<?> getBlockEntityType();
+
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) return null;
+        if (type != getBlockEntityType()) return null;
         return (lvl, pos, st, be) -> {
             if (be instanceof com.novadyne.common.blockentity.AbstractMachineBlockEntity machine) {
                 machine.tickServer();
