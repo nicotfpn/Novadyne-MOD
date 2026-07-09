@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -14,8 +15,7 @@ public class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> NOVADYNE_TAB =
             CREATIVE_MODE_TABS.register("novadyne", () -> CreativeModeTab.builder()
                     .title(Component.literal("NovaDyne"))
-                    .icon(() -> new ItemStack(ModItems.EXOSUIT_TIER1.get()))
+                    .icon(() -> new ItemStack(Items.IRON_INGOT))
                     .displayItems((parameters, output) -> {
-                        output.accept(new ItemStack(ModItems.EXOSUIT_TIER1.get()));
                     }).build());
 }

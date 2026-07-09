@@ -1,6 +1,5 @@
 package com.novadyne.common.integration.energy;
 
-import com.novadyne.ModItems;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
@@ -8,8 +7,6 @@ public final class NovadyneCapabilities {
     private NovadyneCapabilities() {}
 
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        registerItemEnergy(event, ModItems.EXOSUIT_TIER1.get(),
-                stack -> new ExosuitEnergyItemHandler(stack, com.novadyne.NovaDyneMod.EXOSUIT_TIER1_MAX_ENERGY));
     }
 
     public static void registerBlockEntityEnergy(RegisterCapabilitiesEvent event,

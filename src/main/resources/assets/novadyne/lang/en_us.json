@@ -1,4 +1,4 @@
 {
-  "item.novadyne.exosuit_tier1": "Exosuit Tier 1",
-  "itemGroup.novadyne.novadyne": "NovaDyne"
+  "itemGroup.novadyne.novadyne": "NovaDyne",
+  "tooltip.novadyne.energy": "Energy: %s / %s FE"
 }
