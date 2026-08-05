@@ -10,6 +10,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -22,11 +24,20 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractMachineBlockEntity extends BlockEntity implements IUpgradeableMachine, IStrictEnergyHandler {
+public abstract class AbstractMachineBlockEntity extends BlockEntity implements IUpgradeableMachine, IStrictEnergyHandler, MenuProvider {
     protected static final String TAG_ENERGY = "energy";
     protected static final String TAG_VALVE_TIER = "valve_tier";
     protected static final String TAG_PROGRESS = "progress";
     protected static final String TAG_INVENTORY = "inventory";
+
+    @Override
+    public Component getDisplayName() {
+        return getBlockState().getBlock().getName();
+    }
+
+    public ItemStackHandler getInventory() {
+        return inventory;
+    }
 
     protected final MachineEnergyContainer<AbstractMachineBlockEntity> energyContainer;
     protected final ItemStackHandler inventory;

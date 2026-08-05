@@ -2,11 +2,21 @@ package com.novadyne.common.blockentity;
 
 import com.novadyne.ModBlockEntities;
 import com.novadyne.ModItems;
+import com.novadyne.common.menu.ProcessorMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
+
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        return new ProcessorMenu(containerId, playerInventory, this, ContainerLevelAccess.create(level, worldPosition));
+    }
 
     private static final int SLOT_INPUT_1 = 0;
     private static final int SLOT_INPUT_2 = 1;

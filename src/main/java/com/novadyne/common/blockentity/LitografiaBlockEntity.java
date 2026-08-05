@@ -2,13 +2,23 @@ package com.novadyne.common.blockentity;
 
 import com.novadyne.ModBlockEntities;
 import com.novadyne.ModItems;
+import com.novadyne.common.menu.LitografiaMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
+
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        return new LitografiaMenu(containerId, playerInventory, this, ContainerLevelAccess.create(level, worldPosition));
+    }
 
     private static final int SLOT_INPUT = 0;
     private static final int SLOT_BUCKET = 1;
