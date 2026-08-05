@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-import java.util.List;
 
 public abstract class AbstractMachineScreen<T extends AbstractMachineMenu<?>> extends AbstractContainerScreen<T> {
     private final Identifier texture;

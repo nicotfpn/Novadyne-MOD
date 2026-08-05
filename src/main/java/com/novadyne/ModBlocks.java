@@ -4,8 +4,6 @@ import com.novadyne.common.block.LitografiaBlock;
 import com.novadyne.common.block.MaceratorBlock;
 import com.novadyne.common.block.ProcessorBlock;
 import com.novadyne.common.block.WaferPressBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
