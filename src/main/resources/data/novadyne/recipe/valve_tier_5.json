@@ -1,14 +1,14 @@
-{
+﻿{
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "novadyne:valve_tier_4" },
-    { "item": "minecraft:emerald" },
-    { "item": "minecraft:emerald" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" }
+    "novadyne:valve_tier_4",
+    "minecraft:emerald",
+    "minecraft:emerald",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block"
   ],
   "result": {
     "id": "novadyne:valve_tier_5",

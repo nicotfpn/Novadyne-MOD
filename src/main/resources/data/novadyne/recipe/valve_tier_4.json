@@ -1,14 +1,14 @@
-{
+﻿{
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "novadyne:valve_tier_3" },
-    { "item": "minecraft:diamond" },
-    { "item": "minecraft:diamond" },
-    { "item": "minecraft:redstone" },
-    { "item": "minecraft:redstone" },
-    { "item": "minecraft:redstone" },
-    { "item": "minecraft:redstone" }
+    "novadyne:valve_tier_3",
+    "minecraft:diamond",
+    "minecraft:diamond",
+    "minecraft:redstone",
+    "minecraft:redstone",
+    "minecraft:redstone",
+    "minecraft:redstone"
   ],
   "result": {
     "id": "novadyne:valve_tier_4",

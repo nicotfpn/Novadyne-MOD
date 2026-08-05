@@ -1,18 +1,16 @@
-{
+﻿{
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "novadyne:valve_tier_6" },
-    { "item": "minecraft:netherite_ingot" },
-    { "item": "minecraft:netherite_ingot" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" },
-    { "item": "minecraft:redstone_block" }
+    "novadyne:valve_tier_6",
+    "minecraft:netherite_ingot",
+    "minecraft:netherite_ingot",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:redstone_block"
   ],
   "result": {
     "id": "novadyne:valve_tier_7",

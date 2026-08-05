@@ -1,8 +1,6 @@
-{
+﻿{
   "type": "minecraft:blasting",
-  "ingredient": {
-    "tag": "c:gems/quartz"
-  },
+  "ingredient": "#c:gems/quartz",
   "result": {
     "id": "novadyne:pure_silicon"
   },

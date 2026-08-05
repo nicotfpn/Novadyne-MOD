@@ -1,12 +1,12 @@
-{
+﻿{
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "novadyne:valve_tier_2" },
-    { "item": "minecraft:gold_ingot" },
-    { "item": "minecraft:gold_ingot" },
-    { "item": "minecraft:redstone" },
-    { "item": "minecraft:redstone" }
+    "novadyne:valve_tier_2",
+    "minecraft:gold_ingot",
+    "minecraft:gold_ingot",
+    "minecraft:redstone",
+    "minecraft:redstone"
   ],
   "result": {
     "id": "novadyne:valve_tier_3",
