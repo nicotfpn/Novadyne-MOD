@@ -38,3 +38,12 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+
+### Wiki ###
+wiki/docs/
+wiki/generated/
+wiki/mkdocs.yml
+wiki/site/
+tools/wiki/.venv/
+__pycache__/
+*.py[cod]
