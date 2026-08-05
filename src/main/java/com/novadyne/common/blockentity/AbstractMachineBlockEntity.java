@@ -7,6 +7,7 @@ import com.novadyne.api.machine.IUpgradeableMachine;
 import com.novadyne.common.capabilities.energy.MachineEnergyContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +23,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractMachineBlockEntity extends BlockEntity implements IUpgradeableMachine, IStrictEnergyHandler, MenuProvider {
@@ -35,12 +39,12 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
         return getBlockState().getBlock().getName();
     }
 
-    public ItemStackHandler getInventory() {
+    public ItemStacksResourceHandler getInventory() {
         return inventory;
     }
 
     protected final MachineEnergyContainer<AbstractMachineBlockEntity> energyContainer;
-    protected final ItemStackHandler inventory;
+    protected final ItemStacksResourceHandler inventory;
     protected int valveTier = 0;
     protected int progress = 0;
     protected int maxProgress = 100;
@@ -52,23 +56,23 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
         this.inventory = createInventory(inventorySlots);
     }
 
-    protected ItemStackHandler createInventory(int slots) {
-        return new ItemStackHandler(slots) {
+    protected ItemStacksResourceHandler createInventory(int slots) {
+        return new ItemStacksResourceHandler(slots) {
             @Override
-            protected void onContentsChanged(int slot) {
+            protected void onContentsChanged(int index, ItemStack previousContents) {
                 setChanged();
             }
 
             @Override
-            public boolean isItemValid(int slot, ItemStack stack) {
-                return AbstractMachineBlockEntity.this.isItemValidForSlot(slot, stack);
+            public boolean isValid(int index, ItemResource resource) {
+                return AbstractMachineBlockEntity.this.isItemValidForSlot(index, resource);
             }
         };
     }
 
-    protected boolean isItemValidForSlot(int slot, ItemStack stack) {
+    protected boolean isItemValidForSlot(int slot, ItemResource resource) {
         if (isValveSlot(slot)) {
-            return isValveItem(stack);
+            return isValveItem(resource.getItem());
         }
         return true;
     }
@@ -78,8 +82,38 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     }
 
     public static boolean isValveItem(ItemStack stack) {
-        String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        return id.contains("valve_tier_");
+        return !stack.isEmpty() && isValveItem(stack.getItem());
+    }
+
+    public static boolean isValveItem(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item).toString().contains("valve_tier_");
+    }
+
+    protected ItemStack getStackInSlot(int index) {
+        return inventory.getResource(index).toStack(inventory.getAmountAsInt(index));
+    }
+
+    protected ItemStack extractItem(int index, int amount) {
+        ItemResource resource = inventory.getResource(index);
+        if (resource.isEmpty() || amount <= 0) {
+            return ItemStack.EMPTY;
+        }
+        try (Transaction tx = Transaction.openRoot()) {
+            int extracted = inventory.extract(index, resource, amount, tx);
+            tx.commit();
+            return resource.toStack(extracted);
+        }
+    }
+
+    protected ItemStack insertItem(int index, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        try (Transaction tx = Transaction.openRoot()) {
+            int inserted = inventory.insert(index, ItemResource.of(stack), stack.getCount(), tx);
+            tx.commit();
+            return stack.copyWithCount(stack.getCount() - inserted);
+        }
     }
 
     protected abstract int getValveSlotIndex();
@@ -148,9 +182,9 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     }
 
     protected void updateValveTierFromSlot() {
-        ItemStack valveStack = inventory.getStackInSlot(getValveSlotIndex());
+        ItemStack valveStack = getStackInSlot(getValveSlotIndex());
         if (!valveStack.isEmpty()) {
-            String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(valveStack.getItem()).toString();
+            String id = BuiltInRegistries.ITEM.getKey(valveStack.getItem()).toString();
             for (int t = 1; t <= 7; t++) {
                 if (id.contains("valve_tier_" + t)) {
                     setValveTier(t);
@@ -162,9 +196,9 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     }
 
     public void dropInventory() {
-        SimpleContainer container = new SimpleContainer(inventory.getSlots());
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            container.setItem(i, inventory.getStackInSlot(i));
+        SimpleContainer container = new SimpleContainer(inventory.size());
+        for (int i = 0; i < inventory.size(); i++) {
+            container.setItem(i, getStackInSlot(i));
         }
         if (level != null) {
             Containers.dropContents(level, worldPosition, container);

@@ -55,10 +55,10 @@ public class WaferPressBlockEntity extends AbstractMachineBlockEntity {
     protected boolean canProcess() {
         updateValveTierFromSlot();
 
-        ItemStack input = inventory.getStackInSlot(SLOT_INPUT);
+        ItemStack input = getStackInSlot(SLOT_INPUT);
         if (input.isEmpty()) return false;
 
-        ItemStack output = inventory.getStackInSlot(SLOT_OUTPUT);
+        ItemStack output = getStackInSlot(SLOT_OUTPUT);
         ItemStack result = findRecipe(input);
         if (result.isEmpty()) return false;
 
@@ -72,15 +72,15 @@ public class WaferPressBlockEntity extends AbstractMachineBlockEntity {
 
     @Override
     protected void processComplete() {
-        ItemStack input = inventory.getStackInSlot(SLOT_INPUT);
+        ItemStack input = getStackInSlot(SLOT_INPUT);
         ItemStack result = findRecipe(input);
 
-        inventory.extractItem(SLOT_INPUT, 1, false);
+        extractItem(SLOT_INPUT, 1);
         insertOrDropOutput(result.copy());
     }
 
     private void insertOrDropOutput(ItemStack stack) {
-        ItemStack remaining = inventory.insertItem(SLOT_OUTPUT, stack, false);
+        ItemStack remaining = insertItem(SLOT_OUTPUT, stack);
         if (!remaining.isEmpty()) {
             if (level != null) {
                 java.util.Objects.requireNonNull(level).addFreshEntity(

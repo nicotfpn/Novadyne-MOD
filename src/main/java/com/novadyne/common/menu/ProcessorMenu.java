@@ -8,7 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class ProcessorMenu extends AbstractMachineMenu<ProcessorBlockEntity> {
     public ProcessorMenu(int containerId, Inventory playerInv, RegistryFriendlyByteBuf extraData) {
@@ -21,16 +21,16 @@ public class ProcessorMenu extends AbstractMachineMenu<ProcessorBlockEntity> {
 
     @Override
     protected void addMachineSlots() {
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 0, 44, 17));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 1, 44, 35));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 2, 44, 53));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 3, 116, 35) {
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 0, 44, 17));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 1, 44, 35));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 2, 44, 53));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 3, 116, 35) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 4, 68, 53));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 4, 68, 53));
     }
 
     @Override

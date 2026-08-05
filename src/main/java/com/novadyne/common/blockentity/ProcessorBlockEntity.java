@@ -45,16 +45,16 @@ public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
     protected boolean canProcess() {
         updateValveTierFromSlot();
 
-        ItemStack input1 = inventory.getStackInSlot(SLOT_INPUT_1);
-        ItemStack input2 = inventory.getStackInSlot(SLOT_INPUT_2);
-        ItemStack input3 = inventory.getStackInSlot(SLOT_INPUT_3);
+        ItemStack input1 = getStackInSlot(SLOT_INPUT_1);
+        ItemStack input2 = getStackInSlot(SLOT_INPUT_2);
+        ItemStack input3 = getStackInSlot(SLOT_INPUT_3);
 
         if (input1.isEmpty() || input2.isEmpty() || input3.isEmpty()) return false;
         if (!input1.is(ModItems.PART_SILICON_WAFER.get())) return false;
         if (!input2.is(ModItems.PART_COPPER_LAYER.get())) return false;
         if (!input3.is(ModItems.PART_BASE_WAFER.get())) return false;
 
-        ItemStack output = inventory.getStackInSlot(SLOT_OUTPUT);
+        ItemStack output = getStackInSlot(SLOT_OUTPUT);
         if (!output.isEmpty()) {
             if (!ItemStack.isSameItemSameComponents(RESULT, output)) return false;
             if (output.getCount() + RESULT.getCount() > output.getMaxStackSize()) return false;
@@ -65,11 +65,11 @@ public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
 
     @Override
     protected void processComplete() {
-        inventory.extractItem(SLOT_INPUT_1, 1, false);
-        inventory.extractItem(SLOT_INPUT_2, 1, false);
-        inventory.extractItem(SLOT_INPUT_3, 1, false);
+        extractItem(SLOT_INPUT_1, 1);
+        extractItem(SLOT_INPUT_2, 1);
+        extractItem(SLOT_INPUT_3, 1);
 
-        ItemStack remaining = inventory.insertItem(SLOT_OUTPUT, RESULT.copy(), false);
+        ItemStack remaining = insertItem(SLOT_OUTPUT, RESULT.copy());
         if (!remaining.isEmpty()) {
             if (level != null) {
                 java.util.Objects.requireNonNull(level).addFreshEntity(

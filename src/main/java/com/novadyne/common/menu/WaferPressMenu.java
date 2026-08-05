@@ -8,7 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class WaferPressMenu extends AbstractMachineMenu<WaferPressBlockEntity> {
     public WaferPressMenu(int containerId, Inventory playerInv, RegistryFriendlyByteBuf extraData) {
@@ -21,14 +21,14 @@ public class WaferPressMenu extends AbstractMachineMenu<WaferPressBlockEntity> {
 
     @Override
     protected void addMachineSlots() {
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 0, 56, 17));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 1, 116, 35) {
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 0, 56, 17));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 1, 116, 35) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 2, 56, 53));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 2, 56, 53));
     }
 
     @Override

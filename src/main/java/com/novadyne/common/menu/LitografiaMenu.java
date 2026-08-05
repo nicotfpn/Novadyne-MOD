@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class LitografiaMenu extends AbstractMachineMenu<LitografiaBlockEntity> {
     public LitografiaMenu(int containerId, Inventory playerInv, RegistryFriendlyByteBuf extraData) {
@@ -22,10 +22,10 @@ public class LitografiaMenu extends AbstractMachineMenu<LitografiaBlockEntity> {
 
     @Override
     protected void addMachineSlots() {
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 0, 56, 17));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 1, 56, 53));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 2, 38, 53));
-        addSlot(new SlotItemHandler(blockEntity.getInventory(), 3, 116, 35) {
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 0, 56, 17));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 1, 56, 53));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 2, 38, 53));
+        addSlot(new ResourceHandlerSlot(blockEntity.getInventory(), blockEntity.getInventory()::set, 3, 116, 35) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;

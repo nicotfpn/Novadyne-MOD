@@ -44,17 +44,17 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
     protected boolean canProcess() {
         updateValveTierFromSlot();
 
-        ItemStack input = inventory.getStackInSlot(SLOT_INPUT);
+        ItemStack input = getStackInSlot(SLOT_INPUT);
         if (input.isEmpty()) return false;
 
-        ItemStack output = inventory.getStackInSlot(SLOT_OUTPUT);
+        ItemStack output = getStackInSlot(SLOT_OUTPUT);
 
         if (input.is(ModItems.STACKED_ELECTRONIC_CIRCUIT.get())) {
             return canOutputAccept(output, ItemStack.EMPTY);
         }
 
         if (input.is(ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get())) {
-            if (inventory.getStackInSlot(SLOT_BUCKET).is(Items.WATER_BUCKET)) {
+            if (getStackInSlot(SLOT_BUCKET).is(Items.WATER_BUCKET)) {
                 return canOutputAccept(output, new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()));
             }
         }
@@ -71,7 +71,7 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
 
     @Override
     protected void processComplete() {
-        ItemStack input = inventory.getStackInSlot(SLOT_INPUT);
+        ItemStack input = getStackInSlot(SLOT_INPUT);
 
         if (input.is(ModItems.STACKED_ELECTRONIC_CIRCUIT.get())) {
             processEngraving();
@@ -91,7 +91,7 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
         RandomSource rng = level != null ? level.getRandom() : RandomSource.create();
         boolean success = rng.nextDouble() >= failureChance;
 
-        inventory.extractItem(SLOT_INPUT, 1, false);
+        extractItem(SLOT_INPUT, 1);
 
         ItemStack result;
         if (success) {
@@ -104,15 +104,15 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
     }
 
     private void processCleaning() {
-        inventory.extractItem(SLOT_INPUT, 1, false);
-        inventory.extractItem(SLOT_BUCKET, 1, false);
+        extractItem(SLOT_INPUT, 1);
+        extractItem(SLOT_BUCKET, 1);
 
         insertOrDropOutput(new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get(), 1));
         insertOrDropOutput(new ItemStack(Items.BUCKET, 1));
     }
 
     private void insertOrDropOutput(ItemStack stack) {
-        ItemStack remaining = inventory.insertItem(SLOT_OUTPUT, stack, false);
+        ItemStack remaining = insertItem(SLOT_OUTPUT, stack);
         if (!remaining.isEmpty()) {
             if (level != null) {
                 java.util.Objects.requireNonNull(level).addFreshEntity(
