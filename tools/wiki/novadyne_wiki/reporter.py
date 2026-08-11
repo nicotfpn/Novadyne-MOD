@@ -19,6 +19,7 @@ class ReportStats:
     missing_descriptions: list[str] = field(default_factory=list)
     missing_translations: list[str] = field(default_factory=list)
     missing_textures: list[str] = field(default_factory=list)
+    missing_models: list[str] = field(default_factory=list)
     unknown_types: list[str] = field(default_factory=list)
     broken_links: list[str] = field(default_factory=list)
 
@@ -31,6 +32,11 @@ class Reporter:
         self.verbose = verbose
         self.issues: list[Issue] = []
         self.stats = ReportStats()
+        self.catalog_report: dict | None = None
+
+    def set_catalog_report(self, data: dict) -> None:
+        """Anexa o relatório derivado do catálogo (Fase 3)."""
+        self.catalog_report = data
 
     # -- issues -----------------------------------------------------------
 
@@ -62,6 +68,9 @@ class Reporter:
 
     def note_missing_texture(self, entry_id: str) -> None:
         self.stats.missing_textures.append(entry_id)
+
+    def note_missing_model(self, entry_id: str) -> None:
+        self.stats.missing_models.append(entry_id)
 
     def note_unknown_type(self, type_name: str, source: str) -> None:
         self.stats.unknown_types.append(f"{type_name} ({source})")
@@ -103,6 +112,7 @@ class Reporter:
                 "missing_descriptions": sorted(set(self.stats.missing_descriptions)),
                 "missing_translations": sorted(set(self.stats.missing_translations)),
                 "missing_textures": sorted(set(self.stats.missing_textures)),
+                "missing_models": sorted(set(self.stats.missing_models)),
                 "unknown_types": sorted(set(self.stats.unknown_types)),
                 "broken_links": sorted(set(self.stats.broken_links)),
             },
@@ -112,6 +122,8 @@ class Reporter:
                 "errors": len(self.errors),
             },
         }
+        if self.catalog_report is not None:
+            data["catalog"] = self.catalog_report
         build_dir.mkdir(parents=True, exist_ok=True)
         write_text_atomic(
             build_dir / "report.json",
@@ -120,6 +132,8 @@ class Reporter:
         write_text_atomic(build_dir / "report.md", self._render_markdown(data))
 
     def _render_markdown(self, data: dict) -> str:
+        from .report_builder import render_report_markdown
+
         lines = ["# Relatório da Wiki", ""]
         status = "OK" if data["ok"] else "FALHOU"
         lines.append(f"**Status:** {status}  ")
@@ -137,6 +151,7 @@ class Reporter:
             ("missing_descriptions", "Descrições ausentes"),
             ("missing_translations", "Traduções ausentes"),
             ("missing_textures", "Texturas ausentes"),
+            ("missing_models", "Modelos ausentes"),
             ("unknown_types", "Tipos desconhecidos"),
             ("broken_links", "Links quebrados"),
         ]
@@ -148,6 +163,9 @@ class Reporter:
                 for value in values:
                     lines.append(f"- {value}")
                 lines.append("")
+        catalog_section = render_report_markdown(data)
+        if catalog_section:
+            lines.append(catalog_section)
         if data["issues"]:
             lines.append("## Issues")
             lines.append("")

@@ -169,6 +169,10 @@ Todos em `src/main/resources/data/novadyne/recipe/`.
 Não existem receitas `crafting_shaped`, `smoking`, `campfire_cooking`,
 `stonecutting` ou `smithing_transform` no projeto até esta data.
 
+Nota (descoberta pela Fase 3): os 9 arquivos de receita possuem **BOM UTF-8**
+(prefixo `EF BB BF`). O jogo os aceita; o gerador da wiki os lê com
+`utf-8-sig`.
+
 ### 6.2 Receitas de máquina (definidas em Java, não em JSON)
 
 As máquinas não usam o Recipe Manager; definem receitas fixas em código.
@@ -256,6 +260,13 @@ Fonte: listagem de `assets/novadyne/textures/item/`.
 - `items/` (client item definitions): 20 arquivos, `{ "model": { "type":
   "minecraft:model", "model": "novadyne:..." } }`.
 
+Nota (descoberta pela Fase 3): no sistema de definições de item do 26.1.x,
+os itens de bloco apontam **diretamente** para `novadyne:block/<nome>`. Os
+arquivos `models/item/macerator.json`, `models/item/wafer_press.json`,
+`models/item/processor.json` e `models/item/litografia.json` não são
+referenciados por nenhuma definição de item, blockstate ou pai → **modelos
+órfãos** (legado do formato antigo de modelo de item).
+
 Fonte: listagem de `assets/novadyne/{models,blockstates,items}`.
 
 ---
@@ -279,6 +290,12 @@ Fonte: listagem de `assets/novadyne/{models,blockstates,items}`.
    chance de falha é a do tier 1 (30%).
 9. **`.github/workflows/build.yml`** existente: roda `./gradlew build` em push/PR.
    A wiki deve integrar-se sem quebrá-lo.
+10. **BOM UTF-8 nas receitas** (9 arquivos de `data/novadyne/recipe/`).
+11. **Modelos de item de blocos órfãos**: `models/item/{macerator,wafer_press,
+    processor,litografia}.json` não são referenciados pelas definições de item
+    do 26.1.x (que apontam para `novadyne:block/<nome>`).
+12. **Receitas de máquina fora do catálogo da Fase 3**: comprovadas na §6.2,
+    mas a normalização automática em Java é postergada para uma fase futura.
 
 ---
 
@@ -322,4 +339,5 @@ Baseada no conteúdo real encontrado, a wiki usará:
 - **Camada 5 (site)**: MkDocs Material com tema próprio, pt-BR, receitas em
   HTML/CSS com texturas reais, busca e navegação geradas.
 
-A próxima fase (Fase 2) implementa a fundação do gerador e do site.
+A Fase 2 implementou a fundação do gerador e do site; a Fase 3 preencheu o
+catálogo intermediário com os scanners (ver `IMPLEMENTATION_STATUS.md`).

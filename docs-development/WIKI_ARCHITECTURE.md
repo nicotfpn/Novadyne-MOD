@@ -1,6 +1,6 @@
 # Arquitetura da Wiki — NovaDyne
 
-> Atualizado em: 2026-08-05 (Fase 2 — Fundação concluída)
+> Atualizado em: 2026-08-05 (Fase 3 — Catálogo e scanners concluída)
 
 Documento de referência da wiki gerada do NovaDyne. Descreve as camadas,
 as pastas, os comandos e o que é manual ou gerado. O estado de implementação
@@ -32,12 +32,18 @@ Tudo o que existe no mod e pode ser lido sem executar código:
 ### Camada 2 — Catálogo intermediário
 
 `build/wiki/catalog.json` — dados normalizados e desacoplados dos formatos
-brutos. Todo conteúdo vira uma entrada com `id`, `type`, `name`, `texture`,
-`model`, `sources`, etc. As páginas são geradas **a partir do catálogo**, não
-dos arquivos brutos.
+brutos. Todo conteúdo vira uma entrada com `id`, `type`, `display_name`,
+`texture`, `model`, `source_files`, etc. As páginas são geradas **a partir do
+catálogo**, não dos arquivos brutos.
 
-Estado na Fase 2: catálogo criado com schema vazio (`entries: []`,
-`recipes: []`). Os scanners da Fase 3 o preenchem.
+Schema versionado (`schema`/`schema_version = 1`) com as seções:
+`mod` (metadados de `gradle.properties`), `entries`, `recipes`, `tags`,
+`diagnostics` (avisos/erros dos scanners) e `generation` (contagens,
+idiomas, cobertura por scanner, referências quebradas, assets órfãos — sem
+timestamps). Saída determinística, UTF-8, ordenada.
+
+Estado na Fase 3: catálogo preenchido pelos scanners (33 entradas, 9 receitas,
+1 tag no repositório atual).
 
 ### Camada 3 — Conteúdo manual
 
@@ -71,7 +77,7 @@ Tema próprio em `wiki/theme/`, copiado para `docs/assets/` na geração.
 tools/wiki/
 ├── generate.py                  # ponto de entrada da CLI
 ├── requirements.txt             # dependências fixadas (mkdocs-material, PyYAML)
-├── tests/                       # testes unittest da fundação
+├── tests/                       # testes unittest (87)
 └── novadyne_wiki/               # pacote Python (stdlib + PyYAML)
     ├── paths.py                 # layout de pastas (única fonte de caminhos)
     ├── errors.py                # WikiError e Issue (warning/error)
@@ -80,13 +86,24 @@ tools/wiki/
     ├── model.py                 # modelos do catálogo (CatalogEntry, Recipe)
     ├── content.py               # carga de wiki/content/ (front matter)
     ├── catalog.py               # CatalogBuilder (schema do catálogo)
+    ├── report_builder.py        # relatório derivado do catálogo (Fase 3)
+    ├── pipeline.py              # orquestração dos scanners (Fase 3)
     ├── theme.py                 # cópia de wiki/theme -> docs/assets
     ├── config.py                # geração do mkdocs.yml + nav
     ├── validate.py              # validação de links internos
     ├── builder.py               # montagem da árvore docs
     ├── cli.py                   # argumentos e orquestração
-    └── scanners/
-        └── vanilla_items.py     # mapeamento conservador de itens vanilla
+    └── scanners/                # Fase 3 — leitura das fontes do mod
+        ├── common.py            # ScanResult, ids de recurso, JSON (BOM)
+        ├── vanilla_items.py     # mapeamento conservador de itens vanilla
+        ├── registry_scanner.py  # registros NeoForge em Java
+        ├── language_scanner.py  # idiomas (lang/*.json)
+        ├── model_scanner.py     # modelos e texturas
+        ├── blockstate_scanner.py# blockstates
+        ├── asset_scanner.py     # texturas, definições de item, órfãos
+        ├── recipe_scanner.py    # receitas JSON
+        ├── tag_scanner.py       # tags (refs, ciclos)
+        └── loot_table_scanner.py# loot tables
 
 wiki/
 ├── content/                     # MANUAL — páginas mantidas por humanos
@@ -146,17 +163,26 @@ convenientes e CI/Pages entram nas Fases 8–9.
 - A geração é determinística: sem timestamps, ordenação estável, UTF-8
   explícito, escrita atômica (arquivo temporário + rename).
 - O modo `--check` gera duas vezes e compara o manifesto de arquivos
-  (SHA-256 por arquivo). Qualquer diferença é erro.
-- `build/wiki/report.json` e `build/wiki/report.md` trazem conteúdos
-  descobertos, páginas criadas/atualizadas/removidas, descrições, traduções e
-  texturas ausentes, links quebrados e issues (avisos/erros).
+  (SHA-256 por arquivo), cobrindo o catálogo, `report.json`, `report.md`,
+  o `mkdocs.yml` e a árvore docs. Qualquer diferença é erro.
+- O catálogo é gerado **antes** da montagem do site; as páginas das fases
+  seguintes serão construídas a partir dele.
+- `build/wiki/report.json` e `build/wiki/report.md` são derivados do próprio
+  catálogo (contagens por tipo, idiomas, traduções/texturas/modelos ausentes,
+  referências quebradas, assets órfãos, tipos de receita desconhecidos, tags
+  quebradas, ciclos, registros não resolvidos, arquivos ignorados e cobertura
+  por scanner) além das issues (avisos/erros). Nenhum timestamp entra na
+  saída comparada pelo `--check`.
 
 ## 7. Testes
 
 Testes em `tools/wiki/tests/` (unittest, stdlib). Cobrem caminhos, I/O seguro,
-front matter, relatório, mapeamento de itens vanilla, geração do mkdocs.yml e
-idempotência do builder. Fixtures usam diretórios temporários — não tocam o
-repositório real.
+front matter, relatório, mapeamento de itens vanilla, geração do mkdocs.yml,
+idempotência do builder e — desde a Fase 3 — todos os scanners (registros
+Java, idiomas, modelos, blockstates, assets, receitas, tags, loot tables) e o
+pipeline (catálogo, relatórios, colisões, caminhos Windows/POSIX, Unicode,
+JSON inválido, arquivos fora do namespace). Fixtures usam diretórios
+temporários — não tocam o repositório real. Total: **87 testes**.
 
 ## 8. Segurança
 
@@ -168,16 +194,15 @@ repositório real.
 
 ## 9. Estado atual e próximas fases
 
-Concluído: **Fase 1 (Auditoria)** e **Fase 2 (Fundação)**.
+Concluído: **Fase 1 (Auditoria)**, **Fase 2 (Fundação)** e
+**Fase 3 (Catálogo intermediário e scanners)**.
 
 Próximas (não iniciadas):
 
-1. **Fase 3 — Catálogo**: scanners (registros, receitas, tags, modelos),
-   catálogo preenchido, relatório completo.
-2. **Fase 4 — Itens e blocos**: geração de páginas, índices, links estáveis.
-3. **Fase 5 — Receitas**: visual 3×3, “Como obter” e “Usado em”.
-4. **Fase 6 — Veículos e armas**: templates especializados (conteúdo
+1. **Fase 4 — Itens e blocos**: geração de páginas, índices, links estáveis.
+2. **Fase 5 — Receitas**: visual 3×3, “Como obter” e “Usado em”.
+3. **Fase 6 — Veículos e armas**: templates especializados (conteúdo
    comprovado apenas).
-5. **Fase 7 — Qualidade**: validadores completos, busca, acessibilidade.
-6. **Fase 8 — Automação**: tarefas Gradle, CI, GitHub Pages.
-7. **Fase 9 — Revisão final**.
+4. **Fase 7 — Qualidade**: validadores completos, busca, acessibilidade.
+5. **Fase 8 — Automação**: tarefas Gradle, CI, GitHub Pages.
+6. **Fase 9 — Revisão final**.

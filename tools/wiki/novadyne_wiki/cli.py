@@ -1,4 +1,4 @@
-"""CLI do gerador da wiki (Fase 2: fundação).
+"""CLI do gerador da wiki (Fase 3: catálogo intermediário e scanners).
 
 Comandos:
     python tools/wiki/generate.py            # gera catálogo + docs + mkdocs.yml + relatório
@@ -15,12 +15,16 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+from pathlib import Path
 
+from . import io_utils
 from .builder import build_site
-from .catalog import CatalogBuilder, write_catalog
+from .catalog import write_catalog
 from .errors import WikiError
 from .io_utils import file_digest
-from .paths import BUILD_WIKI, WIKI_CONFIG, WIKI_DIR
+from .paths import BUILD_WIKI, DISPOSABLE_DIRS, WIKI_CONFIG, WIKI_DIR
+from .pipeline import generate_catalog
+from .report_builder import build_catalog_report
 from .reporter import Reporter
 
 
@@ -62,12 +66,31 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def run_generation(reporter: Reporter, *, clean: bool = False) -> dict:
-    """Executa o pipeline completo e retorna o manifesto de arquivos."""
-    manifest = build_site(reporter, clean=clean)
-    catalog = CatalogBuilder(reporter).build()
-    write_catalog(catalog, BUILD_WIKI / "catalog.json")
-    manifest["catalog.json"] = file_digest(BUILD_WIKI / "catalog.json")
+def run_generation(reporter: Reporter, *, clean: bool = False,
+                   build_dir=BUILD_WIKI, site_kwargs: dict | None = None,
+                   catalog_kwargs: dict | None = None) -> dict:
+    """Executa o pipeline completo e retorna o manifesto de arquivos.
+
+    A ordem é: limpeza (se pedida) → scanners → catálogo → relatórios →
+    montagem do site. O manifesto inclui catálogo, relatórios, config e a
+    árvore docs, permitindo que o ``--check`` prove idempotência.
+
+    ``build_dir``/``site_kwargs``/``catalog_kwargs`` permitem desviar a
+    saída e as fontes (usado em testes); por padrão usam build/wiki, as
+    pastas reais da wiki e as fontes reais do mod.
+    """
+    build_dir = Path(build_dir)
+    if clean:
+        for directory in DISPOSABLE_DIRS:
+            io_utils.wipe_dir(directory)
+    catalog, scan_summary = generate_catalog(reporter, **(catalog_kwargs or {}))
+    write_catalog(catalog, build_dir / "catalog.json")
+    reporter.set_catalog_report(build_catalog_report(catalog, scan_summary))
+    reporter.write_report(build_dir)
+    manifest = build_site(reporter, clean=False, **(site_kwargs or {}))
+    manifest["catalog.json"] = file_digest(build_dir / "catalog.json")
+    manifest["report.json"] = file_digest(build_dir / "report.json")
+    manifest["report.md"] = file_digest(build_dir / "report.md")
     return manifest
 
 
