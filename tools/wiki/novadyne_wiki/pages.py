@@ -24,6 +24,21 @@ _DEFAULT_BRANCH = "main"
 
 _MACHINE_LINKS = ("block_entity", "menu")
 
+_CRAFTING_TYPES = {"minecraft:crafting_shapeless", "minecraft:crafting_shaped"}
+_COOKING_TYPES = {
+    "minecraft:smelting", "minecraft:blasting",
+    "minecraft:smoking", "minecraft:campfire_cooking",
+}
+
+_TYPE_LABELS = {
+    "minecraft:crafting_shapeless": "Crafting (shapeless)",
+    "minecraft:crafting_shaped": "Crafting (grade)",
+    "minecraft:smelting": "Forno",
+    "minecraft:blasting": "Fundição",
+    "minecraft:smoking": "Defumador",
+    "minecraft:campfire_cooking": "Fogueira",
+}
+
 
 @dataclass
 class GeneratedPage:
@@ -47,12 +62,16 @@ def _rel_link(from_dest: str, to_dest: str) -> str:
     return os.path.relpath(to_dest, start=base_dir).replace("\\", "/")
 
 
-def _texture_rel(texture_id: str | None) -> str | None:
-    """'novadyne:item/pure_silicon' -> 'assets/textures/item/pure_silicon.png'."""
+def _texture_rel(texture_id: str | None, mod_id: str) -> str | None:
+    """'novadyne:item/pure_silicon' -> 'assets/textures/item/pure_silicon.png'.
+
+    Retorna None para namespaces que não são do mod (ex: minecraft:...),
+    cujas texturas não são copiadas para a árvore docs.
+    """
     if not texture_id:
         return None
     parsed = parse_resource_id(texture_id)
-    if not parsed:
+    if not parsed or parsed[0] != mod_id:
         return None
     return f"assets/textures/{parsed[1]}.png"
 
@@ -129,8 +148,8 @@ def _render_identification(entry: dict) -> list[str]:
     return ["## Identificação", "", _table(rows), ""]
 
 
-def _render_image(entry: dict, dest: str) -> list[str]:
-    texture_rel = _texture_rel(entry.get("texture"))
+def _render_image(entry: dict, dest: str, mod_id: str) -> list[str]:
+    texture_rel = _texture_rel(entry.get("texture"), mod_id)
     if not texture_rel:
         return []
     alt = entry.get("display_name") or entry["id"]
@@ -169,33 +188,192 @@ def _render_as_ingredient(recipe_ids: list[str], *, dest, dest_by_id, recipes_by
     return lines
 
 
-def _render_as_result(recipe_ids: list[str], *, dest, dest_by_id, recipes_by_id, entries_by_id) -> list[str]:
-    """Receitas que produzem esta entrada (visual na Fase de receitas)."""
+def _recipe_label(recipe: dict) -> str:
+    return _TYPE_LABELS.get(recipe.get("type"), recipe.get("type", ""))
+
+
+def _item_cell(item_id: str | None, *, dest, dest_by_id, entries_by_id, mod_id) -> str:
+    """Célula de um item: imagem do mod com link para a página da entrada."""
+    if not item_id:
+        return ""
+    entry = entries_by_id.get(item_id)
+    label = entry.get("display_name") if entry else item_id
+    link = _rel_link(dest, dest_by_id[item_id]) if item_id in dest_by_id else None
+    texture_id = (entry or {}).get("texture") or item_id
+    texture_rel = _texture_rel(texture_id, mod_id)
+    if texture_rel:
+        img = f'<img src="{_rel_link(dest, texture_rel)}" alt="{label}" class="recipe-icon">'
+        return f'<a href="{link}">{img}</a>' if link else img
+    if link:
+        return f'<a href="{link}">{label}</a>'
+    return f"<code>{item_id}</code>"
+
+
+def _ingredient_cell(ing: dict | None, *, dest, dest_by_id, entries_by_id, mod_id) -> str:
+    """Célula de um ingrediente (item, tag ou alternativas)."""
+    if not ing:
+        return ""
+    if ing.get("alternatives"):
+        cell = " ou ".join(
+            _ingredient_cell(alt, dest=dest, dest_by_id=dest_by_id,
+                             entries_by_id=entries_by_id, mod_id=mod_id)
+            for alt in ing["alternatives"]
+        )
+    elif ing.get("item"):
+        cell = _item_cell(ing["item"], dest=dest, dest_by_id=dest_by_id,
+                          entries_by_id=entries_by_id, mod_id=mod_id)
+    elif ing.get("tag"):
+        cell = f'<code>{ing["tag"]}</code>'
+    else:
+        cell = ""
+    count = ing.get("count", 1)
+    if count and count > 1:
+        cell = f'{cell} <span class="recipe-count">×{count}</span>'
+    return cell
+
+
+def _result_cell(recipe: dict, *, dest, dest_by_id, entries_by_id, mod_id) -> str:
+    cell = _item_cell(recipe.get("result_item"), dest=dest, dest_by_id=dest_by_id,
+                      entries_by_id=entries_by_id, mod_id=mod_id)
+    count = recipe.get("result_count", 1)
+    if count and count > 1:
+        cell = f'{cell} <span class="recipe-count">×{count}</span>'
+    return cell
+
+
+def _render_crafting_visual(recipe: dict, *, dest, dest_by_id, entries_by_id, mod_id) -> str:
+    """Grade 3×3 (shaped: posições do padrão; shapeless: slots neutros)."""
+    cells: list[str] = []
+    if recipe.get("type") == "minecraft:crafting_shaped":
+        key = recipe.get("key") or {}
+        for row in recipe.get("pattern") or []:
+            for char in row:
+                if char in key:
+                    cells.append(_ingredient_cell(
+                        key[char], dest=dest, dest_by_id=dest_by_id,
+                        entries_by_id=entries_by_id, mod_id=mod_id))
+                else:
+                    cells.append("")
+    else:
+        cells = [
+            _ingredient_cell(ing, dest=dest, dest_by_id=dest_by_id,
+                             entries_by_id=entries_by_id, mod_id=mod_id)
+            for ing in recipe.get("ingredients") or []
+        ]
+    cells = (cells + [""] * 9)[:9]
+
+    grid_rows = [
+        "".join(f'<td class="recipe-slot">{cells[i + j]}</td>' for j in range(3))
+        for i in range(0, 9, 3)
+    ]
+    result = _result_cell(recipe, dest=dest, dest_by_id=dest_by_id,
+                          entries_by_id=entries_by_id, mod_id=mod_id)
+    title = f'<p class="recipe-title"><strong>{_recipe_label(recipe)}</strong> — <code>{recipe["id"]}</code></p>'
+    return "\n".join([
+        title,
+        '<table class="recipe-grid">',
+        f'<tr>{grid_rows[0]}<td class="recipe-arrow" rowspan="3">→</td>'
+        f'<td class="recipe-slot recipe-result" rowspan="3">{result}</td></tr>',
+        f"<tr>{grid_rows[1]}</tr>",
+        f"<tr>{grid_rows[2]}</tr>",
+        "</table>",
+    ])
+
+
+def _render_cooking_visual(recipe: dict, *, dest, dest_by_id, entries_by_id, mod_id) -> str:
+    """Visual compacto de forno: entrada → seta → saída."""
+    ingredient = recipe.get("ingredient")
+    if ingredient is None and recipe.get("ingredients"):
+        ingredient = recipe["ingredients"][0]
+    input_cell = _ingredient_cell(ingredient, dest=dest, dest_by_id=dest_by_id,
+                                  entries_by_id=entries_by_id, mod_id=mod_id)
+    result = _result_cell(recipe, dest=dest, dest_by_id=dest_by_id,
+                          entries_by_id=entries_by_id, mod_id=mod_id)
+    details: list[str] = []
+    if recipe.get("cooking_time"):
+        details.append(f"{recipe['cooking_time']} ticks")
+    if recipe.get("experience") is not None:
+        details.append(f"{recipe['experience']:g} XP")
+    suffix = " — " + " · ".join(details) if details else ""
+    title = (f'<p class="recipe-title"><strong>{_recipe_label(recipe)}</strong>'
+             f' — <code>{recipe["id"]}</code>{suffix}</p>')
+    return "\n".join([
+        title,
+        '<table class="recipe-grid recipe-cooking">',
+        "<tr>",
+        f'<td class="recipe-slot">{input_cell}</td>',
+        '<td class="recipe-arrow">→</td>',
+        f'<td class="recipe-slot recipe-result">{result}</td>',
+        "</tr>",
+        "</table>",
+    ])
+
+
+def _render_recipe_visual(recipe: dict, *, dest, dest_by_id, entries_by_id, mod_id) -> str:
+    rtype = recipe.get("type")
+    if rtype in _CRAFTING_TYPES:
+        return _render_crafting_visual(recipe, dest=dest, dest_by_id=dest_by_id,
+                                       entries_by_id=entries_by_id, mod_id=mod_id)
+    if rtype in _COOKING_TYPES:
+        return _render_cooking_visual(recipe, dest=dest, dest_by_id=dest_by_id,
+                                      entries_by_id=entries_by_id, mod_id=mod_id)
+    return f'- `{recipe["id"]}` ({rtype})'
+
+
+def _render_as_result(recipe_ids: list[str], *, dest, dest_by_id, recipes_by_id,
+                      entries_by_id, mod_id) -> list[str]:
+    """Receitas que produzem esta entrada, com visual (grid/forno)."""
     if not recipe_ids:
         return []
     lines = ["### Obtido por", ""]
     for rid in sorted(recipe_ids):
-        if rid in dest_by_id:
+        recipe = recipes_by_id.get(rid)
+        if recipe and recipe.get("supported"):
+            lines.append(_render_recipe_visual(recipe, dest=dest, dest_by_id=dest_by_id,
+                                               entries_by_id=entries_by_id, mod_id=mod_id))
+            lines.append("")
+        elif rid in dest_by_id:
             name = entries_by_id[rid].get("display_name") or rid
             lines.append(f"- [{name}]({_rel_link(dest, dest_by_id[rid])})")
         else:
             lines.append(f"- `{rid}`")
+    return lines
+
+
+def _render_machine_recipe_note(related: list[dict]) -> list[str]:
+    """Nota de receita não documentada nas páginas de máquina."""
+    lines = [
+        "## Receitas",
+        "",
+        '!!! note "Receitas da máquina"',
+        "",
+        "    Receita definida em código, ainda não documentada automaticamente.",
+    ]
+    be = next((entry for entry in related if entry.get("type") == "block_entity"), None)
+    if be and be.get("registration_source"):
+        lines += ["", f"    Registro: {_source_link(be['registration_source'])}"]
     lines.append("")
     return lines
 
 
-def _render_recipes(entry: dict, *, dest, dest_by_id, recipes_by_id, entries_by_id) -> list[str]:
+def _render_recipes(entry: dict, related: list[dict], *, dest, dest_by_id,
+                    recipes_by_id, entries_by_id, mod_id) -> list[str]:
     as_ingredient = _render_as_ingredient(
         entry.get("recipes_as_ingredient") or [], dest=dest,
         dest_by_id=dest_by_id, recipes_by_id=recipes_by_id, entries_by_id=entries_by_id,
     )
     as_result = _render_as_result(
         entry.get("recipes_as_result") or [], dest=dest,
-        dest_by_id=dest_by_id, recipes_by_id=recipes_by_id, entries_by_id=entries_by_id,
+        dest_by_id=dest_by_id, recipes_by_id=recipes_by_id,
+        entries_by_id=entries_by_id, mod_id=mod_id,
     )
-    if not as_ingredient and not as_result:
-        return []
-    return ["## Receitas", ""] + as_ingredient + as_result
+    if as_result:
+        return ["## Receitas", ""] + as_ingredient + as_result
+    if as_ingredient:
+        return ["## Receitas", ""] + as_ingredient
+    if related:
+        return _render_machine_recipe_note(related)
+    return []
 
 
 def _render_loot(entry: dict) -> list[str]:
@@ -221,7 +399,7 @@ def _render_registry(entry: dict, related: list[dict]) -> list[str]:
 
 def _render_entry_page(entry: dict, related: list[dict], *, dest: str,
                        dest_by_id: dict, recipes_by_id: dict,
-                       entries_by_id: dict) -> str:
+                       entries_by_id: dict, mod_id: str) -> str:
     lines = [GENERATED_BANNER, "", f"# {entry.get('display_name') or entry['id']}", ""]
 
     if entry.get("documentation_status") == "manual" and entry.get("manual_description"):
@@ -229,10 +407,11 @@ def _render_entry_page(entry: dict, related: list[dict], *, dest: str,
         lines.append("")
 
     lines += _render_identification(entry)
-    lines += _render_image(entry, dest)
+    lines += _render_image(entry, dest, mod_id)
     lines += _render_tags(entry)
-    lines += _render_recipes(entry, dest=dest, dest_by_id=dest_by_id,
-                             recipes_by_id=recipes_by_id, entries_by_id=entries_by_id)
+    lines += _render_recipes(entry, related, dest=dest, dest_by_id=dest_by_id,
+                             recipes_by_id=recipes_by_id, entries_by_id=entries_by_id,
+                             mod_id=mod_id)
     lines += _render_loot(entry)
     lines += _render_registry(entry, related)
 
@@ -247,6 +426,7 @@ def generate_catalog_pages(catalog: dict) -> list[GeneratedPage]:
     for entry in entries:
         entries_by_id.setdefault(entry["id"], entry)
     recipes_by_id = {r["id"]: r for r in catalog.get("recipes", [])}
+    mod_id = str((catalog.get("mod") or {}).get("id") or "novadyne")
 
     machine_blocks = {
         e["id"] for e in entries
@@ -270,7 +450,7 @@ def generate_catalog_pages(catalog: dict) -> list[GeneratedPage]:
         title = entry.get("display_name") or entry["id"]
         body = _render_entry_page(
             entry, related, dest=dest, dest_by_id=dest_by_id,
-            recipes_by_id=recipes_by_id, entries_by_id=entries_by_id,
+            recipes_by_id=recipes_by_id, entries_by_id=entries_by_id, mod_id=mod_id,
         )
         pages.append(GeneratedPage(dest_rel=dest, title=title, nav_title=title, body=body))
 

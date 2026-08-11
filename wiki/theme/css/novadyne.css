@@ -49,3 +49,60 @@ body {
 .md-typeset details.warning {
   border-color: #d98a1f;
 }
+
+/* Visual de receitas gerado (pages.py): grade de crafting e forno. */
+.md-typeset .recipe-grid {
+  border-collapse: separate;
+  border-spacing: 3px;
+  margin: 0.5em 0;
+}
+
+.md-typeset .recipe-grid td {
+  border: none;
+  background: transparent;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.md-typeset .recipe-slot {
+  width: 2.2rem;
+  height: 2.2rem;
+  min-width: 2.2rem;
+  min-height: 2.2rem;
+  text-align: center;
+  border: 1px solid var(--novadyne-border);
+  border-radius: 4px;
+  background: var(--novadyne-panel);
+  padding: 2px !important;
+}
+
+.md-typeset .recipe-arrow {
+  padding: 0 0.4em !important;
+  font-size: 1.2rem;
+  color: var(--novadyne-text-muted);
+}
+
+.md-typeset .recipe-result .recipe-icon {
+  transform: scale(1.4);
+}
+
+.md-typeset .recipe-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.md-typeset .recipe-count {
+  font-size: 0.7em;
+  color: var(--novadyne-text-muted);
+}
+
+.md-typeset .recipe-title {
+  margin: 0.6em 0 0.2em;
+  font-size: 0.85rem;
+}
+
+.md-typeset .recipe-cooking .recipe-slot {
+  height: 2.6rem;
+}

@@ -127,6 +127,73 @@ class EntryPageTests(unittest.TestCase):
         self.assertIn("Valve (Tier 1)", by_dest["itens/valve_tier_2.md"])
 
 
+class RecipeVisualTests(unittest.TestCase):
+    def test_shapeless_recipe_renders_grid(self):
+        recipe = {
+            "id": "novadyne:valve_tier_1",
+            "type": "minecraft:crafting_shapeless",
+            "supported": True,
+            "result_item": "novadyne:valve_tier_1",
+            "result_count": 1,
+            "ingredients": [
+                {"item": "minecraft:iron_ingot"},
+                {"item": "minecraft:iron_ingot"},
+                {"item": "minecraft:iron_ingot"},
+                {"item": "minecraft:copper_ingot"},
+            ],
+        }
+        valve = _entry(id="novadyne:valve_tier_1", path="valve_tier_1",
+                       display_name="Valve (Tier 1)", recipes_as_result=["novadyne:valve_tier_1"])
+        catalog = {"entries": [valve], "recipes": [recipe], "tags": []}
+        body = generate_catalog_pages(catalog)[0].body
+        self.assertIn('class="recipe-grid"', body)
+        self.assertIn("minecraft:iron_ingot", body)
+        self.assertIn("valve_tier_1", body)
+
+    def test_smelting_recipe_renders_compact_visual(self):
+        recipe = {
+            "id": "novadyne:pure_silicon_from_quartz",
+            "type": "minecraft:smelting",
+            "supported": True,
+            "result_item": "novadyne:pure_silicon",
+            "result_count": 1,
+            "ingredient": {"tag": "c:gems/quartz"},
+            "experience": 0.2,
+            "cooking_time": 200,
+        }
+        silicon = _entry(recipes_as_result=["novadyne:pure_silicon_from_quartz"])
+        catalog = {"entries": [silicon], "recipes": [recipe], "tags": []}
+        body = generate_catalog_pages(catalog)[0].body
+        self.assertIn("recipe-cooking", body)
+        self.assertIn("recipe-arrow", body)
+        self.assertIn("<code>c:gems/quartz</code>", body)
+        self.assertIn("200 ticks", body)
+        self.assertNotIn("recipe-grid-inner", body)
+
+    def test_shaped_recipe_uses_pattern_positions(self):
+        recipe = {
+            "id": "novadyne:grade",
+            "type": "minecraft:crafting_shaped",
+            "supported": True,
+            "result_item": "novadyne:coisa",
+            "result_count": 1,
+            "pattern": ["AA", "AA"],
+            "key": {"A": {"item": "novadyne:pure_silicon"}},
+        }
+        coisa = _entry(id="novadyne:coisa", path="coisa",
+                       display_name="Coisa", recipes_as_result=["novadyne:grade"])
+        catalog = {"entries": [coisa], "recipes": [recipe], "tags": []}
+        body = generate_catalog_pages(catalog)[0].body
+        self.assertEqual(body.count('class="recipe-slot"'), 9)
+
+    def test_machine_page_shows_recipe_note(self):
+        pages = generate_catalog_pages(_catalog(_machine_entries()))
+        body = pages[0].body
+        self.assertIn("ainda não documentada automaticamente", body)
+        self.assertIn("ModBlockEntities.java:17", body)
+        self.assertIn("## Receitas", body)
+
+
 class BuilderIntegrationTests(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
