@@ -79,6 +79,7 @@ class ModFixture:
             "assets_root": self.assets,
             "data_root": self.data,
             "mod_id": self.mod_id,
+            "content_dir": self.root / "wiki" / "content",
         }
 
     # -- atalhos de conteúdo comum ----------------------------------------

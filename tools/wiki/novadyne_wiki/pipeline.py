@@ -17,8 +17,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from .catalog import CatalogBuilder
+from .content import load_entry_description
 from .io_utils import iter_files
-from .paths import ASSETS_DIR, DATA_DIR, MAIN_JAVA, PROJECT_ROOT
+from .paths import ASSETS_DIR, DATA_DIR, MAIN_JAVA, PROJECT_ROOT, WIKI_CONTENT
 from .scanners import (
     AssetScanner,
     BlockstateScanner,
@@ -179,6 +180,7 @@ def generate_catalog(
     assets_root=ASSETS_DIR,
     data_root=DATA_DIR,
     mod_id: str | None = None,
+    content_dir=WIKI_CONTENT,
 ) -> tuple[dict, dict]:
     """Executa o pipeline completo e retorna (catálogo, resumo para relatório)."""
     project_root = Path(project_root)
@@ -355,6 +357,17 @@ def generate_catalog(
                     entry["warnings"].append(f"textura ausente: {texture_id}")
                     reporter.warning(f"textura ausente: {texture_id}", path=entry["id"])
                     reporter.note_missing_texture(entry["id"])
+
+    # -- descrições manuais ------------------------------------------------
+    # wiki/content/entries/<slug>.md com front matter `id:` anexa um texto
+    # escrito à mão à entrada; sem texto e com avisos, o status é "missing".
+    for entry in entries:
+        manual = load_entry_description(content_dir, entry["id"])
+        if manual is not None:
+            entry["documentation_status"] = "manual"
+            entry["manual_description"] = manual.body
+        elif entry["warnings"]:
+            entry["documentation_status"] = "missing"
 
     # -- cruzamento de referências -----------------------------------------
     recipes = recipe_result.data.get("recipes", [])

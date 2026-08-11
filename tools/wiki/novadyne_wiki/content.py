@@ -69,11 +69,19 @@ def _read_yaml_sidecar(path: Path) -> dict:
 
 
 def load_manual_pages(content_dir: Path) -> list[ManualPage]:
-    """Carrega todos os *.md de wiki/content/ (recursivo, ordenado)."""
+    """Carrega todos os *.md de wiki/content/ (recursivo, ordenado).
+
+    A subpasta `entries/` é ignorada aqui: os arquivos dela são descrições
+    anexadas a entradas do catálogo (ver `load_entry_description`) e não
+    viram páginas independentes na navegação.
+    """
     pages: list[ManualPage] = []
     if not content_dir.exists():
         return pages
     for path in io_utils.iter_files(content_dir, suffixes=(".md",)):
+        rel = path.relative_to(content_dir).as_posix()
+        if rel.startswith("entries/"):
+            continue
         text = io_utils.read_text(path)
         fm, body = _load_yaml_front_matter(text, path)
         rel = path.relative_to(content_dir).as_posix()

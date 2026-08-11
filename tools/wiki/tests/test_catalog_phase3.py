@@ -261,6 +261,45 @@ class CatalogPipelineTests(unittest.TestCase):
         self.assertEqual(data["schema_version"], 1)
         self.assertEqual(data["generation"]["counts"], catalog["generation"]["counts"])
 
+    # -- documentação manual (Fase 4) -------------------------------------
+
+    def _write_manual_description(self, entry_id: str, body: str = "descrição manual"):
+        write_text(
+            self.fixture.root / "wiki" / "content" / "entries" / f"{entry_id.split(':')[1]}.md",
+            f"---\nid: {entry_id}\ntitle: Teste\n---\n\n{body}\n",
+        )
+
+    def test_entry_with_manual_description_is_manual(self):
+        self.fixture.add_simple_item("pure_silicon")
+        self._write_manual_description("novadyne:pure_silicon")
+        catalog, _ = self.fixture.run_catalog()
+        entry = catalog["entries"][0]
+        self.assertEqual(entry["documentation_status"], "manual")
+        self.assertEqual(entry["manual_description"], "descrição manual")
+
+    def test_entry_with_warning_and_no_description_is_missing(self):
+        self.fixture.add_simple_item("sem_descricao")
+        catalog, _ = self.fixture.run_catalog()
+        entry = catalog["entries"][0]
+        self.assertTrue(entry["warnings"])
+        self.assertEqual(entry["documentation_status"], "missing")
+        self.assertNotIn("manual_description", entry)
+
+    def test_normal_entry_stays_auto(self):
+        self.fixture.add_simple_item("coisa")
+        self.fixture.add_item_model("coisa")
+        catalog, _ = self.fixture.run_catalog()
+        entry = catalog["entries"][0]
+        self.assertEqual(entry["warnings"], [])
+        self.assertEqual(entry["documentation_status"], "auto")
+
+    def test_manual_description_survives_second_generation(self):
+        self.fixture.add_simple_item("pure_silicon")
+        self._write_manual_description("novadyne:pure_silicon")
+        first, _ = self.fixture.run_catalog()
+        second, _ = self.fixture.run_catalog()
+        self.assertEqual(first, second)
+
 
 if __name__ == "__main__":
     unittest.main()

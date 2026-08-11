@@ -126,6 +126,15 @@ class EntryPageTests(unittest.TestCase):
         self.assertIn("valve_tier_1.md", by_dest["itens/valve_tier_2.md"])
         self.assertIn("Valve (Tier 1)", by_dest["itens/valve_tier_2.md"])
 
+    def test_manual_description_renders_before_auto_data(self):
+        manual = _entry(
+            documentation_status="manual",
+            manual_description="Texto escrito à mão sobre o item.",
+        )
+        body = generate_catalog_pages(_catalog([manual]))[0].body
+        self.assertLess(body.index("Texto escrito à mão"),
+                        body.index("## Identificação"))
+
 
 class RecipeVisualTests(unittest.TestCase):
     def test_shapeless_recipe_renders_grid(self):

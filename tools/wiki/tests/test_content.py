@@ -61,6 +61,15 @@ class ContentTests(unittest.TestCase):
     def test_empty_dir(self):
         self.assertEqual(content.load_manual_pages(self.tmp), [])
 
+    def test_entries_subdir_not_loaded_as_manual_page(self):
+        self._write("index.md", "---\ntitle: NovaDyne\norder: 0\n---\n# Home\n")
+        self._write(
+            "entries/pure_silicon.md",
+            "---\nid: novadyne:pure_silicon\ntitle: Pure Silicon\n---\ndescrição\n",
+        )
+        pages = content.load_manual_pages(self.tmp)
+        self.assertEqual([p.dest_rel for p in pages], ["index.md"])
+
 
 if __name__ == "__main__":
     unittest.main()
