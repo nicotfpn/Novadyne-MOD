@@ -13,7 +13,6 @@ from pathlib import Path
 import yaml
 
 from . import io_utils
-from .content import ManualPage
 
 BASE_CONFIG: dict = {
     "site_name": "NovaDyne",
@@ -101,17 +100,18 @@ def _section_title(section: str) -> str:
     return section.replace("_", " ").replace("-", " ").strip().title()
 
 
-def build_nav(pages: list[ManualPage]) -> list:
-    """Constrói a navegação a partir das páginas manuais.
+def build_nav(pages: list) -> list:
+    """Constrói a navegação a partir das páginas (manuais e geradas).
 
     - `index.md` vira "Home" (primeiro item).
     - Páginas em subpastas viram seções agrupadas pelo primeiro nível.
     - Ordenação estável por `order` (front matter) e depois por título.
 
-    Nas fases seguintes, páginas geradas serão anexadas a este nav.
+    As páginas geradas por categoria (itens/, blocos/, maquinas/, misc/)
+    formam seções automaticamente.
     """
-    home: ManualPage | None = None
-    by_section: dict[str, list[ManualPage]] = {}
+    home = None
+    by_section: dict[str, list] = {}
     for page in pages:
         if page.dest_rel == "index.md":
             home = page

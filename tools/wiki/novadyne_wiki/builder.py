@@ -11,6 +11,7 @@ from __future__ import annotations
 from . import io_utils, theme, validate
 from .config import assemble_config, build_nav, write_mkdocs_config
 from .content import load_manual_pages
+from .pages import generate_catalog_pages
 from .paths import (
     DISPOSABLE_DIRS,
     TEXTURES_DIR,
@@ -25,6 +26,7 @@ from .paths import (
 def build_site(
     reporter,
     *,
+    catalog: dict | None = None,
     content_dir=WIKI_CONTENT,
     docs_dir=WIKI_DOCS,
     theme_dir=WIKI_THEME,
@@ -46,6 +48,8 @@ def build_site(
     docs_dir.mkdir(parents=True, exist_ok=True)
 
     pages = load_manual_pages(content_dir)
+    if catalog:
+        pages = pages + generate_catalog_pages(catalog)
 
     theme_files = theme.copy_theme_assets(theme_dir=theme_dir, dest_assets=docs_dir / "assets")
     texture_files = theme.copy_texture_assets(textures_dir=textures_dir, dest_assets=docs_dir / "assets")

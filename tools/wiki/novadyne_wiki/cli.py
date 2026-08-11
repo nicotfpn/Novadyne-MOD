@@ -87,7 +87,7 @@ def run_generation(reporter: Reporter, *, clean: bool = False,
     write_catalog(catalog, build_dir / "catalog.json")
     reporter.set_catalog_report(build_catalog_report(catalog, scan_summary))
     reporter.write_report(build_dir)
-    manifest = build_site(reporter, clean=False, **(site_kwargs or {}))
+    manifest = build_site(reporter, catalog=catalog, clean=False, **(site_kwargs or {}))
     manifest["catalog.json"] = file_digest(build_dir / "catalog.json")
     manifest["report.json"] = file_digest(build_dir / "report.json")
     manifest["report.md"] = file_digest(build_dir / "report.md")
