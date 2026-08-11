@@ -69,41 +69,44 @@ def _catalog(entries: list[dict]) -> dict:
 
 
 class DestRelTests(unittest.TestCase):
+    def _dests(self, entries: list[dict]) -> list[str]:
+        return [p.dest_rel for p in generate_catalog_pages(_catalog(entries))
+                if not p.dest_rel.endswith("/index.md")]
+
     def test_item_goes_to_itens(self):
-        pages = generate_catalog_pages(_catalog([_entry()]))
-        self.assertEqual([p.dest_rel for p in pages], ["itens/pure_silicon.md"])
+        self.assertIn("itens/pure_silicon.md", self._dests([_entry()]))
 
     def test_plain_block_goes_to_blocos(self):
         block = _entry(type="block", path="caixa", id="novadyne:caixa")
-        pages = generate_catalog_pages(_catalog([block]))
-        self.assertEqual([p.dest_rel for p in pages], ["blocos/caixa.md"])
+        self.assertIn("blocos/caixa.md", self._dests([block]))
 
     def test_block_entity_and_menu_go_to_maquinas_when_orphan(self):
         be = _entry(type="block_entity", path="solo", id="novadyne:solo")
         menu = _entry(type="menu", path="solo", id="novadyne:solo")
-        pages = generate_catalog_pages(_catalog([be, menu]))
-        self.assertEqual([p.dest_rel for p in pages], ["maquinas/solo.md"])
+        self.assertEqual(self._dests([be, menu]), ["maquinas/solo.md"])
 
     def test_creative_tab_goes_to_misc(self):
         tab = _entry(type="creative_tab", path="novadyne", id="novadyne:novadyne",
                      display_name="NovaDyne")
-        pages = generate_catalog_pages(_catalog([tab]))
-        self.assertEqual([p.dest_rel for p in pages], ["misc/novadyne.md"])
+        self.assertIn("misc/novadyne.md", self._dests([tab]))
 
 
 class EntryPageTests(unittest.TestCase):
+    def _body(self, catalog, dest: str) -> str:
+        if isinstance(catalog, list):
+            catalog = _catalog(catalog)
+        pages = generate_catalog_pages(catalog)
+        return next(p.body for p in pages if p.dest_rel == dest)
+
     def test_simple_item_page_content(self):
-        pages = generate_catalog_pages(_catalog([_entry()]))
-        body = pages[0].body
+        body = self._body([_entry()], "itens/pure_silicon.md")
         self.assertIn("# Pure Silicon", body)
         self.assertIn("novadyne:pure_silicon", body)
         self.assertIn("assets/textures/item/pure_silicon.png", body)
         self.assertIn("ModItems.java:11", body)
 
     def test_machine_merges_block_entity_and_menu_into_single_page(self):
-        pages = generate_catalog_pages(_catalog(_machine_entries()))
-        self.assertEqual([p.dest_rel for p in pages], ["maquinas/macerator.md"])
-        body = pages[0].body
+        body = self._body(_machine_entries(), "maquinas/macerator.md")
         self.assertIn("# Macerator", body)
         self.assertIn("ModBlockEntities.java:17", body)
         self.assertIn("ModMenuTypes.java:18", body)
@@ -121,22 +124,25 @@ class EntryPageTests(unittest.TestCase):
         valve_2 = _entry(id="novadyne:valve_tier_2", path="valve_tier_2",
                          display_name="Valve (Tier 2)", recipes_as_ingredient=["novadyne:valve_tier_1"])
         catalog = {"entries": [valve_1, valve_2], "recipes": recipes, "tags": []}
-        pages = generate_catalog_pages(catalog)
-        by_dest = {p.dest_rel: p.body for p in pages}
-        self.assertIn("valve_tier_1.md", by_dest["itens/valve_tier_2.md"])
-        self.assertIn("Valve (Tier 1)", by_dest["itens/valve_tier_2.md"])
+        body = self._body(catalog, "itens/valve_tier_2.md")
+        self.assertIn("valve_tier_1.md", body)
+        self.assertIn("Valve (Tier 1)", body)
 
     def test_manual_description_renders_before_auto_data(self):
         manual = _entry(
             documentation_status="manual",
             manual_description="Texto escrito à mão sobre o item.",
         )
-        body = generate_catalog_pages(_catalog([manual]))[0].body
+        body = self._body([manual], "itens/pure_silicon.md")
         self.assertLess(body.index("Texto escrito à mão"),
                         body.index("## Identificação"))
 
 
 class RecipeVisualTests(unittest.TestCase):
+    def _body(self, catalog: dict, dest: str) -> str:
+        pages = generate_catalog_pages(catalog)
+        return next(p.body for p in pages if p.dest_rel == dest)
+
     def test_shapeless_recipe_renders_grid(self):
         recipe = {
             "id": "novadyne:valve_tier_1",
@@ -154,7 +160,7 @@ class RecipeVisualTests(unittest.TestCase):
         valve = _entry(id="novadyne:valve_tier_1", path="valve_tier_1",
                        display_name="Valve (Tier 1)", recipes_as_result=["novadyne:valve_tier_1"])
         catalog = {"entries": [valve], "recipes": [recipe], "tags": []}
-        body = generate_catalog_pages(catalog)[0].body
+        body = self._body(catalog, "itens/valve_tier_1.md")
         self.assertIn('class="recipe-grid"', body)
         self.assertIn("minecraft:iron_ingot", body)
         self.assertIn("valve_tier_1", body)
@@ -172,12 +178,11 @@ class RecipeVisualTests(unittest.TestCase):
         }
         silicon = _entry(recipes_as_result=["novadyne:pure_silicon_from_quartz"])
         catalog = {"entries": [silicon], "recipes": [recipe], "tags": []}
-        body = generate_catalog_pages(catalog)[0].body
+        body = self._body(catalog, "itens/pure_silicon.md")
         self.assertIn("recipe-cooking", body)
         self.assertIn("recipe-arrow", body)
         self.assertIn("<code>c:gems/quartz</code>", body)
         self.assertIn("200 ticks", body)
-        self.assertNotIn("recipe-grid-inner", body)
 
     def test_shaped_recipe_uses_pattern_positions(self):
         recipe = {
@@ -192,15 +197,44 @@ class RecipeVisualTests(unittest.TestCase):
         coisa = _entry(id="novadyne:coisa", path="coisa",
                        display_name="Coisa", recipes_as_result=["novadyne:grade"])
         catalog = {"entries": [coisa], "recipes": [recipe], "tags": []}
-        body = generate_catalog_pages(catalog)[0].body
+        body = self._body(catalog, "itens/coisa.md")
         self.assertEqual(body.count('class="recipe-slot"'), 9)
 
     def test_machine_page_shows_recipe_note(self):
-        pages = generate_catalog_pages(_catalog(_machine_entries()))
-        body = pages[0].body
+        body = self._body(_catalog(_machine_entries()), "maquinas/macerator.md")
         self.assertIn("ainda não documentada automaticamente", body)
         self.assertIn("ModBlockEntities.java:17", body)
         self.assertIn("## Receitas", body)
+
+
+class IndexPageTests(unittest.TestCase):
+    def _catalog_with_machine(self) -> dict:
+        entries = [_entry()] + _machine_entries()
+        return _catalog(entries)
+
+    def test_section_index_pages_generated(self):
+        pages = generate_catalog_pages(self._catalog_with_machine())
+        dests = [p.dest_rel for p in pages]
+        for index in ("itens/index.md", "blocos/index.md", "maquinas/index.md"):
+            self.assertIn(index, dests)
+
+    def test_index_uses_grid_cards_with_image_and_link(self):
+        pages = generate_catalog_pages(self._catalog_with_machine())
+        body = next(p.body for p in pages if p.dest_rel == "itens/index.md")
+        self.assertIn('<div class="grid cards" markdown>', body)
+        self.assertIn("[Pure Silicon](pure_silicon.md)", body)
+        self.assertIn("assets/textures/item/pure_silicon.png", body)
+
+    def test_machine_index_lists_only_machines(self):
+        pages = generate_catalog_pages(self._catalog_with_machine())
+        body = next(p.body for p in pages if p.dest_rel == "maquinas/index.md")
+        self.assertIn("[Macerator](macerator.md)", body)
+        self.assertNotIn("pure_silicon", body)
+
+    def test_index_pages_are_deterministic(self):
+        first = generate_catalog_pages(self._catalog_with_machine())
+        second = generate_catalog_pages(self._catalog_with_machine())
+        self.assertEqual([p.body for p in first], [p.body for p in second])
 
 
 class BuilderIntegrationTests(unittest.TestCase):

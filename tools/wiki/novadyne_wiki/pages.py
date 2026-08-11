@@ -419,6 +419,24 @@ def _render_entry_page(entry: dict, related: list[dict], *, dest: str,
     return body
 
 
+def _render_index_page(section_title: str, items: list[dict], *, dest: str,
+                       dest_by_id: dict, mod_id: str) -> str:
+    """Índice de categoria com cards (padrão `grid cards` do Material)."""
+    lines = [GENERATED_BANNER, "", f"# {section_title}", ""]
+    if not items:
+        lines += ["Nenhuma entrada nesta categoria ainda.", ""]
+        return "\n".join(lines) + "\n"
+    lines += ['<div class="grid cards" markdown>', ""]
+    for entry in items:
+        name = entry.get("display_name") or entry["id"]
+        link = _rel_link(dest, dest_by_id[entry["id"]])
+        texture_rel = _texture_rel(entry.get("texture"), mod_id)
+        image = f"![{name}]({_rel_link(dest, texture_rel)}) " if texture_rel else ""
+        lines.append(f"- {image}[{name}]({link})")
+    lines += ["", "</div>", ""]
+    return "\n".join(lines) + "\n"
+
+
 def generate_catalog_pages(catalog: dict) -> list[GeneratedPage]:
     """Gera uma página por entrada do catálogo (mais índices por categoria)."""
     entries = catalog.get("entries", [])
@@ -453,6 +471,25 @@ def generate_catalog_pages(catalog: dict) -> list[GeneratedPage]:
             recipes_by_id=recipes_by_id, entries_by_id=entries_by_id, mod_id=mod_id,
         )
         pages.append(GeneratedPage(dest_rel=dest, title=title, nav_title=title, body=body))
+
+    section_titles = {"itens": "Itens", "blocos": "Blocos", "maquinas": "Máquinas"}
+    for section, section_title in section_titles.items():
+        items: list[dict] = []
+        seen_dests: set[str] = set()
+        for entry in entries:
+            dest = dest_by_id.get(entry["id"], "")
+            if dest.startswith(f"{section}/") and dest not in seen_dests:
+                seen_dests.add(dest)
+                items.append(entry)
+        items.sort(key=lambda entry: (entry.get("display_name") or entry["id"]).lower())
+        body = _render_index_page(
+            section_title, items, dest=f"{section}/index.md",
+            dest_by_id=dest_by_id, mod_id=mod_id,
+        )
+        pages.append(GeneratedPage(
+            dest_rel=f"{section}/index.md", title=section_title,
+            nav_title="Índice", order=0, body=body,
+        ))
 
     pages.sort(key=lambda page: page.dest_rel)
     return pages

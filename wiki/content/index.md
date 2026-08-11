@@ -47,4 +47,6 @@ Estado atual extraído diretamente do código do mod (ver
 - **Cadeia de produção:** da fundição do quartzo à gravação de wafers
   eletrônicos.
 
-As páginas por item, bloco e receita serão geradas nas próximas fases da wiki.
+As páginas de itens, blocos e máquinas já são geradas automaticamente a
+partir do catálogo: veja o [índice de itens](itens/index.md), o
+[índice de blocos](blocos/index.md) e o [índice de máquinas](maquinas/index.md).
