@@ -18,6 +18,7 @@ MAIN_RESOURCES = PROJECT_ROOT / "src" / "main" / "resources"
 ASSETS_DIR = MAIN_RESOURCES / "assets"
 DATA_DIR = MAIN_RESOURCES / "data"
 GENERATED_RESOURCES = PROJECT_ROOT / "src" / "generated" / "resources"
+TEXTURES_DIR = ASSETS_DIR / "novadyne" / "textures"
 
 # Saída intermediária (descartável)
 BUILD_WIKI = PROJECT_ROOT / "build" / "wiki"

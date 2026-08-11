@@ -20,6 +20,7 @@ class BuilderTests(unittest.TestCase):
         self.content_dir = self.tmp / "content"
         self.docs_dir = self.tmp / "docs"
         self.theme_dir = self.tmp / "theme"
+        self.textures_dir = self.tmp / "textures"
         self.custom = self.tmp / "mkdocs.custom.yml"
         self.config_path = self.tmp / "mkdocs.yml"
         self.theme_dir.mkdir(parents=True)
@@ -30,6 +31,10 @@ class BuilderTests(unittest.TestCase):
             "---\ntitle: NovaDyne\norder: 0\n---\n# Home\n",
             encoding="utf-8",
         )
+        (self.textures_dir / "item").mkdir(parents=True)
+        (self.textures_dir / "item" / "pure_silicon.png").write_bytes(b"\x89PNG-fake")
+        (self.textures_dir / "block").mkdir()
+        (self.textures_dir / "block" / "machine_top.png").write_bytes(b"\x89PNG-fake")
 
     def tearDown(self):
         self._tmp.cleanup()
@@ -40,6 +45,7 @@ class BuilderTests(unittest.TestCase):
             content_dir=self.content_dir,
             docs_dir=self.docs_dir,
             theme_dir=self.theme_dir,
+            textures_dir=self.textures_dir,
             custom_config=self.custom,
             config_path=self.config_path,
             clean=clean,
@@ -62,6 +68,26 @@ class BuilderTests(unittest.TestCase):
         stale.write_text("velho", encoding="utf-8")
         self._build()
         self.assertFalse(stale.exists())
+
+    def test_build_site_copies_mod_textures(self):
+        manifest = self._build()
+        for rel in ("assets/textures/item/pure_silicon.png",
+                    "assets/textures/block/machine_top.png"):
+            self.assertTrue((self.docs_dir / rel).exists())
+            self.assertIn(rel, manifest)
+
+    def test_build_site_copies_textures_idempotently(self):
+        first = self._build()
+        second = self._build()
+        self.assertEqual(first, second)
+
+    def test_build_site_handles_missing_textures_dir(self):
+        import shutil
+
+        shutil.rmtree(self.textures_dir)
+        manifest = self._build()
+        self.assertFalse((self.docs_dir / "assets" / "textures").exists())
+        self.assertFalse(any(k.startswith("assets/textures/") for k in manifest))
 
     def test_generation_is_idempotent(self):
         first = self._build()

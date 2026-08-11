@@ -11,7 +11,15 @@ from __future__ import annotations
 from . import io_utils, theme, validate
 from .config import assemble_config, build_nav, write_mkdocs_config
 from .content import load_manual_pages
-from .paths import DISPOSABLE_DIRS, WIKI_CONFIG, WIKI_CONTENT, WIKI_CUSTOM_CONFIG, WIKI_DOCS, WIKI_THEME
+from .paths import (
+    DISPOSABLE_DIRS,
+    TEXTURES_DIR,
+    WIKI_CONFIG,
+    WIKI_CONTENT,
+    WIKI_CUSTOM_CONFIG,
+    WIKI_DOCS,
+    WIKI_THEME,
+)
 
 
 def build_site(
@@ -20,6 +28,7 @@ def build_site(
     content_dir=WIKI_CONTENT,
     docs_dir=WIKI_DOCS,
     theme_dir=WIKI_THEME,
+    textures_dir=TEXTURES_DIR,
     custom_config=WIKI_CUSTOM_CONFIG,
     config_path=WIKI_CONFIG,
     clean: bool = False,
@@ -39,9 +48,10 @@ def build_site(
     pages = load_manual_pages(content_dir)
 
     theme_files = theme.copy_theme_assets(theme_dir=theme_dir, dest_assets=docs_dir / "assets")
+    texture_files = theme.copy_texture_assets(textures_dir=textures_dir, dest_assets=docs_dir / "assets")
 
     manifest: dict[str, str] = {}
-    for rel in theme_files:
+    for rel in theme_files + texture_files:
         dest = (docs_dir / "assets" / rel).resolve()
         manifest[dest.relative_to(docs_dir).as_posix()] = io_utils.file_digest(dest)
 
