@@ -110,6 +110,8 @@ class EntryPageTests(unittest.TestCase):
         self.assertIn("# Macerator", body)
         self.assertIn("ModBlockEntities.java:17", body)
         self.assertIn("ModMenuTypes.java:18", body)
+        self.assertIn("ModItems.java:23", body)
+        self.assertIn("Block item", body)
         self.assertIn("ModBlocks.java:14", body)
         self.assertIn("assets/textures/block/macerator_front.png", body)
 

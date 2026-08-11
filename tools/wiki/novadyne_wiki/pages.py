@@ -24,6 +24,8 @@ _DEFAULT_BRANCH = "main"
 
 _MACHINE_LINKS = ("block_entity", "menu")
 
+_RELATED_ORDER = {"block_entity": 0, "menu": 1, "item": 2}
+
 _CRAFTING_TYPES = {"minecraft:crafting_shapeless", "minecraft:crafting_shaped"}
 _COOKING_TYPES = {
     "minecraft:smelting", "minecraft:blasting",
@@ -122,13 +124,25 @@ def _dest_for_entry(entry: dict, machine_blocks: set[str]) -> str | None:
 
 
 def _related_entries(entry: dict, entries: list[dict]) -> list[dict]:
-    """block_entity/menu da mesma máquina (mesmo id do bloco)."""
+    """block_entity/menu/item de bloco da mesma máquina (mesmo id do bloco)."""
     if entry.get("type") != "block":
         return []
-    return [
+    related = [
         other for other in entries
         if other["id"] == entry["id"] and other.get("type") in _MACHINE_LINKS
     ]
+    item_entry = next(
+        (
+            other for other in entries
+            if other["id"] == entry["id"] and other.get("type") == "item"
+            and other.get("block") == entry["id"]
+        ),
+        None,
+    )
+    if item_entry is not None:
+        related.append(item_entry)
+    related.sort(key=lambda other: _RELATED_ORDER.get(other.get("type"), 9))
+    return related
 
 
 # -- seções de conteúdo -------------------------------------------------
@@ -388,8 +402,9 @@ def _render_loot(entry: dict) -> list[str]:
 
 def _render_registry(entry: dict, related: list[dict]) -> list[str]:
     rows: list[tuple[str, str]] = [("Fonte", _source_link(entry.get("registration_source")))]
+    labels = {"block_entity": "Block entity", "menu": "Menu", "item": "Block item"}
     for other in related:
-        label = "Block entity" if other.get("type") == "block_entity" else "Menu"
+        label = labels.get(other.get("type"), other.get("type", ""))
         rows.append((label, _source_link(other.get("registration_source"))))
     return ["## Registro", "", _table(rows), ""]
 
