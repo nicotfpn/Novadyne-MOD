@@ -37,5 +37,8 @@ DOCS_ASSETS = WIKI_DOCS / "assets"
 # Diretórios descartáveis que o gerador pode limpar com segurança.
 DISPOSABLE_DIRS = (WIKI_GENERATED, WIKI_DOCS, BUILD_WIKI)
 
+# Arquivo de avisos reconhecidos
+ACKNOWLEDGED_WARNINGS = TOOLS_WIKI_DIR / "acknowledged_warnings.json"
+
 # Prefixo obrigatório das páginas geradas.
 GENERATED_BANNER = "<!-- AUTO-GENERATED: DO NOT EDIT DIRECTLY -->"

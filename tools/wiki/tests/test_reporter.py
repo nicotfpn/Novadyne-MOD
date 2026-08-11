@@ -36,6 +36,19 @@ class ReporterTests(unittest.TestCase):
         rep.error("fatal")
         self.assertFalse(rep.ok)
 
+    def test_acknowledged_warning_does_not_fail_strict(self):
+        """Aviso reconhecido não derruba --strict."""
+        rep = reporter.Reporter(strict=True, acknowledged=["textura planejada"])
+        rep.warning("textura planejada")
+        self.assertTrue(rep.ok)
+
+    def test_unacknowledged_warning_still_fails_strict(self):
+        """Aviso NÃO reconhecido continua derrubando --strict."""
+        rep = reporter.Reporter(strict=True, acknowledged=["textura planejada"])
+        rep.warning("textura planejada")
+        rep.warning("outro aviso qualquer")
+        self.assertFalse(rep.ok)
+
     def test_write_report(self):
         rep = reporter.Reporter(strict=False)
         rep.warning("textura ausente", path="assets/x.png")

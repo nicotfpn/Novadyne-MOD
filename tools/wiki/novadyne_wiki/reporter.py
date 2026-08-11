@@ -27,9 +27,10 @@ class ReportStats:
 class Reporter:
     """Registra issues e estatísticas e produz build/wiki/report.{json,md}."""
 
-    def __init__(self, strict: bool = False, verbose: bool = False):
+    def __init__(self, strict: bool = False, verbose: bool = False, acknowledged: list[str] | None = None):
         self.strict = strict
         self.verbose = verbose
+        self.acknowledged = set(acknowledged) if acknowledged else set()
         self.issues: list[Issue] = []
         self.stats = ReportStats()
         self.catalog_report: dict | None = None
@@ -90,11 +91,13 @@ class Reporter:
 
     @property
     def ok(self) -> bool:
-        """Sem erros; em modo estrito, também sem avisos."""
+        """Sem erros; em modo estrito, também sem avisos não reconhecidos."""
         if self.errors:
             return False
-        if self.strict and self.warnings:
-            return False
+        if self.strict:
+            unacknowledged_warnings = [w for w in self.warnings if w.message not in self.acknowledged]
+            if unacknowledged_warnings:
+                return False
         return True
 
     def issues_for_report(self) -> list[dict]:
@@ -104,6 +107,7 @@ class Reporter:
         data = {
             "ok": self.ok,
             "strict": self.strict,
+            "acknowledged": sorted(self.acknowledged),
             "stats": {
                 "discovered": sorted(set(self.stats.discovered)),
                 "pages_created": sorted(set(self.stats.pages_created)),

@@ -22,7 +22,7 @@ from .builder import build_site
 from .catalog import write_catalog
 from .errors import WikiError
 from .io_utils import file_digest
-from .paths import BUILD_WIKI, DISPOSABLE_DIRS, WIKI_CONFIG, WIKI_DIR
+from .paths import ACKNOWLEDGED_WARNINGS, BUILD_WIKI, DISPOSABLE_DIRS, WIKI_CONFIG, WIKI_DIR
 from .pipeline import generate_catalog
 from .report_builder import build_catalog_report
 from .reporter import Reporter
@@ -94,9 +94,9 @@ def run_generation(reporter: Reporter, *, clean: bool = False,
     return manifest
 
 
-def _idempotency_check(clean: bool) -> bool:
-    first = run_generation(Reporter(strict=False), clean=clean)
-    second = run_generation(Reporter(strict=False), clean=False)
+def _idempotency_check(clean: bool, acknowledged: list[str] | None = None) -> bool:
+    first = run_generation(Reporter(strict=False, acknowledged=acknowledged), clean=clean)
+    second = run_generation(Reporter(strict=False, acknowledged=acknowledged), clean=False)
     if first == second:
         return True
     differing = sorted(set(first) ^ set(second))
@@ -140,7 +140,14 @@ def _run_mkdocs(command: str) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    reporter = Reporter(strict=args.strict, verbose=args.verbose)
+    
+    # Load acknowledged warnings
+    acknowledged = []
+    if ACKNOWLEDGED_WARNINGS.exists():
+        import json
+        acknowledged = json.loads(ACKNOWLEDGED_WARNINGS.read_text(encoding="utf-8"))
+    
+    reporter = Reporter(strict=args.strict, verbose=args.verbose, acknowledged=acknowledged)
     try:
         run_generation(reporter, clean=args.clean)
     except WikiError as exc:
@@ -150,7 +157,7 @@ def main(argv: list[str] | None = None) -> int:
 
     ok = reporter.ok
     if args.check and ok:
-        ok = _idempotency_check(args.clean)
+        ok = _idempotency_check(args.clean, acknowledged)
 
     if args.build and ok:
         code = _run_mkdocs("build")
