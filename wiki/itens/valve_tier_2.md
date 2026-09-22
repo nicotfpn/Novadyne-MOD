@@ -12,7 +12,7 @@
 
 ## Como obter
 
-### Valve (Tier 2) — valve_tier_2
+### Valve (Tier 2)
 
 ![Grade ou processo para Valve (Tier 2)](../assets/generated/valve_tier_2.png)
 
@@ -26,15 +26,23 @@
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/valve_tier_2.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/valve_tier_2.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Valve (Tier 3)](../itens/valve_tier_3.md).
 - Slot de valve da [Lithography](litografia.md); melhora a chance de sucesso.
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:valve_tier_2
 ```
+
+</details>

@@ -8,7 +8,7 @@
 
 `novadyne:part_silicon_wafer`
 
-Wafer de silício prensado; componente do circuito eletrônico e do craft do Processor.
+Sai da Wafer Press e entra na montagem do circuito. Você também vai precisar dele para construir o Processor.
 
 ## Como obter
 
@@ -24,15 +24,23 @@ Wafer de silício prensado; componente do circuito eletrônico e do craft do Pro
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Processor](../itens/processor.md).
 - Montar circuito eletrônico, em [Processor](../itens/processor.md).
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:part_silicon_wafer
 ```
+
+</details>

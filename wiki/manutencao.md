@@ -18,4 +18,4 @@ Use Linux com as fontes DejaVu Sans (`fonts-dejavu-core`). O gerador lê as rece
 
 O workflow **Wiki** confere fontes, páginas, imagens e links em cada mudança relevante. Se ele ficar vermelho após mudar uma receita, regenere a wiki e inclua os arquivos atualizados no commit. `--check` não altera arquivos e não acessa a rede.
 
-Imagens de craft e processo são diagramas gerados a partir de dados. Ícones de blocos mostram uma face, sem simular uma captura 3D. Texturas vanilla e suas fontes estão em [créditos](assets/vanilla/SOURCES.md).
+Imagens de craft e processo são diagramas gerados a partir de dados. Blocos e máquinas são desenhados em perspectiva a partir das texturas de suas faces; não são capturas do cliente Minecraft. Texturas vanilla e suas fontes estão em [créditos](assets/vanilla/SOURCES.md).

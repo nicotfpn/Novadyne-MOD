@@ -17,13 +17,13 @@
 | Duração | 150 ticks / 7.5 s |
 | Energia por ciclo | 7.500 FE |
 
-Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqueada. Sem energia suficiente para o próximo tick, o progresso é zerado.
+Tempos consideram 20 ticks por segundo. Recebe energia, mas não fornece energia a outros blocos. Se faltar energia durante o trabalho, o progresso volta a zero.
 
 **Slots:** três entradas (Silicon Wafer, Copper Layer, Base Wafer), saída e valve. A valve ainda não aplica bônus nesta máquina.
 
 ## Como obter
 
-### Processor — processor
+### Processor
 
 ![Grade ou processo para Processor](../assets/generated/processor.png)
 
@@ -38,13 +38,18 @@ Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqu
 
 **Resultado:** 1 × [Processor](../itens/processor.md).
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/processor.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/processor.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Lithography](../itens/litografia.md).
 
-## Processos
+## O que dá para fazer
 
 ### Montar circuito eletrônico
 
@@ -60,12 +65,20 @@ Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqu
 
 Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, da esquerda para a direita**. Consome 1 de cada.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java)
+
+</details>
 
 
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:processor
 ```
+
+</details>

@@ -17,13 +17,13 @@
 | Duração | 100 ticks / 5 s |
 | Energia por ciclo | 3.000 FE |
 
-Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqueada. Sem energia suficiente para o próximo tick, o progresso é zerado.
+Tempos consideram 20 ticks por segundo. Recebe energia, mas não fornece energia a outros blocos. Se faltar energia durante o trabalho, o progresso volta a zero.
 
 **Slots:** entrada, saída e valve. A valve ainda não aplica bônus nesta máquina.
 
 ## Como obter
 
-### Wafer Press — wafer_press
+### Wafer Press
 
 ![Grade ou processo para Wafer Press](../assets/generated/wafer_press.png)
 
@@ -36,13 +36,18 @@ Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqu
 
 **Resultado:** 1 × [Wafer Press](../itens/wafer_press.md).
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/wafer_press.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/wafer_press.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Processor](../itens/processor.md).
 
-## Processos
+## O que dá para fazer
 
 ### Prensar silício
 
@@ -56,7 +61,12 @@ Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqu
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 ### Prensar cobre
 
@@ -70,7 +80,12 @@ Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaç
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 ### Prensar cerâmica
 
@@ -84,12 +99,20 @@ Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaç
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:wafer_press
 ```
+
+</details>

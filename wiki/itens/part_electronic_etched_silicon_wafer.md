@@ -8,7 +8,7 @@
 
 `novadyne:part_electronic_etched_silicon_wafer`
 
-Wafer gravado e limpo. É o final da cadeia atual; ainda não possui uso em outro craft ou processo.
+Wafer pronto e limpo. Por enquanto, a linha de produção termina aqui.
 
 ## Como obter
 
@@ -23,16 +23,24 @@ Wafer gravado e limpo. É o final da cadeia atual; ainda não possui uso em outr
 
 **Resultado:** 1 × [Etched Silicon Wafer](../itens/part_electronic_etched_silicon_wafer.md) + 1 × Balde vazio.
 
-O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. Processo sem RNG.
+O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. A limpeza sempre dá o mesmo resultado.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+
+</details>
 
 ## Onde usar
 
-Sem consumo em outra receita implementada no momento.
+Por enquanto, não entra em nenhuma outra receita.
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:part_electronic_etched_silicon_wafer
 ```
+
+</details>

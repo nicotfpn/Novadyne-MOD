@@ -12,7 +12,7 @@
 
 ## Como obter
 
-### Valve (Tier 4) — valve_tier_4
+### Valve (Tier 4)
 
 ![Grade ou processo para Valve (Tier 4)](../assets/generated/valve_tier_4.png)
 
@@ -26,15 +26,23 @@
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/valve_tier_4.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/valve_tier_4.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Valve (Tier 5)](../itens/valve_tier_5.md).
 - Slot de valve da [Lithography](litografia.md); melhora a chance de sucesso.
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:valve_tier_4
 ```
+
+</details>

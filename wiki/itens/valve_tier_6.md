@@ -12,7 +12,7 @@
 
 ## Como obter
 
-### Valve (Tier 6) — valve_tier_6
+### Valve (Tier 6)
 
 ![Grade ou processo para Valve (Tier 6)](../assets/generated/valve_tier_6.png)
 
@@ -26,15 +26,23 @@
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/valve_tier_6.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/valve_tier_6.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Valve (Tier 7)](../itens/valve_tier_7.md).
 - Slot de valve da [Lithography](litografia.md); melhora a chance de sucesso.
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:valve_tier_6
 ```
+
+</details>

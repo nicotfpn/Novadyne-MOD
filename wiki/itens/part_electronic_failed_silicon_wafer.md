@@ -8,7 +8,7 @@
 
 `novadyne:part_electronic_failed_silicon_wafer`
 
-Resultado de falha na gravação. Pode ser reciclado no Macerator.
+A gravação falhou, mas o material não está perdido: leve ao Macerator para recuperar cobre ou uma base.
 
 ## Como obter
 
@@ -20,18 +20,26 @@ Resultado de falha na gravação. Pode ser reciclado no Macerator.
 | ---: | --- |
 | 1 | [Stacked Electronic Circuit](../itens/stacked_electronic_circuit.md) |
 
-**Resultado sorteado (um por ciclo):** 1 × [Dirty Silicon Wafer](../itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](../itens/part_electronic_failed_silicon_wafer.md).
+**Você recebe um dos dois:** 1 × [Dirty Silicon Wafer](../itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](../itens/part_electronic_failed_silicon_wafer.md).
 
 A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valve equivale ao tier 1: 70% de sucesso. Tier 7: 95%. A saída precisa estar vazia. Não consome água neste estágio.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+
+</details>
 
 ## Onde usar
 
 - Reciclar wafer com falha, em [Macerator](../itens/macerator.md).
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:part_electronic_failed_silicon_wafer
 ```
+
+</details>

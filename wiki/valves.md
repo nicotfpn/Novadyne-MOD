@@ -19,12 +19,12 @@ Coloque uma valve no slot dedicado da Lithography. Ela permanece no slot após o
 
 Chance por tentativa, não uma garantia em lotes pequenos. Os sete crafts são sem posição fixa.
 
-| Ícone | Item | ID |
-| --- | --- | --- |
-| <img src="assets/generated/icon_valve_tier_1.png" width="48" alt="Valve (Tier 1)"> | [Valve (Tier 1)](itens/valve_tier_1.md) | `valve_tier_1` |
-| <img src="assets/generated/icon_valve_tier_2.png" width="48" alt="Valve (Tier 2)"> | [Valve (Tier 2)](itens/valve_tier_2.md) | `valve_tier_2` |
-| <img src="assets/generated/icon_valve_tier_3.png" width="48" alt="Valve (Tier 3)"> | [Valve (Tier 3)](itens/valve_tier_3.md) | `valve_tier_3` |
-| <img src="assets/generated/icon_valve_tier_4.png" width="48" alt="Valve (Tier 4)"> | [Valve (Tier 4)](itens/valve_tier_4.md) | `valve_tier_4` |
-| <img src="assets/generated/icon_valve_tier_5.png" width="48" alt="Valve (Tier 5)"> | [Valve (Tier 5)](itens/valve_tier_5.md) | `valve_tier_5` |
-| <img src="assets/generated/icon_valve_tier_6.png" width="48" alt="Valve (Tier 6)"> | [Valve (Tier 6)](itens/valve_tier_6.md) | `valve_tier_6` |
-| <img src="assets/generated/icon_valve_tier_7.png" width="48" alt="Valve (Tier 7)"> | [Valve (Tier 7)](itens/valve_tier_7.md) | `valve_tier_7` |
+| | Item |
+| --- | --- |
+| <img src="assets/generated/icon_valve_tier_1.png" width="48" alt="Valve (Tier 1)"> | [Valve (Tier 1)](itens/valve_tier_1.md) |
+| <img src="assets/generated/icon_valve_tier_2.png" width="48" alt="Valve (Tier 2)"> | [Valve (Tier 2)](itens/valve_tier_2.md) |
+| <img src="assets/generated/icon_valve_tier_3.png" width="48" alt="Valve (Tier 3)"> | [Valve (Tier 3)](itens/valve_tier_3.md) |
+| <img src="assets/generated/icon_valve_tier_4.png" width="48" alt="Valve (Tier 4)"> | [Valve (Tier 4)](itens/valve_tier_4.md) |
+| <img src="assets/generated/icon_valve_tier_5.png" width="48" alt="Valve (Tier 5)"> | [Valve (Tier 5)](itens/valve_tier_5.md) |
+| <img src="assets/generated/icon_valve_tier_6.png" width="48" alt="Valve (Tier 6)"> | [Valve (Tier 6)](itens/valve_tier_6.md) |
+| <img src="assets/generated/icon_valve_tier_7.png" width="48" alt="Valve (Tier 7)"> | [Valve (Tier 7)](itens/valve_tier_7.md) |
