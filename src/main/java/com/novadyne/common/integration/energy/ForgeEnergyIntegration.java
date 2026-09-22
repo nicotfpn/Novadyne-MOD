@@ -2,6 +2,7 @@ package com.novadyne.common.integration.energy;
 
 import com.novadyne.api.energy.Action;
 import com.novadyne.api.energy.IStrictEnergyHandler;
+import com.novadyne.common.blockentity.AbstractMachineBlockEntity;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 @SuppressWarnings("removal")
@@ -19,7 +20,9 @@ public class ForgeEnergyIntegration implements IEnergyStorage {
         if (!canReceive() || toReceive <= 0) {
             return 0;
         }
-        long inserted = toReceive - handler.insertEnergy(toReceive, Action.fromSimulate(simulate));
+        long inserted = toReceive - (handler instanceof AbstractMachineBlockEntity machine
+                ? machine.insertExternalEnergy(0, toReceive, Action.fromSimulate(simulate))
+                : handler.insertEnergy(toReceive, Action.fromSimulate(simulate)));
         return (int) Math.min(inserted, Integer.MAX_VALUE);
     }
 
@@ -28,7 +31,9 @@ public class ForgeEnergyIntegration implements IEnergyStorage {
         if (!canExtract() || toExtract <= 0) {
             return 0;
         }
-        long extracted = handler.extractEnergy(toExtract, Action.fromSimulate(simulate));
+        long extracted = handler instanceof AbstractMachineBlockEntity machine
+                ? machine.extractExternalEnergy(0, toExtract, Action.fromSimulate(simulate))
+                : handler.extractEnergy(toExtract, Action.fromSimulate(simulate));
         return (int) Math.min(extracted, Integer.MAX_VALUE);
     }
 
@@ -44,7 +49,7 @@ public class ForgeEnergyIntegration implements IEnergyStorage {
 
     @Override
     public boolean canExtract() {
-        return handler.getEnergy(0) > 0;
+        return !(handler instanceof AbstractMachineBlockEntity) && handler.getEnergy(0) > 0;
     }
 
     @Override

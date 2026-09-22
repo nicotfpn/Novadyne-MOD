@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -116,6 +117,22 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
         }
     }
 
+    protected boolean canOutputAccept(int slot, ItemStack result) {
+        if (result.isEmpty()) return false;
+        ItemStack output = getStackInSlot(slot);
+        return (output.isEmpty() || ItemStack.isSameItemSameComponents(output, result))
+                && output.getCount() + result.getCount() <= result.getMaxStackSize();
+    }
+
+    protected void insertResult(int slot, ItemStack result) {
+        if (!canOutputAccept(slot, result)) {
+            throw new IllegalStateException("Machine output changed before completion");
+        }
+        if (!insertItem(slot, result).isEmpty()) {
+            throw new IllegalStateException("Machine output rejected a validated result");
+        }
+    }
+
     protected abstract int getValveSlotIndex();
 
     @Override
@@ -125,8 +142,11 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
 
     @Override
     public void setValveTier(int tier) {
-        this.valveTier = Math.max(0, Math.min(tier, 7));
-        setChanged();
+        int clamped = Math.max(0, Math.min(tier, 7));
+        if (this.valveTier != clamped) {
+            this.valveTier = clamped;
+            setChanged();
+        }
     }
 
     @Override
@@ -169,7 +189,10 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     protected abstract void processComplete();
 
     public void tickServer() {
-        if (!hasEnoughEnergy()) return;
+        if (!hasEnoughEnergy()) {
+            if (progress != 0) resetProgress();
+            return;
+        }
 
         if (canProcess()) {
             consumeEnergy();
@@ -241,7 +264,14 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
 
     @Override
     public void handleUpdateTag(ValueInput input) {
-        loadAdditional(input);
+        energyContainer.setEnergy(input.getLongOr(TAG_ENERGY, energyContainer.getEnergy()));
+        valveTier = input.getIntOr(TAG_VALVE_TIER, valveTier);
+        progress = input.getIntOr(TAG_PROGRESS, progress);
+    }
+
+    @Override
+    public void onDataPacket(Connection connection, ValueInput input) {
+        handleUpdateTag(input);
     }
 
     @Override
@@ -292,5 +322,13 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     @Override
     public long extractEnergy(int container, long amount, Action action) {
         return energyContainer.extract(amount, action, AutomationType.INTERNAL);
+    }
+
+    public long insertExternalEnergy(int container, long amount, Action action) {
+        return container == 0 ? energyContainer.insert(amount, action, AutomationType.EXTERNAL) : amount;
+    }
+
+    public long extractExternalEnergy(int container, long amount, Action action) {
+        return container == 0 ? energyContainer.extract(amount, action, AutomationType.EXTERNAL) : 0;
     }
 }

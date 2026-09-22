@@ -64,35 +64,20 @@ public class MaceratorBlockEntity extends AbstractMachineBlockEntity {
 
     @Override
     protected boolean canProcess() {
-        updateValveTierFromSlot();
-
         ItemStack input = getStackInSlot(SLOT_INPUT);
         if (input.isEmpty()) return false;
 
-        ItemStack output = getStackInSlot(SLOT_OUTPUT);
         ItemStack result = findRecipe(input);
-        if (result.isEmpty()) return false;
-
         if (input.is(ModItems.PART_ELECTRONIC_FAILED_SILICON_WAFER.get())) {
-            if (!output.isEmpty()) {
-                if (!output.is(ModItems.PART_COPPER_LAYER.get()) && !output.is(ModItems.PART_BASE_WAFER.get()))
-                    return false;
-                if (output.getCount() >= output.getMaxStackSize())
-                    return false;
-            }
-            return true;
+            // Either outcome must fit before the roll; an occupied slot cannot hold both.
+            return getStackInSlot(SLOT_OUTPUT).isEmpty();
         }
-
-        if (!output.isEmpty()) {
-            if (!ItemStack.isSameItemSameComponents(result, output)) return false;
-            if (output.getCount() + result.getCount() > output.getMaxStackSize()) return false;
-        }
-
-        return true;
+        return canOutputAccept(SLOT_OUTPUT, result);
     }
 
     @Override
     protected void processComplete() {
+        if (!canProcess()) return;
         ItemStack input = getStackInSlot(SLOT_INPUT);
         ItemStack result = findRecipe(input);
 
@@ -105,24 +90,12 @@ public class MaceratorBlockEntity extends AbstractMachineBlockEntity {
                 output = new ItemStack(ModItems.PART_BASE_WAFER.get(), 1);
             }
             extractItem(SLOT_INPUT, 1);
-            insertOrDropOutput(output);
+            insertResult(SLOT_OUTPUT, output);
             return;
         }
 
         extractItem(SLOT_INPUT, 1);
-        insertOrDropOutput(result.copy());
-    }
-
-    private void insertOrDropOutput(ItemStack stack) {
-        ItemStack remaining = insertItem(SLOT_OUTPUT, stack);
-        if (!remaining.isEmpty()) {
-            if (level != null) {
-                java.util.Objects.requireNonNull(level).addFreshEntity(
-                        new net.minecraft.world.entity.item.ItemEntity(level,
-                                worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
-                                remaining));
-            }
-        }
+        insertResult(SLOT_OUTPUT, result);
     }
 
     private ItemStack findRecipe(ItemStack input) {

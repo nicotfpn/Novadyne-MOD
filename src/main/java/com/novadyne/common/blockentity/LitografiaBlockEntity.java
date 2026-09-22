@@ -47,30 +47,23 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
         ItemStack input = getStackInSlot(SLOT_INPUT);
         if (input.isEmpty()) return false;
 
-        ItemStack output = getStackInSlot(SLOT_OUTPUT);
-
         if (input.is(ModItems.STACKED_ELECTRONIC_CIRCUIT.get())) {
-            return canOutputAccept(output, ItemStack.EMPTY);
+            // Both the success and failure result must have somewhere to go.
+            return getStackInSlot(SLOT_OUTPUT).isEmpty();
         }
 
         if (input.is(ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get())) {
             if (getStackInSlot(SLOT_BUCKET).is(Items.WATER_BUCKET)) {
-                return canOutputAccept(output, new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()));
+                return canOutputAccept(SLOT_OUTPUT, new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()));
             }
         }
 
         return false;
     }
 
-    private boolean canOutputAccept(ItemStack output, ItemStack result) {
-        if (output.isEmpty()) return true;
-        if (result.isEmpty()) return output.getCount() < output.getMaxStackSize();
-        if (!ItemStack.isSameItemSameComponents(result, output)) return false;
-        return output.getCount() + result.getCount() <= output.getMaxStackSize();
-    }
-
     @Override
     protected void processComplete() {
+        if (!canProcess()) return;
         ItemStack input = getStackInSlot(SLOT_INPUT);
 
         if (input.is(ModItems.STACKED_ELECTRONIC_CIRCUIT.get())) {
@@ -100,26 +93,14 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
             result = new ItemStack(ModItems.PART_ELECTRONIC_FAILED_SILICON_WAFER.get(), 1);
         }
 
-        insertOrDropOutput(result);
+        insertResult(SLOT_OUTPUT, result);
     }
 
     private void processCleaning() {
         extractItem(SLOT_INPUT, 1);
         extractItem(SLOT_BUCKET, 1);
-
-        insertOrDropOutput(new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get(), 1));
-        insertOrDropOutput(new ItemStack(Items.BUCKET, 1));
-    }
-
-    private void insertOrDropOutput(ItemStack stack) {
-        ItemStack remaining = insertItem(SLOT_OUTPUT, stack);
-        if (!remaining.isEmpty()) {
-            if (level != null) {
-                java.util.Objects.requireNonNull(level).addFreshEntity(
-                        new net.minecraft.world.entity.item.ItemEntity(level,
-                                worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
-                                remaining));
-            }
-        }
+        // The consumed water bucket leaves its empty bucket in the bucket slot.
+        insertResult(SLOT_BUCKET, new ItemStack(Items.BUCKET));
+        insertResult(SLOT_OUTPUT, new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()));
     }
 }

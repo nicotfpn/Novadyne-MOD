@@ -53,21 +53,11 @@ public class WaferPressBlockEntity extends AbstractMachineBlockEntity {
 
     @Override
     protected boolean canProcess() {
-        updateValveTierFromSlot();
-
         ItemStack input = getStackInSlot(SLOT_INPUT);
         if (input.isEmpty()) return false;
 
-        ItemStack output = getStackInSlot(SLOT_OUTPUT);
         ItemStack result = findRecipe(input);
-        if (result.isEmpty()) return false;
-
-        if (!output.isEmpty()) {
-            if (!ItemStack.isSameItemSameComponents(result, output)) return false;
-            if (output.getCount() + result.getCount() > output.getMaxStackSize()) return false;
-        }
-
-        return true;
+        return canOutputAccept(SLOT_OUTPUT, result);
     }
 
     @Override
@@ -75,20 +65,9 @@ public class WaferPressBlockEntity extends AbstractMachineBlockEntity {
         ItemStack input = getStackInSlot(SLOT_INPUT);
         ItemStack result = findRecipe(input);
 
+        if (!canOutputAccept(SLOT_OUTPUT, result)) return;
         extractItem(SLOT_INPUT, 1);
-        insertOrDropOutput(result.copy());
-    }
-
-    private void insertOrDropOutput(ItemStack stack) {
-        ItemStack remaining = insertItem(SLOT_OUTPUT, stack);
-        if (!remaining.isEmpty()) {
-            if (level != null) {
-                java.util.Objects.requireNonNull(level).addFreshEntity(
-                        new net.minecraft.world.entity.item.ItemEntity(level,
-                                worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
-                                remaining));
-            }
-        }
+        insertResult(SLOT_OUTPUT, result);
     }
 
     private ItemStack findRecipe(ItemStack input) {

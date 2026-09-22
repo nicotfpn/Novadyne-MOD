@@ -2,6 +2,7 @@ package com.novadyne.common.integration.energy;
 
 import com.novadyne.api.energy.Action;
 import com.novadyne.api.energy.IStrictEnergyHandler;
+import com.novadyne.common.blockentity.AbstractMachineBlockEntity;
 import net.neoforged.neoforge.transfer.TransferPreconditions;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
@@ -46,7 +47,9 @@ public class NovadyneEnergyHandler implements EnergyHandler {
         }
 
         journal.updateSnapshots(transaction);
-        long remainder = handler.insertEnergy(container, toInsert, Action.EXECUTE);
+        long remainder = handler instanceof AbstractMachineBlockEntity machine
+                ? machine.insertExternalEnergy(container, toInsert, Action.EXECUTE)
+                : handler.insertEnergy(container, toInsert, Action.EXECUTE);
         long inserted = toInsert - remainder;
         return (int) inserted;
     }
@@ -66,7 +69,9 @@ public class NovadyneEnergyHandler implements EnergyHandler {
         }
 
         journal.updateSnapshots(transaction);
-        long extracted = handler.extractEnergy(container, toExtract, Action.EXECUTE);
+        long extracted = handler instanceof AbstractMachineBlockEntity machine
+                ? machine.extractExternalEnergy(container, toExtract, Action.EXECUTE)
+                : handler.extractEnergy(container, toExtract, Action.EXECUTE);
         return (int) extracted;
     }
 
