@@ -1,0 +1,152 @@
+{
+  "source_sha256": {
+    "ProcessorBlockEntity": "a0456cdd3021d015c4e7208dc663178013f3fc6c94c7fb5797e25000c34bb98c",
+    "MaceratorBlockEntity": "d626060902a34f6355ee1ff1af318b450193e835ff360595f9fb46791a9b0d8d",
+    "AbstractMachineBlockEntity": "fa1c30c7b55f83404a1fa4d4debcb3db14210e655c6d58ed373a7c49c4c738e8",
+    "LitografiaBlockEntity": "df3ab5a78c9bbb66f0891953bc8c785650dcb74ef6fb5783e205e0d2775fe703",
+    "WaferPressBlockEntity": "99ee6dfc9dbcd0dc5c551414c88ea9da57168592a8ad9c0a42ce9985ba81ae2f"
+  },
+  "machines": {
+    "macerator": "**Slots:** entrada, saída e valve. A valve ainda não aplica bônus nesta máquina. A reciclagem exige output vazio.",
+    "wafer_press": "**Slots:** entrada, saída e valve. A valve ainda não aplica bônus nesta máquina.",
+    "processor": "**Slots:** três entradas (Silicon Wafer, Copper Layer, Base Wafer), saída e valve. A valve ainda não aplica bônus nesta máquina.",
+    "litografia": "**Slots:** entrada, balde, valve e saída. A valve afeta apenas a chance da gravação. Na limpeza, o balde vazio permanece no slot do balde."
+  },
+  "materials": {
+    "pure_silicon": "Silício obtido da fundição de quartzo; matéria-prima dos wafers.",
+    "part_silicon_wafer": "Wafer de silício prensado; componente do circuito eletrônico e do craft do Processor.",
+    "ceramic_powder": "Pó cerâmico obtido moendo argila; usado na prensa e na fabricação dela.",
+    "part_copper_layer": "Camada de cobre para a montagem do circuito e o craft do Processor.",
+    "part_base_wafer": "Base cerâmica usada pelo Processor na montagem do circuito.",
+    "stacked_electronic_circuit": "Circuito montado no Processor; pode ser gravado e é ingrediente da Lithography.",
+    "part_electronic_dirty_silicon_wafer": "Resultado bem-sucedido da gravação. Precisa ser limpo com água.",
+    "part_electronic_failed_silicon_wafer": "Resultado de falha na gravação. Pode ser reciclado no Macerator.",
+    "part_electronic_etched_silicon_wafer": "Wafer gravado e limpo. É o final da cadeia atual; ainda não possui uso em outro craft ou processo."
+  },
+  "processes": [
+    {
+      "id": "macerar_argila",
+      "machine": "macerator",
+      "title": "Moer argila",
+      "inputs": [
+        "minecraft:clay_ball"
+      ],
+      "outputs": [
+        "novadyne:ceramic_powder"
+      ],
+      "note": "Consome 1 bola de argila. Output deve aceitar Ceramic Powder.",
+      "short_note": "1 item por ciclo · output compatível e com espaço"
+    },
+    {
+      "id": "reciclar_wafer",
+      "machine": "macerator",
+      "title": "Reciclar wafer com falha",
+      "inputs": [
+        "novadyne:part_electronic_failed_silicon_wafer"
+      ],
+      "outputs": [
+        "novadyne:part_copper_layer",
+        "novadyne:part_base_wafer"
+      ],
+      "note": "**50% para cada resultado**, um item por ciclo. A saída deve estar completamente vazia antes de iniciar.",
+      "short_note": "Retire o output antes de iniciar outro ciclo.",
+      "random": true,
+      "labels": [
+        "50%",
+        "50%"
+      ]
+    },
+    {
+      "id": "prensar_silicio",
+      "machine": "wafer_press",
+      "title": "Prensar silício",
+      "inputs": [
+        "novadyne:pure_silicon"
+      ],
+      "outputs": [
+        "novadyne:part_silicon_wafer"
+      ],
+      "note": "Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.",
+      "short_note": "1 entrada → 1 saída · sem sorteio"
+    },
+    {
+      "id": "prensar_cobre",
+      "machine": "wafer_press",
+      "title": "Prensar cobre",
+      "inputs": [
+        "minecraft:copper_ingot"
+      ],
+      "outputs": [
+        "novadyne:part_copper_layer"
+      ],
+      "note": "Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.",
+      "short_note": "1 entrada → 1 saída · sem sorteio"
+    },
+    {
+      "id": "prensar_ceramica",
+      "machine": "wafer_press",
+      "title": "Prensar cerâmica",
+      "inputs": [
+        "novadyne:ceramic_powder"
+      ],
+      "outputs": [
+        "novadyne:part_base_wafer"
+      ],
+      "note": "Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.",
+      "short_note": "1 entrada → 1 saída · sem sorteio"
+    },
+    {
+      "id": "montar_circuito",
+      "machine": "processor",
+      "title": "Montar circuito eletrônico",
+      "inputs": [
+        "novadyne:part_silicon_wafer",
+        "novadyne:part_copper_layer",
+        "novadyne:part_base_wafer"
+      ],
+      "outputs": [
+        "novadyne:stacked_electronic_circuit"
+      ],
+      "note": "Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, da esquerda para a direita**. Consome 1 de cada.",
+      "short_note": "Entradas na ordem indicada: wafer, cobre, base."
+    },
+    {
+      "id": "gravar_wafer",
+      "machine": "litografia",
+      "title": "Gravar circuito",
+      "inputs": [
+        "novadyne:stacked_electronic_circuit"
+      ],
+      "outputs": [
+        "novadyne:part_electronic_dirty_silicon_wafer",
+        "novadyne:part_electronic_failed_silicon_wafer"
+      ],
+      "note": "A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valve equivale ao tier 1: 70% de sucesso. Tier 7: 95%. A saída precisa estar vazia. Não consome água neste estágio.",
+      "short_note": "Output vazio · valve permanece no slot · sem água nesta etapa",
+      "random": true,
+      "labels": [
+        "Sucesso: 70–95%",
+        "Falha: 30–5%"
+      ]
+    },
+    {
+      "id": "limpar_wafer",
+      "machine": "litografia",
+      "title": "Limpar wafer com água",
+      "inputs": [
+        "novadyne:part_electronic_dirty_silicon_wafer",
+        "minecraft:water_bucket"
+      ],
+      "outputs": [
+        "novadyne:part_electronic_etched_silicon_wafer",
+        "minecraft:bucket"
+      ],
+      "note": "O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. Processo sem RNG.",
+      "short_note": "Balde vazio volta ao slot da água, não ao output do wafer.",
+      "labels": [
+        "Slot de output",
+        "Slot do balde"
+      ]
+    }
+  ]
+}

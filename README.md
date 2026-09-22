@@ -1,5 +1,11 @@
 # NovaDyne
 
+## [📖 Abrir a wiki visual](wiki/README.md)
+
+Receitas em grade 3×3, entradas e saídas das máquinas, materiais, valves e progressão.
+
+[![Prévia da wiki: craft da Lithography](wiki/assets/generated/litografia.png)](wiki/README.md)
+
 Mod de máquinas de progressão eletrônica para Minecraft NeoForge 26.1.2.
 
 ## Conteúdo
