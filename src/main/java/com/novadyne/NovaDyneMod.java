@@ -3,6 +3,7 @@ package com.novadyne;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.novadyne.common.integration.energy.NovadyneCapabilities;
+import com.novadyne.test.CoreSmokeTests;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
@@ -18,6 +19,7 @@ public class NovaDyneMod {
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
+        CoreSmokeTests.FUNCTIONS.register(modEventBus);
         modEventBus.addListener(NovadyneCapabilities::onRegisterCapabilities);
     }
 }

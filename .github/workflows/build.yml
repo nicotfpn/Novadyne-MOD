@@ -30,3 +30,6 @@ jobs:
           name: novadyne-jar
           path: build/libs/*.jar
           if-no-files-found: error
+
+      - name: Test machines on Minecraft server
+        run: ./gradlew runGameTestServer

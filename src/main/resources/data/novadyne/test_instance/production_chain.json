@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "structure": "novadyne:empty_test",
+  "max_ticks": 40,
+  "function": "novadyne:production_chain"
+}
