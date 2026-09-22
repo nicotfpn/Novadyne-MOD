@@ -2,28 +2,33 @@
 
 ---
 
-![NovaDyne — linha de produção](assets/generated/header.png)
+![As quatro máquinas do NovaDyne](assets/generated/header.png)
 
-# NovaDyne · Wiki visual
+# NovaDyne
 
-Tudo começa com argila, quartzo e cobre. Aqui você encontra o caminho até o wafer gravado: o que juntar, onde colocar e o que sai de cada máquina. Os nomes dos itens são os mesmos que aparecem no jogo.
+Uma linha industrial que transforma argila, quartzo e cobre em circuitos e wafers. Esta wiki reúne as receitas, os processos e o caminho para montar cada máquina no survival.
 
-## Por onde começar
+## A linha de produção
 
-| Guia | O que você encontra |
+| 01 · Macerator | 02 · Wafer Press | 03 · Processor | 04 · Lithography |
+| :---: | :---: | :---: | :---: |
+| [<img src="assets/generated/icon_macerator.png" width="88" alt="Macerator">](itens/macerator.md) | [<img src="assets/generated/icon_wafer_press.png" width="88" alt="Wafer Press">](itens/wafer_press.md) | [<img src="assets/generated/icon_processor.png" width="88" alt="Processor">](itens/processor.md) | [<img src="assets/generated/icon_litografia.png" width="88" alt="Lithography">](itens/litografia.md) |
+| Moe argila e recicla wafers com falha | Prensa silício, cobre e cerâmica | Monta o circuito eletrônico | Grava e limpa o wafer |
+
+**Primeira vez por aqui?** Siga a [progressão industrial](progressao.md) para montar a linha. Para consultar um craft específico, abra [todas as receitas](receitas.md).
+
+## Explore
+
+| Guia | Conteúdo |
 | --- | --- |
-| [Todas as receitas](receitas.md) | Grades 3×3, ingredientes, quantidades e resultado |
-| [Máquinas](maquinas.md) | Consumo, duração, slots e processos |
-| [Materiais](materiais.md) | Como obter cada material e onde usar |
-| [Valves](valves.md) | Crafts dos 7 tiers e chance de sucesso |
-| [Progressão](progressao.md) | Ordem para montar sua linha industrial |
-| [Como testar](testar.md) | Instalar o JAR, comandos e testes rápidos |
+| [Receitas](receitas.md) | Crafts, fundição e processos ilustrados |
+| [Máquinas](maquinas.md) | Slots, energia e tempo de operação |
+| [Materiais](materiais.md) | Obtenção e usos de cada componente |
+| [Valves](valves.md) | Tiers e chances da Lithography |
+| [Instalação e testes](testar.md) | Download do JAR e primeiros passos no jogo |
 
-## Vale saber
+> **Antes de começar:** as máquinas recebem energia FE de outros mods. Use uma picareta de pedra ou superior para recuperá-las.
 
-- As máquinas precisam de energia FE externa. O NovaDyne ainda não possui gerador próprio.
-- Minere as quatro máquinas com **picareta de pedra ou superior**.
-- Engraving e reciclagem aleatória exigem output vazio; retire o resultado antes do próximo ciclo.
-- Capacitores e transistor têm PNGs, mas **não são itens registrados nem funcionais**. Plasma Cannon, veículos e automação de itens também não estão disponíveis.
+---
 
-[Repositório e download do JAR](../README.md) · [Fontes das imagens vanilla](assets/vanilla/SOURCES.md) · [Manutenção da wiki](manutencao.md)
+[Repositório](../README.md) · [Créditos das texturas vanilla](assets/vanilla/SOURCES.md) · [Contribuir com a wiki](manutencao.md)

@@ -14,12 +14,12 @@
   },
   "materials": {
     "pure_silicon": "Derreta quartzo para obter silício. Depois, leve à Wafer Press para fazer os wafers.",
-    "part_silicon_wafer": "Sai da Wafer Press e entra na montagem do circuito. Você também vai precisar dele para construir o Processor.",
+    "part_silicon_wafer": "Sai da Wafer Press e entra na montagem do circuito. Também é necessário para construir o Processor.",
     "ceramic_powder": "O primeiro material da linha: basta moer argila no Macerator. Guarde um pouco para construir a Wafer Press.",
     "part_copper_layer": "Camada de cobre para a montagem do circuito e o craft do Processor.",
     "part_base_wafer": "A base cerâmica do circuito. É feita prensando Ceramic Powder.",
     "stacked_electronic_circuit": "Circuito montado no Processor; pode ser gravado e é ingrediente da Lithography.",
-    "part_electronic_dirty_silicon_wafer": "A gravação deu certo! Falta uma passagem pela Lithography com água para limpar o wafer.",
+    "part_electronic_dirty_silicon_wafer": "A gravação deu certo. Uma segunda passagem pela Lithography, com água, limpa o wafer.",
     "part_electronic_failed_silicon_wafer": "A gravação falhou, mas o material não está perdido: leve ao Macerator para recuperar cobre ou uma base.",
     "part_electronic_etched_silicon_wafer": "Wafer pronto e limpo. Por enquanto, a linha de produção termina aqui."
   },
@@ -49,7 +49,7 @@
         "novadyne:part_base_wafer"
       ],
       "note": "**50% para cada resultado**, um item por ciclo. Retire o que estiver na saída antes de começar.",
-      "short_note": "Retire o saída antes de iniciar outro ciclo.",
+      "short_note": "Esvazie a saída antes de iniciar outro ciclo.",
       "random": true,
       "labels": [
         "50%",
@@ -122,7 +122,7 @@
         "novadyne:part_electronic_failed_silicon_wafer"
       ],
       "note": "A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valve equivale ao tier 1: 70% de sucesso. Tier 7: 95%. A saída precisa estar vazia. Não consome água neste estágio.",
-      "short_note": "Saída vazio · valve permanece no espaço · sem água nesta etapa",
+      "short_note": "Saída vazia · valve permanece no slot · sem água nesta etapa",
       "random": true,
       "labels": [
         "Sucesso: 70–95%",

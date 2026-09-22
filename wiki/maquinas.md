@@ -4,6 +4,8 @@
 
 # Máquinas
 
+Do primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. Abra uma página para ver o craft, os slots e os processos disponíveis.
+
 | | Item |
 | --- | --- |
 | <img src="assets/generated/icon_macerator.png" width="48" alt="Macerator"> | [Macerator](itens/macerator.md) |
@@ -13,7 +15,7 @@
 
 ## Regras comuns
 
-- Use energia externa FE ou, em testes com comandos, preencha o campo `energy`. Não há geração própria.
-- Picareta de pedra ou superior permite recuperar o bloco. Ao quebrar, o inventário é derrubado; energia e progresso não são preservados no item da máquina.
-- Output incompatível/cheio bloqueia o processamento. Não há transporte automático de itens implementado.
-- As valves têm efeito na Lithography. Os slots presentes nas outras máquinas ainda não aplicam bônus.
+- Todas recebem energia FE externa. Consulte o [guia de testes](testar.md) para abastecê-las com comandos em um mundo criativo.
+- Use picareta de pedra ou superior para recuperar os blocos. Os itens do inventário caem ao quebrá-los.
+- O processamento aguarda quando a saída está cheia ou contém outro item.
+- As valves alteram a chance de sucesso na Lithography. Nas demais máquinas, o slot de valve não oferece bônus.

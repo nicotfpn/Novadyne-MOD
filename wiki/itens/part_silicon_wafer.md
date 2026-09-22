@@ -8,7 +8,7 @@
 
 `novadyne:part_silicon_wafer`
 
-Sai da Wafer Press e entra na montagem do circuito. Você também vai precisar dele para construir o Processor.
+Sai da Wafer Press e entra na montagem do circuito. Também é necessário para construir o Processor.
 
 ## Como obter
 

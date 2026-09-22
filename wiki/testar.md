@@ -44,9 +44,9 @@ Abasteça energia pelo mesmo comando. Coloque wafer no slot de entrada e água n
 | Engraving ou reciclagem parou | Retire todo o conteúdo do output; ambos os resultados precisam poder caber |
 | Limpeza parou | Retire o balde vazio e coloque outro balde de água |
 | Não dropou ao minerar | Use picareta de pedra ou superior |
-| PNG existe mas `/give` falha | Capacitores/transistor ainda não são itens registrados |
-| Build verde | Compilação e GameTests passaram; isso não certifica aparência, GUI ou desempenho em todo PC |
+| JAR não aparece em Artifacts | Confirme que a execução do workflow terminou com marca verde e que a conta está conectada ao GitHub |
+| Build verde, mas há erro visual | Os testes automatizados verificam o código e alguns processos; registre o erro visto no cliente |
 
-## Trabalhar em um computador fraco
+## Sobre os testes automatizados
 
-Faça o build e os testes pelo GitHub Actions. O servidor de GameTests verifica alguns cenários de registro, energia e processamento sem renderizar o cliente no seu PC. O teste visual ainda exige abrir o Minecraft; com 4 GB de RAM, feche outros programas e tente uma instalação mínima com pouca distância de renderização. Não há garantia de desempenho nesse hardware.
+O [workflow de build](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml) compila o mod e executa testes de registro, energia e processamento em um servidor Minecraft. Aparência, interface e interação com outros mods precisam de verificação dentro do jogo.

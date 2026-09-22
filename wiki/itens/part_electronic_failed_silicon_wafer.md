@@ -20,7 +20,7 @@ A gravação falhou, mas o material não está perdido: leve ao Macerator para r
 | ---: | --- |
 | 1 | [Stacked Electronic Circuit](../itens/stacked_electronic_circuit.md) |
 
-**Você recebe um dos dois:** 1 × [Dirty Silicon Wafer](../itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](../itens/part_electronic_failed_silicon_wafer.md).
+**Resultados possíveis:** 1 × [Dirty Silicon Wafer](../itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](../itens/part_electronic_failed_silicon_wafer.md).
 
 A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valve equivale ao tier 1: 70% de sucesso. Tier 7: 95%. A saída precisa estar vazia. Não consome água neste estágio.
 
