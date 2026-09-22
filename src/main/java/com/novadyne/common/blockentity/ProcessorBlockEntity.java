@@ -43,8 +43,6 @@ public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
 
     @Override
     protected boolean canProcess() {
-        updateValveTierFromSlot();
-
         ItemStack input1 = getStackInSlot(SLOT_INPUT_1);
         ItemStack input2 = getStackInSlot(SLOT_INPUT_2);
         ItemStack input3 = getStackInSlot(SLOT_INPUT_3);
@@ -54,29 +52,16 @@ public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
         if (!input2.is(ModItems.PART_COPPER_LAYER.get())) return false;
         if (!input3.is(ModItems.PART_BASE_WAFER.get())) return false;
 
-        ItemStack output = getStackInSlot(SLOT_OUTPUT);
-        if (!output.isEmpty()) {
-            if (!ItemStack.isSameItemSameComponents(RESULT, output)) return false;
-            if (output.getCount() + RESULT.getCount() > output.getMaxStackSize()) return false;
-        }
-
-        return true;
+        return canOutputAccept(SLOT_OUTPUT, RESULT);
     }
 
     @Override
     protected void processComplete() {
+        if (!canProcess()) return;
         extractItem(SLOT_INPUT_1, 1);
         extractItem(SLOT_INPUT_2, 1);
         extractItem(SLOT_INPUT_3, 1);
 
-        ItemStack remaining = insertItem(SLOT_OUTPUT, RESULT.copy());
-        if (!remaining.isEmpty()) {
-            if (level != null) {
-                java.util.Objects.requireNonNull(level).addFreshEntity(
-                        new net.minecraft.world.entity.item.ItemEntity(level,
-                                worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
-                                remaining));
-            }
-        }
+        insertResult(SLOT_OUTPUT, RESULT.copy());
     }
 }

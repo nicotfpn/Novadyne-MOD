@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ICI",
+    "PMP",
+    "III"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "novadyne:ceramic_powder",
+    "P": "minecraft:piston",
+    "M": "novadyne:macerator"
+  },
+  "result": {
+    "id": "novadyne:wafer_press",
+    "count": 1
+  }
+}

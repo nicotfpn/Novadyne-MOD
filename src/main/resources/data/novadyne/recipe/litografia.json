@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GCG",
+    "PBP",
+    "IDI"
+  ],
+  "key": {
+    "G": "minecraft:glass",
+    "C": "novadyne:stacked_electronic_circuit",
+    "P": "novadyne:pure_silicon",
+    "B": "minecraft:water_bucket",
+    "I": "minecraft:iron_ingot",
+    "D": "novadyne:processor"
+  },
+  "result": {
+    "id": "novadyne:litografia",
+    "count": 1
+  }
+}

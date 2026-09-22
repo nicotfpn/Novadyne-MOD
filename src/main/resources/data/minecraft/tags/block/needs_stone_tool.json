@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "novadyne:macerator",
+    "novadyne:wafer_press",
+    "novadyne:processor",
+    "novadyne:litografia"
+  ]
+}
