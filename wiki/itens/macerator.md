@@ -17,13 +17,13 @@
 | Duração | 120 ticks / 6 s |
 | Energia por ciclo | 2.400 FE |
 
-Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqueada. Sem energia suficiente para o próximo tick, o progresso é zerado.
+Tempos consideram 20 ticks por segundo. Recebe energia, mas não fornece energia a outros blocos. Se faltar energia durante o trabalho, o progresso volta a zero.
 
 **Slots:** entrada, saída e valve. A valve ainda não aplica bônus nesta máquina. A reciclagem exige output vazio.
 
 ## Como obter
 
-### Macerator — macerator
+### Macerator
 
 ![Grade ou processo para Macerator](../assets/generated/macerator.png)
 
@@ -36,13 +36,18 @@ Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqu
 
 **Resultado:** 1 × [Macerator](../itens/macerator.md).
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/macerator.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/macerator.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Wafer Press](../itens/wafer_press.md).
 
-## Processos
+## O que dá para fazer
 
 ### Moer argila
 
@@ -54,9 +59,14 @@ Tempos consideram 20 ticks por segundo. A extração externa de energia é bloqu
 
 **Resultado:** 1 × [Ceramic Powder](../itens/ceramic_powder.md).
 
-Consome 1 bola de argila. Output deve aceitar Ceramic Powder.
+Consome 1 bola de argila. Deixe espaço para Ceramic Powder na saída.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+
+</details>
 
 ### Reciclar wafer com falha
 
@@ -66,16 +76,24 @@ Consome 1 bola de argila. Output deve aceitar Ceramic Powder.
 | ---: | --- |
 | 1 | [Failed Silicon Wafer](../itens/part_electronic_failed_silicon_wafer.md) |
 
-**Resultado sorteado (um por ciclo):** 1 × [Copper Layer](../itens/part_copper_layer.md) **ou** 1 × [Base Wafer](../itens/part_base_wafer.md).
+**Você recebe um dos dois:** 1 × [Copper Layer](../itens/part_copper_layer.md) **ou** 1 × [Base Wafer](../itens/part_base_wafer.md).
 
-**50% para cada resultado**, um item por ciclo. A saída deve estar completamente vazia antes de iniciar.
+**50% para cada resultado**, um item por ciclo. Retire o que estiver na saída antes de começar.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+
+</details>
 
 
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:macerator
 ```
+
+</details>

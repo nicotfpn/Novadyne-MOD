@@ -6,9 +6,9 @@
 
 # NovaDyne · Wiki visual
 
-Guia do conteúdo **implementado** no mod: 4 máquinas, 9 materiais e 7 valves. Nomes em inglês iguais aos exibidos no jogo; explicações em português.
+Tudo começa com argila, quartzo e cobre. Aqui você encontra o caminho até o wafer gravado: o que juntar, onde colocar e o que sai de cada máquina. Os nomes dos itens são os mesmos que aparecem no jogo.
 
-## Encontre o que precisa
+## Por onde começar
 
 | Guia | O que você encontra |
 | --- | --- |
@@ -19,7 +19,7 @@ Guia do conteúdo **implementado** no mod: 4 máquinas, 9 materiais e 7 valves. 
 | [Progressão](progressao.md) | Ordem para montar sua linha industrial |
 | [Como testar](testar.md) | Instalar o JAR, comandos e testes rápidos |
 
-## Antes de começar
+## Vale saber
 
 - As máquinas precisam de energia FE externa. O NovaDyne ainda não possui gerador próprio.
 - Minere as quatro máquinas com **picareta de pedra ou superior**.

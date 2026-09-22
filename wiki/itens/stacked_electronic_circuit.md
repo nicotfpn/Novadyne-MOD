@@ -26,15 +26,23 @@ Circuito montado no Processor; pode ser gravado e é ingrediente da Lithography.
 
 Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, da esquerda para a direita**. Consome 1 de cada.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Lithography](../itens/litografia.md).
 - Gravar circuito, em [Lithography](../itens/litografia.md).
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:stacked_electronic_circuit
 ```
+
+</details>

@@ -8,7 +8,7 @@
 
 `novadyne:ceramic_powder`
 
-Pó cerâmico obtido moendo argila; usado na prensa e na fabricação dela.
+O primeiro material da linha: basta moer argila no Macerator. Guarde um pouco para construir a Wafer Press.
 
 ## Como obter
 
@@ -22,17 +22,25 @@ Pó cerâmico obtido moendo argila; usado na prensa e na fabricação dela.
 
 **Resultado:** 1 × [Ceramic Powder](../itens/ceramic_powder.md).
 
-Consome 1 bola de argila. Output deve aceitar Ceramic Powder.
+Consome 1 bola de argila. Deixe espaço para Ceramic Powder na saída.
 
-[Ver lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Wafer Press](../itens/wafer_press.md).
 - Prensar cerâmica, em [Wafer Press](../itens/wafer_press.md).
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:ceramic_powder
 ```
+
+</details>

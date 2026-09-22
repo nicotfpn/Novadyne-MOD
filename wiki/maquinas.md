@@ -4,12 +4,12 @@
 
 # Máquinas
 
-| Ícone | Item | ID |
-| --- | --- | --- |
-| <img src="assets/generated/icon_macerator.png" width="48" alt="Macerator"> | [Macerator](itens/macerator.md) | `macerator` |
-| <img src="assets/generated/icon_wafer_press.png" width="48" alt="Wafer Press"> | [Wafer Press](itens/wafer_press.md) | `wafer_press` |
-| <img src="assets/generated/icon_processor.png" width="48" alt="Processor"> | [Processor](itens/processor.md) | `processor` |
-| <img src="assets/generated/icon_litografia.png" width="48" alt="Lithography"> | [Lithography](itens/litografia.md) | `litografia` |
+| | Item |
+| --- | --- |
+| <img src="assets/generated/icon_macerator.png" width="48" alt="Macerator"> | [Macerator](itens/macerator.md) |
+| <img src="assets/generated/icon_wafer_press.png" width="48" alt="Wafer Press"> | [Wafer Press](itens/wafer_press.md) |
+| <img src="assets/generated/icon_processor.png" width="48" alt="Processor"> | [Processor](itens/processor.md) |
+| <img src="assets/generated/icon_litografia.png" width="48" alt="Lithography"> | [Lithography](itens/litografia.md) |
 
 ## Regras comuns
 

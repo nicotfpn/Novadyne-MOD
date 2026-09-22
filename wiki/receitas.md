@@ -4,11 +4,11 @@
 
 # Todas as receitas
 
-As grades usam os PNGs reais do mod e texturas vanilla. Ícones de máquinas e blocos mostram uma face da textura; não são capturas 3D do jogo.
+Escolha o que quer fazer e siga os ingredientes. Na bancada, respeite a grade quando a receita pedir; nas máquinas, confira as entradas e o espaço na saída.
 
 ## Bancada e fornos
 
-### Lithography — litografia
+### Lithography
 
 ![Grade ou processo para Lithography](assets/generated/litografia.png)
 
@@ -23,11 +23,16 @@ As grades usam os PNGs reais do mod e texturas vanilla. Ícones de máquinas e b
 
 **Resultado:** 1 × [Lithography](itens/litografia.md).
 
-O balde de água tem o balde vazio como restante de crafting vanilla.
+Você recebe o balde vazio de volta ao fazer este craft.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/litografia.json)
+<details>
+<summary>Ver no código</summary>
 
-### Macerator — macerator
+[Receita JSON](../src/main/resources/data/novadyne/recipe/litografia.json)
+
+</details>
+
+### Macerator
 
 ![Grade ou processo para Macerator](assets/generated/macerator.png)
 
@@ -40,9 +45,14 @@ O balde de água tem o balde vazio como restante de crafting vanilla.
 
 **Resultado:** 1 × [Macerator](itens/macerator.md).
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/macerator.json)
+<details>
+<summary>Ver no código</summary>
 
-### Processor — processor
+[Receita JSON](../src/main/resources/data/novadyne/recipe/macerator.json)
+
+</details>
+
+### Processor
 
 ![Grade ou processo para Processor](assets/generated/processor.png)
 
@@ -57,37 +67,52 @@ O balde de água tem o balde vazio como restante de crafting vanilla.
 
 **Resultado:** 1 × [Processor](itens/processor.md).
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/processor.json)
+<details>
+<summary>Ver no código</summary>
 
-### Pure Silicon — pure_silicon_from_quartz
+[Receita JSON](../src/main/resources/data/novadyne/recipe/processor.json)
+
+</details>
+
+### Pure Silicon · fornalha
 
 ![Grade ou processo para Pure Silicon](assets/generated/pure_silicon_from_quartz.png)
 
 | Quantidade | Ingrediente |
 | ---: | --- |
-| 1 | Quartzo (tag c:gems/quartz) |
+| 1 | Quartzo |
 
 **Resultado:** 1 × [Pure Silicon](itens/pure_silicon.md).
 
 A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros itens por datapacks. O combustível não está incluído no ingrediente.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz.json)
+<details>
+<summary>Ver no código</summary>
 
-### Pure Silicon — pure_silicon_from_quartz_blasting
+[Receita JSON](../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz.json)
+
+</details>
+
+### Pure Silicon · alto-forno
 
 ![Grade ou processo para Pure Silicon](assets/generated/pure_silicon_from_quartz_blasting.png)
 
 | Quantidade | Ingrediente |
 | ---: | --- |
-| 1 | Quartzo (tag c:gems/quartz) |
+| 1 | Quartzo |
 
 **Resultado:** 1 × [Pure Silicon](itens/pure_silicon.md).
 
 A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros itens por datapacks. O combustível não está incluído no ingrediente.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz_blasting.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 1) — valve_tier_1
+[Receita JSON](../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz_blasting.json)
+
+</details>
+
+### Valve (Tier 1)
 
 ![Grade ou processo para Valve (Tier 1)](assets/generated/valve_tier_1.png)
 
@@ -100,9 +125,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_1.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 2) — valve_tier_2
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_1.json)
+
+</details>
+
+### Valve (Tier 2)
 
 ![Grade ou processo para Valve (Tier 2)](assets/generated/valve_tier_2.png)
 
@@ -116,9 +146,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_2.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 3) — valve_tier_3
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_2.json)
+
+</details>
+
+### Valve (Tier 3)
 
 ![Grade ou processo para Valve (Tier 3)](assets/generated/valve_tier_3.png)
 
@@ -132,9 +167,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_3.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 4) — valve_tier_4
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_3.json)
+
+</details>
+
+### Valve (Tier 4)
 
 ![Grade ou processo para Valve (Tier 4)](assets/generated/valve_tier_4.png)
 
@@ -148,9 +188,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_4.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 5) — valve_tier_5
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_4.json)
+
+</details>
+
+### Valve (Tier 5)
 
 ![Grade ou processo para Valve (Tier 5)](assets/generated/valve_tier_5.png)
 
@@ -164,9 +209,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_5.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 6) — valve_tier_6
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_5.json)
+
+</details>
+
+### Valve (Tier 6)
 
 ![Grade ou processo para Valve (Tier 6)](assets/generated/valve_tier_6.png)
 
@@ -180,9 +230,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_6.json)
+<details>
+<summary>Ver no código</summary>
 
-### Valve (Tier 7) — valve_tier_7
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_6.json)
+
+</details>
+
+### Valve (Tier 7)
 
 ![Grade ou processo para Valve (Tier 7)](assets/generated/valve_tier_7.png)
 
@@ -196,9 +251,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/valve_tier_7.json)
+<details>
+<summary>Ver no código</summary>
 
-### Wafer Press — wafer_press
+[Receita JSON](../src/main/resources/data/novadyne/recipe/valve_tier_7.json)
+
+</details>
+
+### Wafer Press
 
 ![Grade ou processo para Wafer Press](assets/generated/wafer_press.png)
 
@@ -211,9 +271,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Resultado:** 1 × [Wafer Press](itens/wafer_press.md).
 
-[Ver JSON da receita](../src/main/resources/data/novadyne/recipe/wafer_press.json)
+<details>
+<summary>Ver no código</summary>
 
-## Processamento nas máquinas
+[Receita JSON](../src/main/resources/data/novadyne/recipe/wafer_press.json)
+
+</details>
+
+## Nas máquinas
 
 ### Moer argila
 
@@ -225,9 +290,14 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 **Resultado:** 1 × [Ceramic Powder](itens/ceramic_powder.md).
 
-Consome 1 bola de argila. Output deve aceitar Ceramic Powder.
+Consome 1 bola de argila. Deixe espaço para Ceramic Powder na saída.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+
+</details>
 
 ### Reciclar wafer com falha
 
@@ -237,11 +307,16 @@ Consome 1 bola de argila. Output deve aceitar Ceramic Powder.
 | ---: | --- |
 | 1 | [Failed Silicon Wafer](itens/part_electronic_failed_silicon_wafer.md) |
 
-**Resultado sorteado (um por ciclo):** 1 × [Copper Layer](itens/part_copper_layer.md) **ou** 1 × [Base Wafer](itens/part_base_wafer.md).
+**Você recebe um dos dois:** 1 × [Copper Layer](itens/part_copper_layer.md) **ou** 1 × [Base Wafer](itens/part_base_wafer.md).
 
-**50% para cada resultado**, um item por ciclo. A saída deve estar completamente vazia antes de iniciar.
+**50% para cada resultado**, um item por ciclo. Retire o que estiver na saída antes de começar.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java)
+
+</details>
 
 ### Prensar silício
 
@@ -255,7 +330,12 @@ Consome 1 bola de argila. Output deve aceitar Ceramic Powder.
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 ### Prensar cobre
 
@@ -269,7 +349,12 @@ Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaç
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 ### Prensar cerâmica
 
@@ -283,7 +368,12 @@ Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaç
 
 Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaço.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java)
+
+</details>
 
 ### Montar circuito eletrônico
 
@@ -299,7 +389,12 @@ Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaç
 
 Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, da esquerda para a direita**. Consome 1 de cada.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java)
+
+</details>
 
 ### Gravar circuito
 
@@ -309,11 +404,16 @@ Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, d
 | ---: | --- |
 | 1 | [Stacked Electronic Circuit](itens/stacked_electronic_circuit.md) |
 
-**Resultado sorteado (um por ciclo):** 1 × [Dirty Silicon Wafer](itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](itens/part_electronic_failed_silicon_wafer.md).
+**Você recebe um dos dois:** 1 × [Dirty Silicon Wafer](itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](itens/part_electronic_failed_silicon_wafer.md).
 
 A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valve equivale ao tier 1: 70% de sucesso. Tier 7: 95%. A saída precisa estar vazia. Não consome água neste estágio.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+
+</details>
 
 ### Limpar wafer com água
 
@@ -326,6 +426,11 @@ A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valv
 
 **Resultado:** 1 × [Etched Silicon Wafer](itens/part_electronic_etched_silicon_wafer.md) + 1 × Balde vazio.
 
-O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. Processo sem RNG.
+O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. A limpeza sempre dá o mesmo resultado.
 
-[Ver lógica da máquina](../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+
+</details>

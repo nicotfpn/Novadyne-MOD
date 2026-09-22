@@ -8,45 +8,58 @@
 
 `novadyne:pure_silicon`
 
-Silício obtido da fundição de quartzo; matéria-prima dos wafers.
+Derreta quartzo para obter silício. Depois, leve à Wafer Press para fazer os wafers.
 
 ## Como obter
 
-### Pure Silicon — pure_silicon_from_quartz
+### Pure Silicon · fornalha
 
 ![Grade ou processo para Pure Silicon](../assets/generated/pure_silicon_from_quartz.png)
 
 | Quantidade | Ingrediente |
 | ---: | --- |
-| 1 | Quartzo (tag c:gems/quartz) |
+| 1 | Quartzo |
 
 **Resultado:** 1 × [Pure Silicon](../itens/pure_silicon.md).
 
 A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros itens por datapacks. O combustível não está incluído no ingrediente.
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz.json)
+<details>
+<summary>Ver no código</summary>
 
-### Pure Silicon — pure_silicon_from_quartz_blasting
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz.json)
+
+</details>
+
+### Pure Silicon · alto-forno
 
 ![Grade ou processo para Pure Silicon](../assets/generated/pure_silicon_from_quartz_blasting.png)
 
 | Quantidade | Ingrediente |
 | ---: | --- |
-| 1 | Quartzo (tag c:gems/quartz) |
+| 1 | Quartzo |
 
 **Resultado:** 1 × [Pure Silicon](../itens/pure_silicon.md).
 
 A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros itens por datapacks. O combustível não está incluído no ingrediente.
 
-[Ver JSON da receita](../../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz_blasting.json)
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../../src/main/resources/data/novadyne/recipe/pure_silicon_from_quartz_blasting.json)
+
+</details>
 
 ## Onde usar
 
 - Craft de [Lithography](../itens/litografia.md).
 - Prensar silício, em [Wafer Press](../itens/wafer_press.md).
 
-## Teste em criativo
+<details>
+<summary>Pegar este item em criativo</summary>
 
 ```mcfunction
 /give @s novadyne:pure_silicon
 ```
+
+</details>

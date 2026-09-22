@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import hashlib
+from functools import lru_cache
 import json
 from pathlib import Path
 import re
@@ -18,7 +19,7 @@ JAVA = ROOT / 'src/main/java/com/novadyne'
 OUT = WIKI / 'assets/generated'
 FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
-BG, PANEL, TEXT, MUTED, CYAN, GOLD = '#101923', '#1b2a39', '#f0f5fa', '#aabccc', '#56ddce', '#ffd386'
+BG, PANEL, TEXT, MUTED, CYAN, GOLD = '#1b1e19', '#272b26', '#eeeadd', '#a9ad9c', '#bdcca8', '#d8b789'
 MACHINES = {'macerator':'MaceratorBlockEntity', 'wafer_press':'WaferPressBlockEntity', 'processor':'ProcessorBlockEntity', 'litografia':'LitografiaBlockEntity'}
 VANILLA = {'iron_ingot':'Barra de ferro','copper_ingot':'Barra de cobre','gold_ingot':'Barra de ouro','redstone':'Redstone','diamond':'Diamante','emerald':'Esmeralda','netherite_scrap':'Fragmento de netherita','netherite_ingot':'Barra de netherita','water_bucket':'Balde de água','bucket':'Balde vazio','quartz':'Quartzo','clay_ball':'Bola de argila','furnace':'Fornalha','piston':'Pistão','glass':'Vidro','redstone_block':'Bloco de redstone'}
 LANG = json.loads((ASSETS/'lang/en_us.json').read_text())
@@ -30,7 +31,7 @@ RECIPES = {p.stem:json.loads(p.read_text()) for p in sorted((DATA/'novadyne/reci
 
 
 def name(item):
-    if item.startswith('#'): return 'Quartzo (tag c:gems/quartz)'
+    if item.startswith('#'): return 'Quartzo'
     ns, key = item.split(':')
     return VANILLA.get(key,key) if ns=='minecraft' else LANG.get('item.novadyne.'+key,LANG.get('block.novadyne.'+key,key))
 
@@ -45,17 +46,47 @@ def link(item, prefix=''):
 def font(size=20,bold=False): return ImageFont.truetype(BOLD if bold else FONT,size)
 
 
+def cube(front, side, top):
+    """Project the three visible texture faces into an isometric inventory icon."""
+    result=Image.new('RGBA',(192,200))
+    faces=[(top,[(96,8),(180,52),(96,96),(12,52)],1.0),
+           (front,[(12,52),(96,96),(96,188),(12,144)],0.94),
+           (side,[(96,96),(180,52),(180,144),(96,188)],0.70)]
+    for texture,points,shade in faces:
+        tex=texture.convert('RGBA');layer=Image.new('RGBA',result.size);draw=ImageDraw.Draw(layer)
+        a,b,_,c=points
+        def point(u,v):return (a[0]+(b[0]-a[0])*u+(c[0]-a[0])*v,a[1]+(b[1]-a[1])*u+(c[1]-a[1])*v)
+        for y in range(tex.height):
+            for x in range(tex.width):
+                r,g,bv,alpha=tex.getpixel((x,y))
+                if not alpha:continue
+                corners=[point(x/tex.width,y/tex.height),point((x+1)/tex.width,y/tex.height),point((x+1)/tex.width,(y+1)/tex.height),point(x/tex.width,(y+1)/tex.height)]
+                draw.polygon(corners,fill=(round(r*shade),round(g*shade),round(bv*shade),alpha))
+        result=Image.alpha_composite(result,layer)
+    return result
+
+
+@lru_cache(maxsize=None)
 def icon(item):
-    if item.startswith('#'): item='minecraft:quartz'
+    if item.startswith('#'):item='minecraft:quartz'
     ns,key=item.split(':')
-    if ns=='novadyne':
-        p=ASSETS/('textures/block/'+key+'_front.png' if key in MACHINES else 'textures/item/'+key+'.png')
-    else: p=WIKI/'assets/vanilla'/(key+'.png')
-    if not p.exists(): raise ValueError('Missing icon: '+item)
-    return Image.open(p).convert('RGBA')
+    def load(path):return Image.open(path).convert('RGBA')
+    if ns=='novadyne' and key in MACHINES:
+        textures=json.loads((ASSETS/'models/block'/(key+'.json')).read_text())['textures']
+        def face(k):return load(ASSETS/'textures'/(textures[k].split(':')[1]+'.png'))
+        return cube(face('front'),face('side'),face('top'))
+    if ns=='minecraft' and key in {'furnace','blast_furnace','piston','glass','redstone_block'}:
+        def vanilla(k):return load(WIKI/'assets/vanilla'/(k+'.png'))
+        if key=='furnace':return cube(vanilla('furnace'),vanilla('furnace_side'),vanilla('furnace_top'))
+        if key=='blast_furnace':return cube(vanilla('blast_furnace_front'),vanilla('blast_furnace_side'),vanilla('blast_furnace_top'))
+        if key=='piston':return cube(vanilla('piston_side'),vanilla('piston_side'),vanilla('piston'))
+        return cube(vanilla(key),vanilla(key),vanilla(key))
+    p=ASSETS/'textures/item'/(key+'.png') if ns=='novadyne' else WIKI/'assets/vanilla'/(key+'.png')
+    if not p.exists():raise ValueError('Missing icon: '+item)
+    return load(p)
 
 
-def text(draw, xy, value, size=20, color=TEXT, bold=False): draw.text(xy,value,font=font(size,bold),fill=color)
+def text(draw, xy, value, size=20, color=TEXT, bold=False):draw.text(xy,value,font=font(size,bold),fill=color)
 
 
 def wrapped(draw, xy, value, width=22, size=18, color=TEXT):
@@ -63,57 +94,71 @@ def wrapped(draw, xy, value, width=22, size=18, color=TEXT):
         text(draw,(xy[0],xy[1]+i*(size+6)),line,size,color)
 
 
+def centered(draw,cx,y,value,width=180,size=18,color=TEXT,bold=False):
+    lines=[];line='';f=font(size,bold)
+    for word in value.split():
+        test=(line+' '+word).strip()
+        if line and draw.textlength(test,font=f)>width:lines.append(line);line=word
+        else:line=test
+    if line:lines.append(line)
+    for i,line in enumerate(lines):
+        x=cx-draw.textlength(line,font=f)/2
+        text(draw,(x,y+i*(size+5)),line,size,color,bold)
+
+
 def slot(im,x,y,item=None,count=1,size=80):
     d=ImageDraw.Draw(im)
-    d.rounded_rectangle((x,y,x+size,y+size),radius=9,fill='#0d151e',outline='#40576a',width=2)
+    d.rounded_rectangle((x,y+2,x+size,y+size+2),radius=7,fill='#111410')
+    d.rounded_rectangle((x,y,x+size,y+size),radius=7,fill='#272b26',outline='#444a40',width=1)
     if item:
-        pic=icon(item); factor=(size-18)/max(pic.size)
+        pic=icon(item);factor=(size-14)/max(pic.size)
         pic=pic.resize((round(pic.width*factor),round(pic.height*factor)),Image.Resampling.NEAREST)
         im.paste(pic,(x+(size-pic.width)//2,y+(size-pic.height)//2),pic)
         if count>1:
-            d.rectangle((x+size-29,y+size-26,x+size-4,y+size-4),fill=BG)
-            text(d,(x+size-27,y+size-28),str(count),19,GOLD,True)
+            d.rounded_rectangle((x+size-30,y+size-27,x+size-3,y+size-3),radius=3,fill=BG)
+            text(d,(x+size-27,y+size-28),str(count),18,GOLD,True)
 
 
 def arrow(d,x,y,w=110):
-    d.line((x,y,x+w-16,y),fill=CYAN,width=6)
-    d.polygon([(x+w-18,y-13),(x+w,y),(x+w-18,y+13)],fill=CYAN)
+    d.line((x,y,x+w-3,y),fill=CYAN,width=3)
+    d.line((x+w-13,y-9,x+w,y,x+w-13,y+9),fill=CYAN,width=3)
 
 
 def canvas(title,sub,height=440):
-    im=Image.new('RGB',(1200,height),BG); d=ImageDraw.Draw(im)
-    d.rectangle((0,0,8,height),fill=CYAN)
-    text(d,(34,22),'NOVADYNE  /  GUIA DE PRODUÇÃO',15,CYAN,True)
-    text(d,(34,52),title,30,TEXT,True)
-    text(d,(34,97),sub,17,MUTED)
+    im=Image.new('RGB',(1200,height),BG);d=ImageDraw.Draw(im)
+    text(d,(40,22),'NOVADYNE',14,CYAN,True)
+    text(d,(1076,22),'CADERNO',12,MUTED)
+    text(d,(40,54),title,31,TEXT,True)
+    text(d,(40,101),sub,17,MUTED)
+    d.line((40,135,1160,135),fill='#373d33',width=1)
     return im,d
 
 
 def render_recipe(key,r):
     typ=r['type'].split(':')[1]
-    labels={'crafting_shaped':'BANCADA · posição dos ingredientes importa','crafting_shapeless':'BANCADA · sem posição fixa; a grade é apenas um exemplo','smelting':'FORNALHA · combustível necessário','blasting':'ALTO-FORNO · combustível necessário'}
-    im,d=canvas(name(r['result']['id']),labels[typ],480)
+    labels={'crafting_shaped':'Na bancada · siga a posição dos ingredientes','crafting_shapeless':'Na bancada · os ingredientes podem ficar em qualquer posição','smelting':'Na fornalha · adicione combustível','blasting':'No alto-forno · adicione combustível'}
+    im,d=canvas(name(r['result']['id']),labels[typ],490)
     if typ.startswith('crafting'):
-        if typ=='crafting_shaped':
-            cells=[r['key'].get(c) for row in r['pattern'] for c in row.ljust(3)]
-        else: cells=r['ingredients']
+        cells=[r['key'].get(c) for row in r['pattern'] for c in row.ljust(3)] if typ=='crafting_shaped' else r['ingredients']
         cells=cells+[None]*(9-len(cells))
-        for i,item in enumerate(cells):slot(im,42+(i%3)*88,148+(i//3)*88,item)
-        arrow(d,350,274,135)
-        text(d,(541,151),'RESULTADO',17,CYAN,True)
-        slot(im,551,190,r['result']['id'],r['result'].get('count',1),128)
-        wrapped(d,(714,202),name(r['result']['id']),29,25)
-        text(d,(714,288),str(r['result'].get('count',1))+' unidade(s)',20,GOLD)
+        for i,item in enumerate(cells):slot(im,199+(i%3)*86,161+(i//3)*86,item,size=78)
+        arrow(d,526,286,160)
+        slot(im,804,222,r['result']['id'],r['result'].get('count',1),128)
+        centered(d,868,367,name(r['result']['id']),360,21,bold=True)
+        count=r['result'].get('count',1)
+        centered(d,868,405,f'{count} '+('unidade' if count==1 else 'unidades'),240,17,GOLD)
+        centered(d,324,429,'Grade 3 × 3' if typ=='crafting_shaped' else 'Uma forma de organizar',290,15,MUTED)
     else:
-        slot(im,90,189,r['ingredient'],size=100)
-        wrapped(d,(45,310),name(r['ingredient']),29)
-        arrow(d,275,241,150)
-        text(d,(469,200),'CALOR',22,GOLD,True)
-        text(d,(451,245),f'{r["cookingtime"]/20:g} s · {r["experience"]} XP',19,MUTED)
-        arrow(d,666,241,150)
-        slot(im,906,189,r['result']['id'],size=100)
-        wrapped(d,(846,310),name(r['result']['id']),29)
-    text(d,(35,447),'Quantidades e ingredientes completos na tabela abaixo da imagem.',16,MUTED)
+        cx=[260,600,940]
+        slot(im,cx[0]-50,208,r['ingredient'],size=100)
+        centered(d,cx[0],333,name(r['ingredient']),250,18)
+        arrow(d,385,258,88)
+        slot(im,cx[1]-50,208,'minecraft:furnace' if typ=='smelting' else 'minecraft:blast_furnace',size=100)
+        centered(d,cx[1],333,'Fornalha' if typ=='smelting' else 'Alto-forno',250,21,bold=True)
+        centered(d,cx[1],371,f'{r["cookingtime"]/20:g} s · {r["experience"]} XP',200,16,GOLD)
+        arrow(d,726,258,88)
+        slot(im,cx[2]-50,208,r['result']['id'],size=100)
+        centered(d,cx[2],333,name(r['result']['id']),250,18)
     im.save(OUT/(key+'.png'))
 
 
@@ -124,24 +169,27 @@ def stats(machine):
 
 
 def render_process(p):
-    s=stats(p['machine'])
-    im,d=canvas(p['title'],f'{name("novadyne:"+p["machine"])} · {s["MAX_PROGRESS"]/20:g} s · {s["ENERGY_PER_TICK"]} FE/t · {s["MAX_PROGRESS"]*s["ENERGY_PER_TICK"]:,} FE por ciclo'.replace(',','.'),450)
-    text(d,(38,143),'ENTRADAS',16,CYAN,True)
+    s=stats(p['machine']);machine=name('novadyne:'+p['machine'])
+    im,d=canvas(p['title'],f'{s["MAX_PROGRESS"]/20:g} segundos · {s["ENERGY_PER_TICK"]} FE/t · {s["MAX_PROGRESS"]*s["ENERGY_PER_TICK"]:,} FE por operação'.replace(',','.'),475)
+    centered(d,230,156,'Ingredientes',370,15,MUTED)
+    centered(d,957,156,'Um dos dois resultados' if p.get('random') else 'Resultado',370,15,MUTED)
     for i,item in enumerate(p['inputs']):
-        x=35+i*130;slot(im,x,180,item)
-        wrapped(d,(x,272),name(item),16,16)
-        if i<len(p['inputs'])-1:text(d,(x+92,209),'+',25,MUTED)
-    arrow(d,434,221,79)
-    slot(im,546,171,'novadyne:'+p['machine'],size=100)
-    text(d,(538,291),'PROCESSO',16,MUTED)
-    arrow(d,681,221,79)
-    text(d,(797,143),'SAÍDAS POSSÍVEIS' if p.get('random') else 'SAÍDAS',16,CYAN,True)
+        cx=230+(i-(len(p['inputs'])-1)/2)*130
+        slot(im,int(cx-42),208,item,size=84)
+        centered(d,cx,310,name(item),310 if len(p['inputs'])==1 else 119,16)
+        if i<len(p['inputs'])-1:centered(d,cx+65,234,'+',25,21,MUTED)
+    arrow(d,442,250,71)
+    slot(im,540,190,'novadyne:'+p['machine'],size=120)
+    centered(d,600,329,machine,210,22,CYAN,True)
+    arrow(d,686,250,71)
     for i,item in enumerate(p['outputs']):
-        x=797+i*190;slot(im,x,180,item)
-        wrapped(d,(x,272),name(item),22,16)
-        if p.get('labels'):text(d,(x,345),p['labels'][i],16,GOLD)
-        if i<len(p['outputs'])-1:text(d,(x+109,208),'OU' if p.get('random') else '+',20,GOLD,True)
-    text(d,(35,412),p['short_note'],16,MUTED)
+        cx=957+(i-(len(p['outputs'])-1)/2)*200
+        slot(im,int(cx-42),208,item,size=84)
+        centered(d,cx,310,name(item),180,16)
+        if p.get('labels'):centered(d,cx,374,p['labels'][i],186,16,GOLD)
+        if i<len(p['outputs'])-1:centered(d,cx+100,234,'ou' if p.get('random') else '+',42,19,MUTED)
+    d.line((40,421,1160,421),fill='#373d33',width=1)
+    text(d,(40,438),p['short_note'],16,MUTED)
     im.save(OUT/(p['id']+'.png'))
 
 
@@ -165,20 +213,21 @@ def ingredients_table(items,prefix=''):
 def recipe_section(key,r,prefix=''):
     img=f'{prefix}assets/generated/{key}.png'
     typ=r['type'].split(':')[1]
-    s=f'### {name(r["result"]["id"])} — {key}\n\n![Grade ou processo para {name(r["result"]["id"])}]({img})\n\n'
+    method={'smelting':' · fornalha','blasting':' · alto-forno'}.get(typ,'')
+    s=f'### {name(r["result"]["id"])}{method}\n\n![Grade ou processo para {name(r["result"]["id"])}]({img})\n\n'
     s+=ingredients_table(ingredient_list(r),prefix)+f'\n**Resultado:** {r["result"].get("count",1)} × {link(r["result"]["id"],prefix)}.\n\n'
     if typ=='crafting_shapeless':s+='**Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.\n\n'
     if typ in ['smelting','blasting']:s+='A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros itens por datapacks. O combustível não está incluído no ingrediente.\n\n'
-    if 'minecraft:water_bucket' in ingredient_list(r):s+='O balde de água tem o balde vazio como restante de crafting vanilla.\n\n'
-    s+=f'[Ver JSON da receita]({prefix}../src/main/resources/data/novadyne/recipe/{key}.json)\n\n'
+    if 'minecraft:water_bucket' in ingredient_list(r):s+='Você recebe o balde vazio de volta ao fazer este craft.\n\n'
+    s+=f'<details>\n<summary>Ver no código</summary>\n\n[Receita JSON]({prefix}../src/main/resources/data/novadyne/recipe/{key}.json)\n\n</details>\n\n'
     return s
 
 
 def process_section(p,prefix=''):
     s=f'### {p["title"]}\n\n![{p["title"]}: entradas e saídas]({prefix}assets/generated/{p["id"]}.png)\n\n'
     s+=ingredients_table(p['inputs'],prefix)
-    s+='\n**'+('Resultado sorteado (um por ciclo)' if p.get('random') else 'Resultado')+':** '+(' **ou** ' if p.get('random') else ' + ').join('1 × '+link(i,prefix) for i in p['outputs'])+'.\n\n'+p['note']+'\n\n'
-    s+=f'[Ver lógica da máquina]({prefix}../src/main/java/com/novadyne/common/blockentity/{MACHINES[p["machine"]]}.java)\n\n'
+    s+='\n**'+('Você recebe um dos dois' if p.get('random') else 'Resultado')+':** '+(' **ou** ' if p.get('random') else ' + ').join('1 × '+link(i,prefix) for i in p['outputs'])+'.\n\n'+p['note']+'\n\n'
+    s+=f'<details>\n<summary>Ver no código</summary>\n\n[Lógica da máquina]({prefix}../src/main/java/com/novadyne/common/blockentity/{MACHINES[p["machine"]]}.java)\n\n</details>\n\n'
     return s
 
 
@@ -195,16 +244,16 @@ def build():
         x=40+i*294;slot(im,x,153,'novadyne:'+key,size=80)
         wrapped(d,(x+98,170),name('novadyne:'+key),16,19)
     im.save(OUT/'header.png')
-    intro=nav()+'![NovaDyne — linha de produção](assets/generated/header.png)\n\n# NovaDyne · Wiki visual\n\nGuia do conteúdo **implementado** no mod: 4 máquinas, 9 materiais e 7 valves. Nomes em inglês iguais aos exibidos no jogo; explicações em português.\n\n'
-    intro+='## Encontre o que precisa\n\n| Guia | O que você encontra |\n| --- | --- |\n| [Todas as receitas](receitas.md) | Grades 3×3, ingredientes, quantidades e resultado |\n| [Máquinas](maquinas.md) | Consumo, duração, slots e processos |\n| [Materiais](materiais.md) | Como obter cada material e onde usar |\n| [Valves](valves.md) | Crafts dos 7 tiers e chance de sucesso |\n| [Progressão](progressao.md) | Ordem para montar sua linha industrial |\n| [Como testar](testar.md) | Instalar o JAR, comandos e testes rápidos |\n\n'
-    intro+='## Antes de começar\n\n- As máquinas precisam de energia FE externa. O NovaDyne ainda não possui gerador próprio.\n- Minere as quatro máquinas com **picareta de pedra ou superior**.\n- Engraving e reciclagem aleatória exigem output vazio; retire o resultado antes do próximo ciclo.\n- Capacitores e transistor têm PNGs, mas **não são itens registrados nem funcionais**. Plasma Cannon, veículos e automação de itens também não estão disponíveis.\n\n[Repositório e download do JAR](../README.md) · [Fontes das imagens vanilla](assets/vanilla/SOURCES.md) · [Manutenção da wiki](manutencao.md)\n'
+    intro=nav()+'![NovaDyne — linha de produção](assets/generated/header.png)\n\n# NovaDyne · Wiki visual\n\nTudo começa com argila, quartzo e cobre. Aqui você encontra o caminho até o wafer gravado: o que juntar, onde colocar e o que sai de cada máquina. Os nomes dos itens são os mesmos que aparecem no jogo.\n\n'
+    intro+='## Por onde começar\n\n| Guia | O que você encontra |\n| --- | --- |\n| [Todas as receitas](receitas.md) | Grades 3×3, ingredientes, quantidades e resultado |\n| [Máquinas](maquinas.md) | Consumo, duração, slots e processos |\n| [Materiais](materiais.md) | Como obter cada material e onde usar |\n| [Valves](valves.md) | Crafts dos 7 tiers e chance de sucesso |\n| [Progressão](progressao.md) | Ordem para montar sua linha industrial |\n| [Como testar](testar.md) | Instalar o JAR, comandos e testes rápidos |\n\n'
+    intro+='## Vale saber\n\n- As máquinas precisam de energia FE externa. O NovaDyne ainda não possui gerador próprio.\n- Minere as quatro máquinas com **picareta de pedra ou superior**.\n- Engraving e reciclagem aleatória exigem output vazio; retire o resultado antes do próximo ciclo.\n- Capacitores e transistor têm PNGs, mas **não são itens registrados nem funcionais**. Plasma Cannon, veículos e automação de itens também não estão disponíveis.\n\n[Repositório e download do JAR](../README.md) · [Fontes das imagens vanilla](assets/vanilla/SOURCES.md) · [Manutenção da wiki](manutencao.md)\n'
     write('README.md',intro)
-    write('receitas.md',nav()+'# Todas as receitas\n\nAs grades usam os PNGs reais do mod e texturas vanilla. Ícones de máquinas e blocos mostram uma face da textura; não são capturas 3D do jogo.\n\n## Bancada e fornos\n\n'+''.join(recipe_section(k,r) for k,r in RECIPES.items())+'## Processamento nas máquinas\n\n'+''.join(process_section(p) for p in PROCESSES))
+    write('receitas.md',nav()+'# Todas as receitas\n\nEscolha o que quer fazer e siga os ingredientes. Na bancada, respeite a grade quando a receita pedir; nas máquinas, confira as entradas e o espaço na saída.\n\n## Bancada e fornos\n\n'+''.join(recipe_section(k,r) for k,r in RECIPES.items())+'## Nas máquinas\n\n'+''.join(process_section(p) for p in PROCESSES))
     for key in REGISTERED:
         item='novadyne:'+key
         s=nav('../')+f'# {name(item)}\n\n![{name(item)}](../assets/generated/icon_{key}.png)\n\n`{item}`\n\n'
         if key in MACHINES:
-            st=stats(key);s+='## Operação\n\n| Propriedade | Valor |\n| --- | --- |\n'+f'| Capacidade | {st["MAX_ENERGY"]:,} FE |\n| Consumo | {st["ENERGY_PER_TICK"]} FE/t |\n| Duração | {st["MAX_PROGRESS"]} ticks / {st["MAX_PROGRESS"]/20:g} s |\n| Energia por ciclo | {st["ENERGY_PER_TICK"]*st["MAX_PROGRESS"]:,} FE |\n'.replace(',','.')+'\nTempos consideram 20 ticks por segundo. A extração externa de energia é bloqueada. Sem energia suficiente para o próximo tick, o progresso é zerado.\n\n'+CATALOG['machines'][key]+'\n\n'
+            st=stats(key);s+='## Operação\n\n| Propriedade | Valor |\n| --- | --- |\n'+f'| Capacidade | {st["MAX_ENERGY"]:,} FE |\n| Consumo | {st["ENERGY_PER_TICK"]} FE/t |\n| Duração | {st["MAX_PROGRESS"]} ticks / {st["MAX_PROGRESS"]/20:g} s |\n| Energia por ciclo | {st["ENERGY_PER_TICK"]*st["MAX_PROGRESS"]:,} FE |\n'.replace(',','.')+'\nTempos consideram 20 ticks por segundo. Recebe energia, mas não fornece energia a outros blocos. Se faltar energia durante o trabalho, o progresso volta a zero.\n\n'+CATALOG['machines'][key]+'\n\n'
         elif key.startswith('valve_'):
             tier=int(key[-1]);s+=f'**Upgrade da Lithography.** Tier {tier}: {(0.70+(tier-1)*0.25/6)*100:.2f}% de sucesso e {(0.30-(tier-1)*0.25/6)*100:.2f}% de falha na gravação. A valve não é consumida.\n\n'.replace('.00%','%')
         else:s+=CATALOG['materials'][key]+'\n\n'
@@ -218,12 +267,12 @@ def build():
         uses=[f'- Craft de {link(r["result"]["id"],"../")}.' for r in RECIPES.values() if item in ingredient_list(r)]
         uses += [f'- {p["title"]}, em {link("novadyne:"+p["machine"],"../")}.' for p in PROCESSES if item in p['inputs']]
         if key.startswith('valve_'):uses+=['- Slot de valve da [Lithography](litografia.md); melhora a chance de sucesso.']
-        s+='\n'.join(uses) if uses else 'Sem consumo em outra receita implementada no momento.'
-        if key in MACHINES:s+='\n\n## Processos\n\n'+''.join(process_section(p,'../') for p in PROCESSES if p['machine']==key)
-        s+=f'\n\n## Teste em criativo\n\n```mcfunction\n/give @s {item}\n```\n'
+        s+='\n'.join(uses) if uses else 'Por enquanto, não entra em nenhuma outra receita.'
+        if key in MACHINES:s+='\n\n## O que dá para fazer\n\n'+''.join(process_section(p,'../') for p in PROCESSES if p['machine']==key)
+        s+=f'\n\n<details>\n<summary>Pegar este item em criativo</summary>\n\n```mcfunction\n/give @s {item}\n```\n\n</details>\n'
         write('itens/'+key+'.md',s)
     def index(keys):
-        return '| Ícone | Item | ID |\n| --- | --- | --- |\n'+''.join(f'| <img src="assets/generated/icon_{k}.png" width="48" alt="{name("novadyne:"+k)}"> | {link("novadyne:"+k)} | `{k}` |\n' for k in keys)
+        return '| | Item |\n| --- | --- |\n'+''.join(f'| <img src="assets/generated/icon_{k}.png" width="48" alt="{name("novadyne:"+k)}"> | {link("novadyne:"+k)} |\n' for k in keys)
     write('materiais.md',nav()+'# Materiais\n\nClique no nome para ver obtenção, craft e usos.\n\n'+index(MATERIALS))
     write('maquinas.md',nav()+'# Máquinas\n\n'+index(MACHINES)+'\n## Regras comuns\n\n- Use energia externa FE ou, em testes com comandos, preencha o campo `energy`. Não há geração própria.\n- Picareta de pedra ou superior permite recuperar o bloco. Ao quebrar, o inventário é derrubado; energia e progresso não são preservados no item da máquina.\n- Output incompatível/cheio bloqueia o processamento. Não há transporte automático de itens implementado.\n- As valves têm efeito na Lithography. Os slots presentes nas outras máquinas ainda não aplicam bônus.\n')
     valve=nav()+'# Valves · tiers e chance de sucesso\n\nColoque uma valve no slot dedicado da Lithography. Ela permanece no slot após o processo. As porcentagens abaixo são do **engraving**; a limpeza com água não usa RNG.\n\n| Valve | Sucesso | Falha |\n| --- | ---: | ---: |\n| Sem valve | 70% | 30% |\n'
@@ -325,7 +374,7 @@ Use Linux com as fontes DejaVu Sans (`fonts-dejavu-core`). O gerador lê as rece
 
 O workflow **Wiki** confere fontes, páginas, imagens e links em cada mudança relevante. Se ele ficar vermelho após mudar uma receita, regenere a wiki e inclua os arquivos atualizados no commit. `--check` não altera arquivos e não acessa a rede.
 
-Imagens de craft e processo são diagramas gerados a partir de dados. Ícones de blocos mostram uma face, sem simular uma captura 3D. Texturas vanilla e suas fontes estão em [créditos](assets/vanilla/SOURCES.md).
+Imagens de craft e processo são diagramas gerados a partir de dados. Blocos e máquinas são desenhados em perspectiva a partir das texturas de suas faces; não são capturas do cliente Minecraft. Texturas vanilla e suas fontes estão em [créditos](assets/vanilla/SOURCES.md).
 ''')
     snapshot={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs()}
     (WIKI/'sources.json').write_text(json.dumps(snapshot,indent=2,ensure_ascii=False)+'\n')
@@ -334,6 +383,7 @@ Imagens de craft e processo são diagramas gerados a partir de dados. Ícones de
 def inputs():
     files=[ROOT/'tools/wiki/generate.py',ROOT/'tools/wiki/processes.json',ROOT/'tools/wiki/requirements.txt',JAVA/'ModItems.java',JAVA/'common/blockentity/AbstractMachineBlockEntity.java',ROOT/'gradle.properties']
     files+=list((DATA/'novadyne/recipe').glob('*.json'))+list((JAVA/'common/blockentity').glob('*BlockEntity.java'))
+    files+=list((ASSETS/'models/block').glob('*.json'))
     files+=list((ASSETS/'lang').glob('*.json'))+list((ASSETS/'textures').rglob('*.png'))+list((WIKI/'assets/vanilla').glob('*'))
     return sorted(set(files))
 
