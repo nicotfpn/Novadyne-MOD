@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RCR",
+    "WLW",
+    "IGI"
+  ],
+  "key": {
+    "R": "minecraft:redstone",
+    "C": "novadyne:part_copper_layer",
+    "W": "novadyne:part_silicon_wafer",
+    "L": "novadyne:wafer_press",
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:gold_ingot"
+  },
+  "result": {
+    "id": "novadyne:processor",
+    "count": 1
+  }
+}
