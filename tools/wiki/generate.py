@@ -127,7 +127,7 @@ def arrow(d,x,y,w=110):
 def canvas(title,sub,height=440):
     im=Image.new('RGB',(1200,height),BG);d=ImageDraw.Draw(im)
     text(d,(40,22),'NOVADYNE',14,CYAN,True)
-    text(d,(1076,22),'CADERNO',12,MUTED)
+    text(d,(1040,22),'GUIA DE JOGO',12,MUTED)
     text(d,(40,54),title,31,TEXT,True)
     text(d,(40,101),sub,17,MUTED)
     d.line((40,135,1160,135),fill='#373d33',width=1)
@@ -218,7 +218,7 @@ def recipe_section(key,r,prefix=''):
     s+=ingredients_table(ingredient_list(r),prefix)+f'\n**Resultado:** {r["result"].get("count",1)} × {link(r["result"]["id"],prefix)}.\n\n'
     if typ=='crafting_shapeless':s+='**Sem posição fixa:** basta colocar esses ingredientes na bancada, em qualquer ordem.\n\n'
     if typ in ['smelting','blasting']:s+='A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros itens por datapacks. O combustível não está incluído no ingrediente.\n\n'
-    if 'minecraft:water_bucket' in ingredient_list(r):s+='Você recebe o balde vazio de volta ao fazer este craft.\n\n'
+    if 'minecraft:water_bucket' in ingredient_list(r):s+='O balde vazio retorna após o craft.\n\n'
     s+=f'<details>\n<summary>Ver no código</summary>\n\n[Receita JSON]({prefix}../src/main/resources/data/novadyne/recipe/{key}.json)\n\n</details>\n\n'
     return s
 
@@ -226,7 +226,7 @@ def recipe_section(key,r,prefix=''):
 def process_section(p,prefix=''):
     s=f'### {p["title"]}\n\n![{p["title"]}: entradas e saídas]({prefix}assets/generated/{p["id"]}.png)\n\n'
     s+=ingredients_table(p['inputs'],prefix)
-    s+='\n**'+('Você recebe um dos dois' if p.get('random') else 'Resultado')+':** '+(' **ou** ' if p.get('random') else ' + ').join('1 × '+link(i,prefix) for i in p['outputs'])+'.\n\n'+p['note']+'\n\n'
+    s+='\n**'+('Resultados possíveis' if p.get('random') else 'Resultado')+':** '+(' **ou** ' if p.get('random') else ' + ').join('1 × '+link(i,prefix) for i in p['outputs'])+'.\n\n'+p['note']+'\n\n'
     s+=f'<details>\n<summary>Ver no código</summary>\n\n[Lógica da máquina]({prefix}../src/main/java/com/novadyne/common/blockentity/{MACHINES[p["machine"]]}.java)\n\n</details>\n\n'
     return s
 
@@ -244,11 +244,12 @@ def build():
         x=40+i*294;slot(im,x,153,'novadyne:'+key,size=80)
         wrapped(d,(x+98,170),name('novadyne:'+key),16,19)
     im.save(OUT/'header.png')
-    intro=nav()+'![NovaDyne — linha de produção](assets/generated/header.png)\n\n# NovaDyne · Wiki visual\n\nTudo começa com argila, quartzo e cobre. Aqui você encontra o caminho até o wafer gravado: o que juntar, onde colocar e o que sai de cada máquina. Os nomes dos itens são os mesmos que aparecem no jogo.\n\n'
-    intro+='## Por onde começar\n\n| Guia | O que você encontra |\n| --- | --- |\n| [Todas as receitas](receitas.md) | Grades 3×3, ingredientes, quantidades e resultado |\n| [Máquinas](maquinas.md) | Consumo, duração, slots e processos |\n| [Materiais](materiais.md) | Como obter cada material e onde usar |\n| [Valves](valves.md) | Crafts dos 7 tiers e chance de sucesso |\n| [Progressão](progressao.md) | Ordem para montar sua linha industrial |\n| [Como testar](testar.md) | Instalar o JAR, comandos e testes rápidos |\n\n'
-    intro+='## Vale saber\n\n- As máquinas precisam de energia FE externa. O NovaDyne ainda não possui gerador próprio.\n- Minere as quatro máquinas com **picareta de pedra ou superior**.\n- Engraving e reciclagem aleatória exigem output vazio; retire o resultado antes do próximo ciclo.\n- Capacitores e transistor têm PNGs, mas **não são itens registrados nem funcionais**. Plasma Cannon, veículos e automação de itens também não estão disponíveis.\n\n[Repositório e download do JAR](../README.md) · [Fontes das imagens vanilla](assets/vanilla/SOURCES.md) · [Manutenção da wiki](manutencao.md)\n'
+    intro=nav()+'![As quatro máquinas do NovaDyne](assets/generated/header.png)\n\n# NovaDyne\n\nUma linha industrial que transforma argila, quartzo e cobre em circuitos e wafers. Esta wiki reúne as receitas, os processos e o caminho para montar cada máquina no survival.\n\n'
+    intro+='## A linha de produção\n\n| 01 · Macerator | 02 · Wafer Press | 03 · Processor | 04 · Lithography |\n| :---: | :---: | :---: | :---: |\n| [<img src="assets/generated/icon_macerator.png" width="88" alt="Macerator">](itens/macerator.md) | [<img src="assets/generated/icon_wafer_press.png" width="88" alt="Wafer Press">](itens/wafer_press.md) | [<img src="assets/generated/icon_processor.png" width="88" alt="Processor">](itens/processor.md) | [<img src="assets/generated/icon_litografia.png" width="88" alt="Lithography">](itens/litografia.md) |\n| Moe argila e recicla wafers com falha | Prensa silício, cobre e cerâmica | Monta o circuito eletrônico | Grava e limpa o wafer |\n\n**Primeira vez por aqui?** Siga a [progressão industrial](progressao.md) para montar a linha. Para consultar um craft específico, abra [todas as receitas](receitas.md).\n\n'
+    intro+='## Explore\n\n| Guia | Conteúdo |\n| --- | --- |\n| [Receitas](receitas.md) | Crafts, fundição e processos ilustrados |\n| [Máquinas](maquinas.md) | Slots, energia e tempo de operação |\n| [Materiais](materiais.md) | Obtenção e usos de cada componente |\n| [Valves](valves.md) | Tiers e chances da Lithography |\n| [Instalação e testes](testar.md) | Download do JAR e primeiros passos no jogo |\n\n'
+    intro+='> **Antes de começar:** as máquinas recebem energia FE de outros mods. Use uma picareta de pedra ou superior para recuperá-las.\n\n---\n\n[Repositório](../README.md) · [Créditos das texturas vanilla](assets/vanilla/SOURCES.md) · [Contribuir com a wiki](manutencao.md)\n'
     write('README.md',intro)
-    write('receitas.md',nav()+'# Todas as receitas\n\nEscolha o que quer fazer e siga os ingredientes. Na bancada, respeite a grade quando a receita pedir; nas máquinas, confira as entradas e o espaço na saída.\n\n## Bancada e fornos\n\n'+''.join(recipe_section(k,r) for k,r in RECIPES.items())+'## Nas máquinas\n\n'+''.join(process_section(p) for p in PROCESSES))
+    write('receitas.md',nav()+'# Receitas e processos\n\nAs imagens mostram a disposição dos ingredientes e o resultado de cada operação. Na bancada, siga a grade quando houver posição fixa; nas máquinas, confira as entradas e deixe espaço na saída.\n\n## Bancada e fornos\n\n'+''.join(recipe_section(k,r) for k,r in RECIPES.items())+'## Nas máquinas\n\n'+''.join(process_section(p) for p in PROCESSES))
     for key in REGISTERED:
         item='novadyne:'+key
         s=nav('../')+f'# {name(item)}\n\n![{name(item)}](../assets/generated/icon_{key}.png)\n\n`{item}`\n\n'
@@ -274,7 +275,7 @@ def build():
     def index(keys):
         return '| | Item |\n| --- | --- |\n'+''.join(f'| <img src="assets/generated/icon_{k}.png" width="48" alt="{name("novadyne:"+k)}"> | {link("novadyne:"+k)} |\n' for k in keys)
     write('materiais.md',nav()+'# Materiais\n\nClique no nome para ver obtenção, craft e usos.\n\n'+index(MATERIALS))
-    write('maquinas.md',nav()+'# Máquinas\n\n'+index(MACHINES)+'\n## Regras comuns\n\n- Use energia externa FE ou, em testes com comandos, preencha o campo `energy`. Não há geração própria.\n- Picareta de pedra ou superior permite recuperar o bloco. Ao quebrar, o inventário é derrubado; energia e progresso não são preservados no item da máquina.\n- Output incompatível/cheio bloqueia o processamento. Não há transporte automático de itens implementado.\n- As valves têm efeito na Lithography. Os slots presentes nas outras máquinas ainda não aplicam bônus.\n')
+    write('maquinas.md',nav()+'# Máquinas\n\nDo primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. Abra uma página para ver o craft, os slots e os processos disponíveis.\n\n'+index(MACHINES)+'\n## Regras comuns\n\n- Todas recebem energia FE externa. Consulte o [guia de testes](testar.md) para abastecê-las com comandos em um mundo criativo.\n- Use picareta de pedra ou superior para recuperar os blocos. Os itens do inventário caem ao quebrá-los.\n- O processamento aguarda quando a saída está cheia ou contém outro item.\n- As valves alteram a chance de sucesso na Lithography. Nas demais máquinas, o slot de valve não oferece bônus.\n')
     valve=nav()+'# Valves · tiers e chance de sucesso\n\nColoque uma valve no slot dedicado da Lithography. Ela permanece no slot após o processo. As porcentagens abaixo são do **engraving**; a limpeza com água não usa RNG.\n\n| Valve | Sucesso | Falha |\n| --- | ---: | ---: |\n| Sem valve | 70% | 30% |\n'
     for tier in range(1,8):valve+=f'| {link("novadyne:valve_tier_"+str(tier))} | {(0.70+(tier-1)*0.25/6)*100:.2f}% | {(0.30-(tier-1)*0.25/6)*100:.2f}% |\n'
     valve+='\nChance por tentativa, não uma garantia em lotes pequenos. Os sete crafts são sem posição fixa.\n\n'+index(['valve_tier_'+str(i) for i in range(1,8)])
@@ -351,12 +352,12 @@ Abasteça energia pelo mesmo comando. Coloque wafer no slot de entrada e água n
 | Engraving ou reciclagem parou | Retire todo o conteúdo do output; ambos os resultados precisam poder caber |
 | Limpeza parou | Retire o balde vazio e coloque outro balde de água |
 | Não dropou ao minerar | Use picareta de pedra ou superior |
-| PNG existe mas `/give` falha | Capacitores/transistor ainda não são itens registrados |
-| Build verde | Compilação e GameTests passaram; isso não certifica aparência, GUI ou desempenho em todo PC |
+| JAR não aparece em Artifacts | Confirme que a execução do workflow terminou com marca verde e que a conta está conectada ao GitHub |
+| Build verde, mas há erro visual | Os testes automatizados verificam o código e alguns processos; registre o erro visto no cliente |
 
-## Trabalhar em um computador fraco
+## Sobre os testes automatizados
 
-Faça o build e os testes pelo GitHub Actions. O servidor de GameTests verifica alguns cenários de registro, energia e processamento sem renderizar o cliente no seu PC. O teste visual ainda exige abrir o Minecraft; com 4 GB de RAM, feche outros programas e tente uma instalação mínima com pouca distância de renderização. Não há garantia de desempenho nesse hardware.
+O [workflow de build](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml) compila o mod e executa testes de registro, energia e processamento em um servidor Minecraft. Aparência, interface e interação com outros mods precisam de verificação dentro do jogo.
 ''')
     write('manutencao.md',nav()+'''# Como manter esta wiki
 

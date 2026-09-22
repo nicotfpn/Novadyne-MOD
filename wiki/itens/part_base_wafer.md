@@ -20,7 +20,7 @@ A base cerâmica do circuito. É feita prensando Ceramic Powder.
 | ---: | --- |
 | 1 | [Failed Silicon Wafer](../itens/part_electronic_failed_silicon_wafer.md) |
 
-**Você recebe um dos dois:** 1 × [Copper Layer](../itens/part_copper_layer.md) **ou** 1 × [Base Wafer](../itens/part_base_wafer.md).
+**Resultados possíveis:** 1 × [Copper Layer](../itens/part_copper_layer.md) **ou** 1 × [Base Wafer](../itens/part_base_wafer.md).
 
 **50% para cada resultado**, um item por ciclo. Retire o que estiver na saída antes de começar.
 

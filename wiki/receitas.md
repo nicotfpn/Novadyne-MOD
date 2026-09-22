@@ -2,9 +2,9 @@
 
 ---
 
-# Todas as receitas
+# Receitas e processos
 
-Escolha o que quer fazer e siga os ingredientes. Na bancada, respeite a grade quando a receita pedir; nas máquinas, confira as entradas e o espaço na saída.
+As imagens mostram a disposição dos ingredientes e o resultado de cada operação. Na bancada, siga a grade quando houver posição fixa; nas máquinas, confira as entradas e deixe espaço na saída.
 
 ## Bancada e fornos
 
@@ -23,7 +23,7 @@ Escolha o que quer fazer e siga os ingredientes. Na bancada, respeite a grade qu
 
 **Resultado:** 1 × [Lithography](itens/litografia.md).
 
-Você recebe o balde vazio de volta ao fazer este craft.
+O balde vazio retorna após o craft.
 
 <details>
 <summary>Ver no código</summary>
@@ -307,7 +307,7 @@ Consome 1 bola de argila. Deixe espaço para Ceramic Powder na saída.
 | ---: | --- |
 | 1 | [Failed Silicon Wafer](itens/part_electronic_failed_silicon_wafer.md) |
 
-**Você recebe um dos dois:** 1 × [Copper Layer](itens/part_copper_layer.md) **ou** 1 × [Base Wafer](itens/part_base_wafer.md).
+**Resultados possíveis:** 1 × [Copper Layer](itens/part_copper_layer.md) **ou** 1 × [Base Wafer](itens/part_base_wafer.md).
 
 **50% para cada resultado**, um item por ciclo. Retire o que estiver na saída antes de começar.
 
@@ -404,7 +404,7 @@ Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, d
 | ---: | --- |
 | 1 | [Stacked Electronic Circuit](itens/stacked_electronic_circuit.md) |
 
-**Você recebe um dos dois:** 1 × [Dirty Silicon Wafer](itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](itens/part_electronic_failed_silicon_wafer.md).
+**Resultados possíveis:** 1 × [Dirty Silicon Wafer](itens/part_electronic_dirty_silicon_wafer.md) **ou** 1 × [Failed Silicon Wafer](itens/part_electronic_failed_silicon_wafer.md).
 
 A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valve equivale ao tier 1: 70% de sucesso. Tier 7: 95%. A saída precisa estar vazia. Não consome água neste estágio.
 
