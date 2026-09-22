@@ -1,9 +1,0 @@
-# Dependências da wiki do NovaDyne — versões fixadas.
-# Instalação recomendada em um venv:
-#   python -m venv tools/wiki/.venv
-#   tools/wiki/.venv/Scripts/python -m pip install -r tools/wiki/requirements.txt
-#
-# mkdocs-material também fixa mkdocs, markdown, jinja2, etc. (resolvidas
-# transitivamente). PyYAML é usado pelo carregador de front matter/conteúdo.
-mkdocs-material==9.5.50
-PyYAML==6.0.2
