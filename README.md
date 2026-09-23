@@ -9,7 +9,7 @@
   <a href="https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml">Baixar o JAR</a>
 </p>
 
-O NovaDyne é um mod de progressão eletrônica para **Minecraft Java 26.1.2 com NeoForge**. Comece moendo argila, prepare as camadas do circuito e passe pela litografia até chegar ao wafer final. As máquinas têm inventário e interface próprios, consomem energia FE e podem ser construídas em survival.
+O NovaDyne é um mod de eletrônica industrial para **Minecraft Java 26.1.2 com NeoForge**. Você começa com argila, quartzo e cobre, monta uma linha de máquinas e chega ao wafer gravado. Tudo nessa linha pode ser feito em survival: máquinas, geradores, pia de água e cabos de fluido.
 
 ## A linha de produção
 
@@ -24,7 +24,7 @@ Argila vira **Ceramic Powder**; quartzo fundido vira **Pure Silicon**. A prensa 
 
 Cada etapa, com ingredientes e saídas ilustrados, está na [wiki visual](wiki/README.md). O **Etched Silicon Wafer** é o fim da cadeia disponível atualmente.
 
-A limpeza aceita um balde de água ou água encanada: construa um [Water Sink](wiki/itens/water_sink.md), conecte [cabos de fluido](wiki/itens/fluid_pipe.md) à Lithography e acompanhe o reservatório na GUI. Cada wafer usa 1.000 mB. O sink fornece água infinita; a máquina continua precisando de energia FE.
+Para limpar os wafers, você pode usar um balde ou montar uma linha de água: [Water Sink](wiki/itens/water_sink.md) → [cabos de fluido](wiki/itens/fluid_pipe.md) → Lithography. A GUI mostra a água armazenada, e cada wafer consome 1.000 mB. O sink cuida da água; a máquina ainda precisa de FE.
 
 ## Instalar e jogar
 
@@ -32,7 +32,7 @@ A limpeza aceita um balde de água ou água encanada: construa um [Water Sink](w
 2. Abra o [workflow Build](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml), escolha uma execução verde da branch `main` e baixe o artifact **`novadyne-jar`**. É preciso entrar no GitHub para baixar artifacts.
 3. Extraia o ZIP e coloque o arquivo `.jar` na pasta `mods` da instalação NeoForge.
 
-As máquinas recebem **energia FE**: encoste um [Fuel Generator](wiki/itens/fuel_generator.md) na máquina para queimar combustíveis de fornalha, inclusive madeira. Há também o [Solar Generator básico](wiki/itens/basic_solar_generator.md), que produz apenas de dia, e o [avançado](wiki/itens/advanced_solar_generator.md), que produz 25% à noite. Também aceitam FE de fontes de outros mods. Por enquanto, a energia sai diretamente para blocos vizinhos; os cabos de energia virão depois.
+Para alimentar uma máquina, encoste nela um [Fuel Generator](wiki/itens/fuel_generator.md) e coloque um combustível de fornalha, como madeira ou carvão. Você também pode usar o [solar básico](wiki/itens/basic_solar_generator.md), que funciona de dia, ou o [solar avançado](wiki/itens/advanced_solar_generator.md), que continua gerando 25% à noite. As máquinas aceitam FE de outros mods. A transferência entre blocos distantes por cabo de energia ainda está em desenvolvimento.
 
 Quer experimentar as máquinas primeiro? Pegue o [Test Power Hub](wiki/itens/test_power_hub.md) no criativo ou com `/give @s novadyne:test_power_hub`. Coloque as máquinas no mesmo nível, até dois blocos para cada lado: ele alimenta cada uma dentro do quadrado 5 × 5. O bloco é exclusivo para testes e não tem receita de craft. Há um [guia rápido de instalação e testes](wiki/testar.md).
 

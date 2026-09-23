@@ -1,0 +1,36 @@
+{
+  "itemGroup.novadyne.novadyne": "NovaDyne",
+
+  "block.novadyne.macerator": "Macerador",
+  "block.novadyne.wafer_press": "Prensa de Wafers",
+  "block.novadyne.processor": "Processador",
+  "block.novadyne.litografia": "Litografia",
+  "block.novadyne.test_power_hub": "Fonte de Energia de Teste",
+  "block.novadyne.water_sink": "Pia de Água Infinita",
+  "block.novadyne.fluid_pipe": "Cabo de Fluido",
+  "block.novadyne.fuel_generator": "Gerador a Combustível",
+  "block.novadyne.basic_solar_generator": "Gerador Solar Básico",
+  "block.novadyne.advanced_solar_generator": "Gerador Solar Avançado",
+
+  "item.novadyne.pure_silicon": "Silício Puro",
+  "item.novadyne.part_silicon_wafer": "Wafer de Silício",
+  "item.novadyne.ceramic_powder": "Pó de Cerâmica",
+  "item.novadyne.part_copper_layer": "Camada de Cobre",
+  "item.novadyne.part_base_wafer": "Wafer Base",
+  "item.novadyne.stacked_electronic_circuit": "Circuito Eletrônico Empilhado",
+  "item.novadyne.part_electronic_dirty_silicon_wafer": "Wafer de Silício Sujo",
+  "item.novadyne.part_electronic_failed_silicon_wafer": "Wafer de Silício Defeituoso",
+  "item.novadyne.part_electronic_etched_silicon_wafer": "Wafer de Silício Gravado",
+  "item.novadyne.valve_tier_1": "Válvula (nível 1)",
+  "item.novadyne.valve_tier_2": "Válvula (nível 2)",
+  "item.novadyne.valve_tier_3": "Válvula (nível 3)",
+  "item.novadyne.valve_tier_4": "Válvula (nível 4)",
+  "item.novadyne.valve_tier_5": "Válvula (nível 5)",
+  "item.novadyne.valve_tier_6": "Válvula (nível 6)",
+  "item.novadyne.valve_tier_7": "Válvula (nível 7)",
+
+  "tooltip.novadyne.energy": "Energia: %s / %s FE",
+  "gui.novadyne.water": "Água: %s mB",
+  "gui.novadyne.fe_stored": "%s / %s FE",
+  "message.novadyne.solar_energy": "Energia solar: %s / %s FE"
+}

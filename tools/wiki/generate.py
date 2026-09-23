@@ -68,6 +68,22 @@ def cube(front, side, top):
     return result
 
 
+def pipe_icon():
+    """Small isometric sketch of the thin cross-shaped in-game pipe model."""
+    texture=Image.open(ASSETS/'textures/block/fluid_pipe.png').convert('RGBA')
+    dark=texture.getpixel((8,2));copper=texture.getpixel((8,5));water=texture.getpixel((8,8))
+    im=Image.new('RGBA',(192,200));d=ImageDraw.Draw(im)
+    for end in ((18,59),(173,59),(96,185)):
+        d.line(((96,103),end),fill=dark,width=27)
+        d.line(((96,103),end),fill=copper,width=18)
+        d.line(((96,103),end),fill=water,width=8)
+    d.polygon(((78,88),(96,78),(115,88),(96,100)),fill=copper)
+    d.polygon(((78,88),(96,100),(96,123),(78,111)),fill=dark)
+    d.polygon(((96,100),(115,88),(115,111),(96,123)),fill=copper)
+    d.polygon(((86,91),(96,86),(105,91),(96,97)),fill=water)
+    return im
+
+
 @lru_cache(maxsize=None)
 def icon(item):
     if item.startswith('#'):item='minecraft:quartz'
@@ -75,8 +91,8 @@ def icon(item):
     def load(path):return Image.open(path).convert('RGBA')
     if ns=='novadyne' and key in UTILITY_BLOCKS:
         if key=='water_sink':
-            metal=load(ASSETS/'textures/block/machine_side.png')
-            return cube(metal,metal,load(WIKI/'assets/vanilla/water_bucket.png'))
+            side=load(ASSETS/'textures/block/water_sink_side.png')
+            return cube(side,side,load(ASSETS/'textures/block/water_sink_top.png'))
         if key=='fuel_generator':
             return cube(load(WIKI/'assets/vanilla/furnace.png'),load(ASSETS/'textures/block/machine_side.png'),load(WIKI/'assets/vanilla/furnace_top.png'))
         if key.endswith('solar_generator'):
@@ -85,8 +101,7 @@ def icon(item):
                 for py in (2,7):draw.rectangle((px,py,px+3,py+4),fill='#376998' if key.startswith('basic') else '#63a8d1')
             frame=load(ASSETS/'textures/block/machine_side.png') if key.startswith('basic') else load(WIKI/'assets/vanilla/copper_ingot.png')
             return cube(frame,frame,panel)
-        copper=load(WIKI/'assets/vanilla/copper_ingot.png')
-        return cube(copper,copper,copper)
+        return pipe_icon()
     if ns=='novadyne' and (key in MACHINES or key in TEST_BLOCKS):
         textures=json.loads((ASSETS/'models/block'/(key+'.json')).read_text())['textures']
         def face(k):return load(ASSETS/'textures'/(textures[k].split(':')[1]+'.png'))
