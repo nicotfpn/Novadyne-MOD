@@ -158,9 +158,9 @@ public final class CoreSmokeTests {
             helper.setBlock(center, ModBlocks.TEST_POWER_HUB.get());
             helper.setBlock(edge, ModBlocks.MACERATOR.get());
             helper.setBlock(outside, ModBlocks.MACERATOR.get());
-            TestPowerHubBlockEntity hub = (TestPowerHubBlockEntity) helper.getBlockEntity(center);
-            MaceratorBlockEntity inside = (MaceratorBlockEntity) helper.getBlockEntity(edge);
-            MaceratorBlockEntity beyond = (MaceratorBlockEntity) helper.getBlockEntity(outside);
+            TestPowerHubBlockEntity hub = helper.getBlockEntity(center, TestPowerHubBlockEntity.class);
+            MaceratorBlockEntity inside = helper.getBlockEntity(edge, MaceratorBlockEntity.class);
+            MaceratorBlockEntity beyond = helper.getBlockEntity(outside, MaceratorBlockEntity.class);
             hub.tickServer();
             check(inside.getEnergy(0) == TestPowerHubBlockEntity.FE_PER_MACHINE_PER_TICK,
                     "Machine on the corner of the 5x5 area received no energy");
