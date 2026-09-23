@@ -27,7 +27,7 @@ public class SolarGeneratorBlock extends BaseEntityBlock {
 
     @Override protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof SolarGeneratorBlockEntity solar) {
-            player.displayClientMessage(Component.translatable("message.novadyne.solar_energy", solar.getEnergy(0), solar.getMaxEnergy(0)), true);
+            player.sendSystemMessage(Component.translatable("message.novadyne.solar_energy", solar.getEnergy(0), solar.getMaxEnergy(0)));
         }
         return InteractionResult.SUCCESS;
     }
