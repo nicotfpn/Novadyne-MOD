@@ -16,6 +16,8 @@ Mod de máquinas de progressão eletrônica para Minecraft NeoForge 26.1.2.
   Layer, Base Wafer e Stacked Electronic Circuit.
 - **Upgrades:** Válvulas de tier 1 a 7, usadas para reduzir a chance de falha
   da Litografia.
+- **Teste em criativo:** Test Power Hub alimenta máquinas NovaDyne numa área
+  horizontal 5 × 5; não possui receita de survival.
 - **Planejado** — Plasma Cannon (arma de energia), veículos e armas. Nada
   disso é anunciado como disponível.
 
@@ -33,4 +35,4 @@ Built with NeoForge MDK. Java 25 required.
 2. Confirme que **Build with Gradle** e **Test machines on Minecraft server** estão verdes. Os testes iniciam um servidor no GitHub e conferem registro dos itens, energia, bloqueio de saída e o processamento das quatro máquinas.
 3. Em **Artifacts**, baixe `novadyne-jar`, descompacte o ZIP e use o arquivo `.jar` em uma instalação limpa de **Minecraft 26.1.2 / NeoForge 26.1.2.76**.
 
-Para verificar a aparência e as GUIs, ainda é preciso abrir o cliente Minecraft. Em um PC com 4 GB de RAM, feche outros programas, use gráficos Fast e ajuste a memória máxima do launcher para 1536 MB ou 2 GB. Crie um mundo novo em criativo, coloque as quatro máquinas e abra cada uma delas. Para testar uma máquina sem gerador, coloque-a no mundo e use `/data merge block X Y Z {energy:10000L}` com as coordenadas do bloco; depois insira os itens na GUI. A versão atual ainda não tem gerador próprio.
+Para verificar a aparência e as GUIs, ainda é preciso abrir o cliente Minecraft. Em um PC com 4 GB de RAM, feche outros programas, use gráficos Fast e ajuste a memória máxima do launcher para 1536 MB ou 2 GB. Crie um mundo novo em criativo, coloque o Test Power Hub no chão e as quatro máquinas no mesmo nível, até dois blocos de distância em cada direção horizontal. Ele fornece até 1.000 FE/t por máquina e permite testar os processos pela GUI. Não tem receita de survival.

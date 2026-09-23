@@ -21,10 +21,11 @@ FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 BG, PANEL, TEXT, MUTED, CYAN, GOLD = '#1b1e19', '#272b26', '#eeeadd', '#a9ad9c', '#bdcca8', '#d8b789'
 MACHINES = {'macerator':'MaceratorBlockEntity', 'wafer_press':'WaferPressBlockEntity', 'processor':'ProcessorBlockEntity', 'litografia':'LitografiaBlockEntity'}
+TEST_BLOCKS = {'test_power_hub'}
 VANILLA = {'iron_ingot':'Barra de ferro','copper_ingot':'Barra de cobre','gold_ingot':'Barra de ouro','redstone':'Redstone','diamond':'Diamante','emerald':'Esmeralda','netherite_scrap':'Fragmento de netherita','netherite_ingot':'Barra de netherita','water_bucket':'Balde de água','bucket':'Balde vazio','quartz':'Quartzo','clay_ball':'Bola de argila','furnace':'Fornalha','piston':'Pistão','glass':'Vidro','redstone_block':'Bloco de redstone'}
 LANG = json.loads((ASSETS/'lang/en_us.json').read_text())
 REGISTERED = re.findall(r'registerSimple(?:Item|BlockItem)\("([^\"]+)"', (JAVA/'ModItems.java').read_text())
-MATERIALS = [s for s in REGISTERED if s not in MACHINES and not s.startswith('valve_')]
+MATERIALS = [s for s in REGISTERED if s not in MACHINES and s not in TEST_BLOCKS and not s.startswith('valve_')]
 CATALOG = json.loads((ROOT/'tools/wiki/processes.json').read_text())
 PROCESSES = CATALOG['processes']
 RECIPES = {p.stem:json.loads(p.read_text()) for p in sorted((DATA/'novadyne/recipe').glob('*.json'))}
@@ -71,9 +72,11 @@ def icon(item):
     if item.startswith('#'):item='minecraft:quartz'
     ns,key=item.split(':')
     def load(path):return Image.open(path).convert('RGBA')
-    if ns=='novadyne' and key in MACHINES:
+    if ns=='novadyne' and (key in MACHINES or key in TEST_BLOCKS):
         textures=json.loads((ASSETS/'models/block'/(key+'.json')).read_text())['textures']
         def face(k):return load(ASSETS/'textures'/(textures[k].split(':')[1]+'.png'))
+        if key in TEST_BLOCKS:
+            return cube(face('side'),face('side'),load(WIKI/'assets/vanilla/redstone_block.png'))
         return cube(face('front'),face('side'),face('top'))
     if ns=='minecraft' and key in {'furnace','blast_furnace','piston','glass','redstone_block'}:
         def vanilla(k):return load(WIKI/'assets/vanilla'/(k+'.png'))
@@ -255,6 +258,8 @@ def build():
         s=nav('../')+f'# {name(item)}\n\n![{name(item)}](../assets/generated/icon_{key}.png)\n\n`{item}`\n\n'
         if key in MACHINES:
             st=stats(key);s+='## Operação\n\n| Propriedade | Valor |\n| --- | --- |\n'+f'| Capacidade | {st["MAX_ENERGY"]:,} FE |\n| Consumo | {st["ENERGY_PER_TICK"]} FE/t |\n| Duração | {st["MAX_PROGRESS"]} ticks / {st["MAX_PROGRESS"]/20:g} s |\n| Energia por ciclo | {st["ENERGY_PER_TICK"]*st["MAX_PROGRESS"]:,} FE |\n'.replace(',','.')+'\nTempos consideram 20 ticks por segundo. Recebe energia, mas não fornece energia a outros blocos. Se faltar energia durante o trabalho, o progresso volta a zero.\n\n'+CATALOG['machines'][key]+'\n\n'
+        elif key in TEST_BLOCKS:
+            s+='**Bloco de teste em criativo.** Fornece até 1.000 FE por tick para cada máquina NovaDyne dentro de um quadrado 5 × 5, no mesmo nível do bloco. É uma fonte infinita para testar as GUIs e os processos; não possui receita de craft.\n\n'
         elif key.startswith('valve_'):
             tier=int(key[-1]);s+=f'**Upgrade da Lithography.** Tier {tier}: {(0.70+(tier-1)*0.25/6)*100:.2f}% de sucesso e {(0.30-(tier-1)*0.25/6)*100:.2f}% de falha na gravação. A valve não é consumida.\n\n'.replace('.00%','%')
         else:s+=CATALOG['materials'][key]+'\n\n'
@@ -263,19 +268,19 @@ def build():
         s+='## Como obter\n\n'
         s+=''.join(recipe_section(k,r,'../') for k,r in sources)
         s+=''.join(process_section(p,'../') for p in processes)
-        if not sources and not processes:s+='Sem receita de obtenção implementada.\n\n'
+        if not sources and not processes:s+='Disponível no inventário criativo ou com `/give @s novadyne:test_power_hub`.\n\n' if key in TEST_BLOCKS else 'Sem receita de obtenção implementada.\n\n'
         s+='## Onde usar\n\n'
         uses=[f'- Craft de {link(r["result"]["id"],"../")}.' for r in RECIPES.values() if item in ingredient_list(r)]
         uses += [f'- {p["title"]}, em {link("novadyne:"+p["machine"],"../")}.' for p in PROCESSES if item in p['inputs']]
         if key.startswith('valve_'):uses+=['- Slot de valve da [Lithography](litografia.md); melhora a chance de sucesso.']
-        s+='\n'.join(uses) if uses else 'Por enquanto, não entra em nenhuma outra receita.'
+        s+='\n'.join(uses) if uses else ('Coloque-o no centro das máquinas que deseja alimentar.' if key in TEST_BLOCKS else 'Por enquanto, não entra em nenhuma outra receita.')
         if key in MACHINES:s+='\n\n## O que dá para fazer\n\n'+''.join(process_section(p,'../') for p in PROCESSES if p['machine']==key)
         s+=f'\n\n<details>\n<summary>Pegar este item em criativo</summary>\n\n```mcfunction\n/give @s {item}\n```\n\n</details>\n'
         write('itens/'+key+'.md',s)
     def index(keys):
         return '| | Item |\n| --- | --- |\n'+''.join(f'| <img src="assets/generated/icon_{k}.png" width="48" alt="{name("novadyne:"+k)}"> | {link("novadyne:"+k)} |\n' for k in keys)
     write('materiais.md',nav()+'# Materiais\n\nClique no nome para ver obtenção, craft e usos.\n\n'+index(MATERIALS))
-    write('maquinas.md',nav()+'# Máquinas\n\nDo primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. Abra uma página para ver o craft, os slots e os processos disponíveis.\n\n'+index(MACHINES)+'\n## Regras comuns\n\n- Todas recebem energia FE externa. Consulte o [guia de testes](testar.md) para abastecê-las com comandos em um mundo criativo.\n- Use picareta de pedra ou superior para recuperar os blocos. Os itens do inventário caem ao quebrá-los.\n- O processamento aguarda quando a saída está cheia ou contém outro item.\n- As valves alteram a chance de sucesso na Lithography. Nas demais máquinas, o slot de valve não oferece bônus.\n')
+    write('maquinas.md',nav()+'# Máquinas\n\nDo primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. Abra uma página para ver o craft, os slots e os processos disponíveis.\n\n'+index(MACHINES)+'\n## Energia para testar\n\n'+index(TEST_BLOCKS)+'\nO [Test Power Hub](itens/test_power_hub.md) alimenta as máquinas em um quadrado 5 × 5 no mesmo nível. Está disponível no criativo e facilita os [testes no jogo](testar.md).\n\n## Regras comuns\n\n- Todas recebem energia FE externa. Para testar em criativo, use o Test Power Hub.\n- Use picareta de pedra ou superior para recuperar os blocos. Os itens do inventário caem ao quebrá-los.\n- O processamento aguarda quando a saída está cheia ou contém outro item.\n- As valves alteram a chance de sucesso na Lithography. Nas demais máquinas, o slot de valve não oferece bônus.\n')
     valve=nav()+'# Valves · tiers e chance de sucesso\n\nColoque uma valve no slot dedicado da Lithography. Ela permanece no slot após o processo. As porcentagens abaixo são do **engraving**; a limpeza com água não usa RNG.\n\n| Valve | Sucesso | Falha |\n| --- | ---: | ---: |\n| Sem valve | 70% | 30% |\n'
     for tier in range(1,8):valve+=f'| {link("novadyne:valve_tier_"+str(tier))} | {(0.70+(tier-1)*0.25/6)*100:.2f}% | {(0.30-(tier-1)*0.25/6)*100:.2f}% |\n'
     valve+='\nChance por tentativa, não uma garantia em lotes pequenos. Os sete crafts são sem posição fixa.\n\n'+index(['valve_tier_'+str(i) for i in range(1,8)])
@@ -322,17 +327,12 @@ flowchart TD
 ## Teste rápido do Macerator
 
 ```mcfunction
+/give @s novadyne:test_power_hub
 /give @s novadyne:macerator
 /give @s minecraft:clay_ball 8
 ```
 
-Coloque a máquina e anote as coordenadas. Substitua X, Y e Z pelos números do bloco:
-
-```mcfunction
-/data merge block X Y Z {energy:10000L}
-```
-
-Abra a GUI e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS) e produz 1 Ceramic Powder. O comando é uma facilidade de teste; não adiciona um gerador ao survival.
+Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de distância nos eixos norte/sul e leste/oeste. O bloco fornece energia a cada máquina NovaDyne no quadrado 5 × 5 centrado nele. Abra a GUI do Macerator e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS) e produz 1 Ceramic Powder.
 
 ## Teste da limpeza
 
@@ -342,7 +342,7 @@ Abra a GUI e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS)
 /give @s minecraft:water_bucket
 ```
 
-Abasteça energia pelo mesmo comando. Coloque wafer no slot de entrada e água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
+Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer no slot de entrada e a água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
 
 ## Diagnóstico
 

@@ -5,6 +5,7 @@
   "block.novadyne.wafer_press": "Wafer Press",
   "block.novadyne.processor": "Processor",
   "block.novadyne.litografia": "Lithography",
+  "block.novadyne.test_power_hub": "Test Power Hub",
 
   "item.novadyne.pure_silicon": "Pure Silicon",
   "item.novadyne.part_silicon_wafer": "Silicon Wafer",

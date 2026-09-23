@@ -3,6 +3,7 @@ package com.novadyne;
 import com.novadyne.common.block.LitografiaBlock;
 import com.novadyne.common.block.MaceratorBlock;
 import com.novadyne.common.block.ProcessorBlock;
+import com.novadyne.common.block.TestPowerHubBlock;
 import com.novadyne.common.block.WaferPressBlock;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -21,6 +22,9 @@ public final class ModBlocks {
                     props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
     public static final DeferredBlock<LitografiaBlock> LITOGRAFIA =
             BLOCKS.registerBlock("litografia", LitografiaBlock::new,
+                    props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
+    public static final DeferredBlock<TestPowerHubBlock> TEST_POWER_HUB =
+            BLOCKS.registerBlock("test_power_hub", TestPowerHubBlock::new,
                     props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
 
     private ModBlocks() {}
