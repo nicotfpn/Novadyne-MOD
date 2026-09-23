@@ -4,6 +4,7 @@
     "novadyne:macerator",
     "novadyne:wafer_press",
     "novadyne:processor",
-    "novadyne:litografia"
+    "novadyne:litografia",
+    "novadyne:test_power_hub"
   ]
 }

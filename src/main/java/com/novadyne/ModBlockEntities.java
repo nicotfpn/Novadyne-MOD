@@ -3,6 +3,7 @@ package com.novadyne;
 import com.novadyne.common.blockentity.LitografiaBlockEntity;
 import com.novadyne.common.blockentity.MaceratorBlockEntity;
 import com.novadyne.common.blockentity.ProcessorBlockEntity;
+import com.novadyne.common.blockentity.TestPowerHubBlockEntity;
 import com.novadyne.common.blockentity.WaferPressBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,6 +26,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LitografiaBlockEntity>> LITOGRAFIA =
             BLOCK_ENTITIES.register("litografia", () ->
                     new BlockEntityType<>(LitografiaBlockEntity::new, ModBlocks.LITOGRAFIA.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TestPowerHubBlockEntity>> TEST_POWER_HUB =
+            BLOCK_ENTITIES.register("test_power_hub", () ->
+                    new BlockEntityType<>(TestPowerHubBlockEntity::new, ModBlocks.TEST_POWER_HUB.get()));
 
     private ModBlockEntities() {}
 }

@@ -14,17 +14,12 @@
 ## Teste rápido do Macerator
 
 ```mcfunction
+/give @s novadyne:test_power_hub
 /give @s novadyne:macerator
 /give @s minecraft:clay_ball 8
 ```
 
-Coloque a máquina e anote as coordenadas. Substitua X, Y e Z pelos números do bloco:
-
-```mcfunction
-/data merge block X Y Z {energy:10000L}
-```
-
-Abra a GUI e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS) e produz 1 Ceramic Powder. O comando é uma facilidade de teste; não adiciona um gerador ao survival.
+Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de distância nos eixos norte/sul e leste/oeste. O bloco fornece energia a cada máquina NovaDyne no quadrado 5 × 5 centrado nele. Abra a GUI do Macerator e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS) e produz 1 Ceramic Powder.
 
 ## Teste da limpeza
 
@@ -34,7 +29,7 @@ Abra a GUI e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS)
 /give @s minecraft:water_bucket
 ```
 
-Abasteça energia pelo mesmo comando. Coloque wafer no slot de entrada e água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
+Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer no slot de entrada e a água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
 
 ## Diagnóstico
 

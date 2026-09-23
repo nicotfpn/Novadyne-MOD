@@ -8,6 +8,7 @@ import com.novadyne.common.blockentity.AbstractMachineBlockEntity;
 import com.novadyne.common.blockentity.LitografiaBlockEntity;
 import com.novadyne.common.blockentity.MaceratorBlockEntity;
 import com.novadyne.common.blockentity.ProcessorBlockEntity;
+import com.novadyne.common.blockentity.TestPowerHubBlockEntity;
 import com.novadyne.common.blockentity.WaferPressBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -31,6 +32,7 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("energy_and_outputs", () -> CoreSmokeTests::energyAndOutputs);
         FUNCTIONS.register("production_chain", () -> CoreSmokeTests::productionChain);
         FUNCTIONS.register("lithography", () -> CoreSmokeTests::lithography);
+        FUNCTIONS.register("test_power_hub", () -> CoreSmokeTests::testPowerHub);
     }
 
     private CoreSmokeTests() {}
@@ -72,7 +74,8 @@ public final class CoreSmokeTests {
                         "Unregistered item: " + item);
             }
             check(ModBlocks.MACERATOR.get() != null && ModBlocks.WAFER_PRESS.get() != null
-                    && ModBlocks.PROCESSOR.get() != null && ModBlocks.LITOGRAFIA.get() != null,
+                    && ModBlocks.PROCESSOR.get() != null && ModBlocks.LITOGRAFIA.get() != null
+                    && ModBlocks.TEST_POWER_HUB.get() != null,
                     "Missing machine block");
         });
     }
@@ -144,6 +147,24 @@ public final class CoreSmokeTests {
             check(stack(engraver, 3).is(ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get())
                             || stack(engraver, 3).is(ModItems.PART_ELECTRONIC_FAILED_SILICON_WAFER.get()),
                     "Engraving output missing");
+        });
+    }
+
+    private static void testPowerHub(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos center = new BlockPos(1, 1, 1);
+            BlockPos edge = new BlockPos(3, 1, 3);
+            BlockPos outside = new BlockPos(4, 1, 1);
+            helper.setBlock(center, ModBlocks.TEST_POWER_HUB.get());
+            helper.setBlock(edge, ModBlocks.MACERATOR.get());
+            helper.setBlock(outside, ModBlocks.MACERATOR.get());
+            TestPowerHubBlockEntity hub = (TestPowerHubBlockEntity) helper.getBlockEntity(center);
+            MaceratorBlockEntity inside = (MaceratorBlockEntity) helper.getBlockEntity(edge);
+            MaceratorBlockEntity beyond = (MaceratorBlockEntity) helper.getBlockEntity(outside);
+            hub.tickServer();
+            check(inside.getEnergy(0) == TestPowerHubBlockEntity.FE_PER_MACHINE_PER_TICK,
+                    "Machine on the corner of the 5x5 area received no energy");
+            check(beyond.getEnergy(0) == 0, "Machine outside the 5x5 area received energy");
         });
     }
 }

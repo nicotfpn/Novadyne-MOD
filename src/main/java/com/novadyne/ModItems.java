@@ -27,6 +27,8 @@ public final class ModItems {
             ITEMS.registerSimpleBlockItem("processor", ModBlocks.PROCESSOR);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LITOGRAFIA =
             ITEMS.registerSimpleBlockItem("litografia", ModBlocks.LITOGRAFIA);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TEST_POWER_HUB =
+            ITEMS.registerSimpleBlockItem("test_power_hub", ModBlocks.TEST_POWER_HUB);
 
     // Valve upgrades
     public static final DeferredItem<Item> VALVE_TIER_1 = ITEMS.registerSimpleItem("valve_tier_1");
