@@ -1,38 +1,48 @@
-# NovaDyne
+![NovaDyne: Macerator, Wafer Press, Processor e Lithography](wiki/assets/generated/header.png)
 
-## [📖 Abrir a wiki visual](wiki/README.md)
+<h1 align="center">NovaDyne</h1>
+<p align="center">Da argila, do quartzo e do cobre até um wafer gravado.</p>
+<p align="center">
+  <a href="wiki/README.md">Wiki visual</a> ·
+  <a href="wiki/receitas.md">Receitas</a> ·
+  <a href="wiki/progressao.md">Progressão</a> ·
+  <a href="https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml">Baixar o JAR</a>
+</p>
 
-Receitas em grade 3×3, entradas e saídas das máquinas, materiais, valves e progressão.
+O NovaDyne é um mod de progressão eletrônica para **Minecraft Java 26.1.2 com NeoForge**. Comece moendo argila, prepare as camadas do circuito e passe pela litografia até chegar ao wafer final. As máquinas têm inventário e interface próprios, consomem energia FE e podem ser construídas em survival.
 
-[![Prévia da wiki: craft da Lithography](wiki/assets/generated/litografia.png)](wiki/README.md)
+## A linha de produção
 
-Mod de máquinas de progressão eletrônica para Minecraft NeoForge 26.1.2.
+| Macerator | Wafer Press | Processor | Lithography |
+| :---: | :---: | :---: | :---: |
+| [<img src="wiki/assets/generated/icon_macerator.png" width="88" alt="Macerator">](wiki/itens/macerator.md) | [<img src="wiki/assets/generated/icon_wafer_press.png" width="88" alt="Wafer Press">](wiki/itens/wafer_press.md) | [<img src="wiki/assets/generated/icon_processor.png" width="88" alt="Processor">](wiki/itens/processor.md) | [<img src="wiki/assets/generated/icon_litografia.png" width="88" alt="Lithography">](wiki/itens/litografia.md) |
+| Moe argila e recicla wafers com falha | Prensa cerâmica, cobre e silício | Monta o circuito eletrônico | Grava e limpa o wafer |
 
-## Conteúdo
+Argila vira **Ceramic Powder**; quartzo fundido vira **Pure Silicon**. A prensa prepara Base Wafer, Copper Layer e Silicon Wafer. O Processor junta as três peças, e a Lithography grava o circuito. A gravação pode falhar: as **valves** melhoram a chance de sucesso, e wafers com falha podem ser reciclados.
 
-- **Máquinas:** Macerator, Wafer Press, Processor e Litografia — blocos com
-  GUI, inventário e armazenamento de energia.
-- **Materiais:** Pure Silicon, wafers de silício, Ceramic Powder, Copper
-  Layer, Base Wafer e Stacked Electronic Circuit.
-- **Upgrades:** Válvulas de tier 1 a 7, usadas para reduzir a chance de falha
-  da Litografia.
-- **Teste em criativo:** Test Power Hub alimenta máquinas NovaDyne numa área
-  horizontal 5 × 5; não possui receita de survival.
-- **Planejado** — Plasma Cannon (arma de energia), veículos e armas. Nada
-  disso é anunciado como disponível.
+[![Entradas e saída do Processor](wiki/assets/generated/montar_circuito.png)](wiki/itens/processor.md)
 
-## Development
+Cada etapa, com ingredientes e saídas ilustrados, está na [wiki visual](wiki/README.md). O **Etched Silicon Wafer** é o fim da cadeia disponível atualmente.
 
-Built with NeoForge MDK. Java 25 required.
+## Instalar e jogar
+
+1. Instale **Minecraft Java 26.1.2**, **NeoForge 26.1.2.76** e use **Java 25**.
+2. Abra o [workflow Build](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml), escolha uma execução verde da branch `main` e baixe o artifact **`novadyne-jar`**. É preciso entrar no GitHub para baixar artifacts.
+3. Extraia o ZIP e coloque o arquivo `.jar` na pasta `mods` da instalação NeoForge.
+
+As máquinas recebem **energia FE externa**. Para montar a linha em survival, use uma fonte de FE de outro mod. O NovaDyne ainda não tem geração de energia na progressão.
+
+Quer experimentar as máquinas primeiro? Pegue o [Test Power Hub](wiki/itens/test_power_hub.md) no criativo ou com `/give @s novadyne:test_power_hub`. Coloque as máquinas no mesmo nível, até dois blocos para cada lado: ele alimenta cada uma dentro do quadrado 5 × 5. O bloco é exclusivo para testes e não tem receita de craft. Há um [guia rápido de instalação e testes](wiki/testar.md).
+
+## Desenvolvimento
+
+O projeto usa **NeoForge 26.1.2.76**, **Java 25** e o Gradle Wrapper. Para compilar e rodar os testes em um servidor Minecraft:
 
 ```bash
 ./gradlew build
+./gradlew runGameTestServer
 ```
 
-## Testar sem abrir o Minecraft no seu computador
+Os mesmos passos rodam no [GitHub Actions](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml), que também disponibiliza o JAR compilado. As receitas e páginas dos itens são mantidas na [wiki](wiki/README.md); instruções para atualizá-la ficam em [manutenção](wiki/manutencao.md).
 
-1. Abra **Actions → Build** neste repositório e selecione a execução mais recente da branch `main`.
-2. Confirme que **Build with Gradle** e **Test machines on Minecraft server** estão verdes. Os testes iniciam um servidor no GitHub e conferem registro dos itens, energia, bloqueio de saída e o processamento das quatro máquinas.
-3. Em **Artifacts**, baixe `novadyne-jar`, descompacte o ZIP e use o arquivo `.jar` em uma instalação limpa de **Minecraft 26.1.2 / NeoForge 26.1.2.76**.
-
-Para verificar a aparência e as GUIs, ainda é preciso abrir o cliente Minecraft. Em um PC com 4 GB de RAM, feche outros programas, use gráficos Fast e ajuste a memória máxima do launcher para 1536 MB ou 2 GB. Crie um mundo novo em criativo, coloque o Test Power Hub no chão e as quatro máquinas no mesmo nível, até dois blocos de distância em cada direção horizontal. Ele fornece até 1.000 FE/t por máquina e permite testar os processos pela GUI. Não tem receita de survival.
+O mod está em desenvolvimento. A [lista de materiais](wiki/materiais.md), as [receitas](wiki/receitas.md) e as [máquinas](wiki/maquinas.md) documentam o conteúdo jogável desta versão.
