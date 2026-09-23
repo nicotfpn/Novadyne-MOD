@@ -6,6 +6,8 @@
   "block.novadyne.processor": "Processor",
   "block.novadyne.litografia": "Lithography",
   "block.novadyne.test_power_hub": "Test Power Hub",
+  "block.novadyne.water_sink": "Water Sink",
+  "block.novadyne.fluid_pipe": "Fluid Pipe",
 
   "item.novadyne.pure_silicon": "Pure Silicon",
   "item.novadyne.part_silicon_wafer": "Silicon Wafer",
@@ -24,5 +26,6 @@
   "item.novadyne.valve_tier_6": "Valve (Tier 6)",
   "item.novadyne.valve_tier_7": "Valve (Tier 7)",
 
-  "tooltip.novadyne.energy": "Energy: %s / %s FE"
+  "tooltip.novadyne.energy": "Energy: %s / %s FE",
+  "gui.novadyne.water": "Water: %s / %s mB"
 }

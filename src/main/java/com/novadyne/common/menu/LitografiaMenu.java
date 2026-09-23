@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.inventory.ContainerData;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class LitografiaMenu extends AbstractMachineMenu<LitografiaBlockEntity> {
@@ -18,6 +19,18 @@ public class LitografiaMenu extends AbstractMachineMenu<LitografiaBlockEntity> {
 
     public LitografiaMenu(int containerId, Inventory playerInv, LitografiaBlockEntity blockEntity, ContainerLevelAccess access) {
         super(ModMenuTypes.LITOGRAFIA.get(), containerId, playerInv, blockEntity, access, ModBlocks.LITOGRAFIA, 4);
+        addDataSlots(new ContainerData() {
+            @Override public int get(int index) { return blockEntity.getWaterAmount(); }
+            @Override public void set(int index, int value) { clientWater = value; }
+            @Override public int getCount() { return 1; }
+        });
+    }
+
+    private int clientWater;
+
+    public int getWaterAmount() {
+        return blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide()
+                ? blockEntity.getWaterAmount() : clientWater;
     }
 
     @Override

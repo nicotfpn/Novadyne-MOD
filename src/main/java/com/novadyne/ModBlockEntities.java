@@ -5,6 +5,7 @@ import com.novadyne.common.blockentity.MaceratorBlockEntity;
 import com.novadyne.common.blockentity.ProcessorBlockEntity;
 import com.novadyne.common.blockentity.TestPowerHubBlockEntity;
 import com.novadyne.common.blockentity.WaferPressBlockEntity;
+import com.novadyne.common.blockentity.WaterSinkBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -29,6 +30,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TestPowerHubBlockEntity>> TEST_POWER_HUB =
             BLOCK_ENTITIES.register("test_power_hub", () ->
                     new BlockEntityType<>(TestPowerHubBlockEntity::new, ModBlocks.TEST_POWER_HUB.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterSinkBlockEntity>> WATER_SINK =
+            BLOCK_ENTITIES.register("water_sink", () ->
+                    new BlockEntityType<>(WaterSinkBlockEntity::new, ModBlocks.WATER_SINK.get()));
 
     private ModBlockEntities() {}
 }
