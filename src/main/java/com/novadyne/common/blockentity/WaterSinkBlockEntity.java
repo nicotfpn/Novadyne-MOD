@@ -56,8 +56,9 @@ public class WaterSinkBlockEntity extends BlockEntity {
                 ResourceHandler<FluidResource> target = level.getCapability(Capabilities.Fluid.BLOCK, next, direction.getOpposite());
                 if (target == null) continue;
                 try (Transaction tx = Transaction.openRoot()) {
-                    int moved = target.insert(WATER, WATER_PER_TICK, tx);
-                    if (moved > 0) tx.commit();
+                    int extracted = source.extract(WATER, WATER_PER_TICK, tx);
+                    int moved = target.insert(WATER, extracted, tx);
+                    if (moved == extracted && moved > 0) tx.commit();
                 }
             }
         }

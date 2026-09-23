@@ -36,6 +36,6 @@ public class LitografiaScreen extends AbstractMachineScreen<LitografiaMenu> {
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         super.extractLabels(graphics, mouseX, mouseY);
-        graphics.text(this.font, Component.translatable("gui.novadyne.water", this.menu.getWaterAmount(), 4000), 78, 67, 0xFF428CD0, false);
+        graphics.text(this.font, Component.translatable("gui.novadyne.water", this.menu.getWaterAmount()), 84, 76, 0xFF428CD0, false);
     }
 }

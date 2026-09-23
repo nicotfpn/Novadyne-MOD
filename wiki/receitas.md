@@ -8,6 +8,24 @@ As imagens mostram a disposição dos ingredientes e o resultado de cada operaç
 
 ## Bancada e fornos
 
+### Fluid Pipe
+
+![Grade ou processo para Fluid Pipe](assets/generated/fluid_pipe.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 6 | Barra de cobre |
+| 3 | Vidro |
+
+**Resultado:** 8 × [Fluid Pipe](itens/fluid_pipe.md).
+
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../src/main/resources/data/novadyne/recipe/fluid_pipe.json)
+
+</details>
+
 ### Lithography
 
 ![Grade ou processo para Lithography](assets/generated/litografia.png)
@@ -278,6 +296,27 @@ A tag `c:gems/quartz` contém quartzo vanilla neste mod e pode receber outros it
 
 </details>
 
+### Water Sink
+
+![Grade ou processo para Water Sink](assets/generated/water_sink.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 5 | Barra de ferro |
+| 1 | Balde de água |
+| 3 | Barra de cobre |
+
+**Resultado:** 1 × [Water Sink](itens/water_sink.md).
+
+O balde vazio retorna após o craft.
+
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../src/main/resources/data/novadyne/recipe/water_sink.json)
+
+</details>
+
 ## Nas máquinas
 
 ### Moer argila
@@ -426,7 +465,28 @@ A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valv
 
 **Resultado:** 1 × [Etched Silicon Wafer](itens/part_electronic_etched_silicon_wafer.md) + 1 × Balde vazio.
 
-O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. A limpeza sempre dá o mesmo resultado.
+O wafer limpo vai para o output. O balde vazio retorna ao slot de água. Se o reservatório tiver ao menos 1000 mB, a máquina usa primeiro a água encanada e preserva o balde.
+
+<details>
+<summary>Ver no código</summary>
+
+[Lógica da máquina](../src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java)
+
+</details>
+
+### Limpar wafer com água encanada
+
+![Limpar wafer com água encanada: entradas e saídas](assets/generated/limpar_wafer_cabo.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 1 | [Dirty Silicon Wafer](itens/part_electronic_dirty_silicon_wafer.md) |
+| 1 | [Water Sink](itens/water_sink.md) |
+| 1 | [Fluid Pipe](itens/fluid_pipe.md) |
+
+**Resultado:** 1 × [Etched Silicon Wafer](itens/part_electronic_etched_silicon_wafer.md).
+
+Instale o Water Sink e conecte uma linha de cabos de fluido à Lithography. Eles são infraestrutura e não são consumidos. O reservatório guarda até 4000 mB; cada wafer usa 1000 mB. A máquina ainda precisa de energia FE e espaço no output.
 
 <details>
 <summary>Ver no código</summary>

@@ -33,7 +33,7 @@ public final class ModBlocks {
                     props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
     public static final DeferredBlock<FluidPipeBlock> FLUID_PIPE =
             BLOCKS.registerBlock("fluid_pipe", FluidPipeBlock::new,
-                    props -> props.strength(1.5F, 6.0F).requiresCorrectToolForDrops());
+                    props -> props.strength(1.5F, 6.0F).noOcclusion().requiresCorrectToolForDrops());
 
     private ModBlocks() {}
 }
