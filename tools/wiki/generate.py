@@ -69,18 +69,24 @@ def cube(front, side, top):
 
 
 def pipe_icon():
-    """Small isometric sketch of the thin cross-shaped in-game pipe model."""
+    """Isometric view of the three visible axes of the six-way pipe junction."""
     texture=Image.open(ASSETS/'textures/block/fluid_pipe.png').convert('RGBA')
     dark=texture.getpixel((8,2));copper=texture.getpixel((8,5));water=texture.getpixel((8,8))
     im=Image.new('RGBA',(192,200));d=ImageDraw.Draw(im)
-    for end in ((18,59),(173,59),(96,185)):
-        d.line(((96,103),end),fill=dark,width=27)
-        d.line(((96,103),end),fill=copper,width=18)
-        d.line(((96,103),end),fill=water,width=8)
-    d.polygon(((78,88),(96,78),(115,88),(96,100)),fill=copper)
-    d.polygon(((78,88),(96,100),(96,123),(78,111)),fill=dark)
-    d.polygon(((96,100),(115,88),(115,111),(96,123)),fill=copper)
-    d.polygon(((86,91),(96,86),(105,91),(96,97)),fill=water)
+    center=(96,100)
+    arms=((18,53),(174,53),(96,184))
+    for end in arms:
+        d.line((center,end),fill=dark,width=32)
+        d.line((center,end),fill=copper,width=24)
+        d.line((center,end),fill=water,width=9)
+        # A darker collar and a bright water-facing end cap make each connection clear.
+        d.ellipse((end[0]-16,end[1]-16,end[0]+16,end[1]+16),fill=dark)
+        d.ellipse((end[0]-12,end[1]-12,end[0]+12,end[1]+12),fill=copper)
+        d.ellipse((end[0]-5,end[1]-5,end[0]+5,end[1]+5),fill=water)
+    d.polygon(((76,88),(96,77),(116,88),(116,111),(96,124),(76,111)),fill=dark)
+    d.polygon(((82,89),(96,82),(110,89),(110,107),(96,116),(82,107)),fill=copper)
+    d.polygon(((88,90),(96,86),(104,90),(104,101),(96,106),(88,101)),fill=water)
+    d.line(((88,90),(96,86),(104,90)),fill='#d9f4ef',width=3)
     return im
 
 
