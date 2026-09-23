@@ -17,6 +17,10 @@ public final class NovadyneCapabilities {
                 be -> (IStrictEnergyHandler) be);
         registerBlockEntityEnergy(event, ModBlockEntities.LITOGRAFIA.get(),
                 be -> (IStrictEnergyHandler) be);
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.LITOGRAFIA.get(),
+                (be, direction) -> be.getWaterStorage());
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.WATER_SINK.get(),
+                (be, direction) -> be.getWaterSource());
     }
 
     public static void registerBlockEntityEnergy(RegisterCapabilitiesEvent event,

@@ -10,6 +10,7 @@ import com.novadyne.common.blockentity.MaceratorBlockEntity;
 import com.novadyne.common.blockentity.ProcessorBlockEntity;
 import com.novadyne.common.blockentity.TestPowerHubBlockEntity;
 import com.novadyne.common.blockentity.WaferPressBlockEntity;
+import com.novadyne.common.blockentity.WaterSinkBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -18,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import java.util.function.Consumer;
@@ -33,6 +36,7 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("production_chain", () -> CoreSmokeTests::productionChain);
         FUNCTIONS.register("lithography", () -> CoreSmokeTests::lithography);
         FUNCTIONS.register("test_power_hub", () -> CoreSmokeTests::testPowerHub);
+        FUNCTIONS.register("water_pipe_lithography", () -> CoreSmokeTests::waterPipeLithography);
     }
 
     private CoreSmokeTests() {}
@@ -67,7 +71,8 @@ public final class CoreSmokeTests {
                     ModItems.VALVE_TIER_1.get(), ModItems.VALVE_TIER_2.get(), ModItems.VALVE_TIER_3.get(),
                     ModItems.VALVE_TIER_4.get(), ModItems.VALVE_TIER_5.get(), ModItems.VALVE_TIER_6.get(),
                     ModItems.VALVE_TIER_7.get(), ModItems.MACERATOR.get(), ModItems.WAFER_PRESS.get(),
-                    ModItems.PROCESSOR.get(), ModItems.LITOGRAFIA.get()
+                    ModItems.PROCESSOR.get(), ModItems.LITOGRAFIA.get(),
+                    ModItems.WATER_SINK.get(), ModItems.FLUID_PIPE.get()
             };
             for (Item item : items) {
                 check(BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(NovaDyneMod.MODID),
@@ -75,7 +80,8 @@ public final class CoreSmokeTests {
             }
             check(ModBlocks.MACERATOR.get() != null && ModBlocks.WAFER_PRESS.get() != null
                     && ModBlocks.PROCESSOR.get() != null && ModBlocks.LITOGRAFIA.get() != null
-                    && ModBlocks.TEST_POWER_HUB.get() != null,
+                    && ModBlocks.TEST_POWER_HUB.get() != null && ModBlocks.WATER_SINK.get() != null
+                    && ModBlocks.FLUID_PIPE.get() != null,
                     "Missing machine block");
         });
     }
@@ -165,6 +171,43 @@ public final class CoreSmokeTests {
             check(inside.getEnergy(0) == TestPowerHubBlockEntity.FE_PER_MACHINE_PER_TICK,
                     "Machine on the corner of the 5x5 area received no energy");
             check(beyond.getEnergy(0) == 0, "Machine outside the 5x5 area received energy");
+        });
+    }
+
+    private static void waterPipeLithography(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos sinkPos = new BlockPos(1, 1, 1);
+            BlockPos pipePos = new BlockPos(2, 1, 1);
+            BlockPos machinePos = new BlockPos(3, 1, 1);
+            helper.setBlock(sinkPos, ModBlocks.WATER_SINK.get());
+            helper.setBlock(pipePos, ModBlocks.FLUID_PIPE.get());
+            helper.setBlock(machinePos, ModBlocks.LITOGRAFIA.get());
+            WaterSinkBlockEntity sink = helper.getBlockEntity(sinkPos, WaterSinkBlockEntity.class);
+            LitografiaBlockEntity cleaner = helper.getBlockEntity(machinePos, LitografiaBlockEntity.class);
+            for (int i = 0; i < 4; i++) sink.tickServer();
+            check(cleaner.getWaterAmount() == LitografiaBlockEntity.WATER_PER_WAFER, "Pipe did not fill tank");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(cleaner.getWaterStorage().extract(FluidResource.of(Fluids.WATER), 1000, tx) == 0,
+                        "External consumer drained the cleaning tank");
+            }
+            cleaner.setEnergy(0, 20_000);
+            put(cleaner, 0, ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get());
+            put(cleaner, 3, Items.COBBLESTONE);
+            tick(cleaner, LitografiaBlockEntity.MAX_PROGRESS);
+            check(cleaner.getWaterAmount() == 1000 && !stack(cleaner, 0).isEmpty(),
+                    "Blocked output consumed input or water");
+            try (Transaction tx = Transaction.openRoot()) {
+                cleaner.getInventory().extract(3, ItemResource.of(Items.COBBLESTONE), 1, tx);
+                tx.commit();
+            }
+            tick(cleaner, LitografiaBlockEntity.MAX_PROGRESS);
+            check(stack(cleaner, 3).is(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()),
+                    "Piped water did not clean the wafer");
+            check(cleaner.getWaterAmount() == 0 && stack(cleaner, 1).isEmpty(),
+                    "Cleaning via tank consumed bucket or wrong water quantity");
+            cleaner.getWaterStorage().setAmount(3950);
+            sink.tickServer();
+            check(cleaner.getWaterAmount() == 4000, "Pipe could not top off a partially filled tank");
         });
     }
 }

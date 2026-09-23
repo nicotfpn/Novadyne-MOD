@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "novadyne:block/water_sink"
+    }
+  }
+}

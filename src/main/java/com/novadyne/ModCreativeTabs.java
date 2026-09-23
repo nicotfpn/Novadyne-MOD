@@ -21,6 +21,8 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.PROCESSOR.get());
                         output.accept(ModBlocks.LITOGRAFIA.get());
                         output.accept(ModBlocks.TEST_POWER_HUB.get());
+                        output.accept(ModBlocks.WATER_SINK.get());
+                        output.accept(ModBlocks.FLUID_PIPE.get());
 
                         output.accept(ModItems.PURE_SILICON.get());
                         output.accept(ModItems.CERAMIC_POWDER.get());

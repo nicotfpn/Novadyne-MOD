@@ -2,8 +2,11 @@ package com.novadyne.common.blockentity;
 
 import com.novadyne.ModBlockEntities;
 import com.novadyne.ModItems;
+import com.novadyne.common.capabilities.fluid.WaterStorage;
 import com.novadyne.common.menu.LitografiaMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +15,8 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
 
@@ -29,6 +34,12 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
     public static final long MAX_ENERGY = 20_000;
     public static final long ENERGY_PER_TICK = 40;
     public static final int MAX_PROGRESS = 120;
+    public static final int WATER_PER_WAFER = 1000;
+    public static final int WATER_CAPACITY = 4000;
+    private final WaterStorage water = new WaterStorage(WATER_CAPACITY, this::setChanged);
+
+    public WaterStorage getWaterStorage() { return water; }
+    public int getWaterAmount() { return water.amount(); }
 
     public LitografiaBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.LITOGRAFIA.get(), pos, state, INVENTORY_SIZE, MAX_ENERGY, ENERGY_PER_TICK);
@@ -53,7 +64,7 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
         }
 
         if (input.is(ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get())) {
-            if (getStackInSlot(SLOT_BUCKET).is(Items.WATER_BUCKET)) {
+            if (water.amount() >= WATER_PER_WAFER || getStackInSlot(SLOT_BUCKET).is(Items.WATER_BUCKET)) {
                 return canOutputAccept(SLOT_OUTPUT, new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()));
             }
         }
@@ -98,9 +109,34 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
 
     private void processCleaning() {
         extractItem(SLOT_INPUT, 1);
-        extractItem(SLOT_BUCKET, 1);
-        // The consumed water bucket leaves its empty bucket in the bucket slot.
-        insertResult(SLOT_BUCKET, new ItemStack(Items.BUCKET));
+        if (water.amount() >= WATER_PER_WAFER) {
+            water.consume(WATER_PER_WAFER);
+        } else {
+            extractItem(SLOT_BUCKET, 1);
+            // The consumed water bucket leaves its empty bucket in the bucket slot.
+            insertResult(SLOT_BUCKET, new ItemStack(Items.BUCKET));
+        }
         insertResult(SLOT_OUTPUT, new ItemStack(ModItems.PART_ELECTRONIC_ETCHED_SILICON_WAFER.get()));
+    }
+
+    @Override protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("water", water.amount());
+    }
+
+    @Override protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        water.setAmount(input.getIntOr("water", 0));
+    }
+
+    @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("water", water.amount());
+        return tag;
+    }
+
+    @Override public void handleUpdateTag(ValueInput input) {
+        super.handleUpdateTag(input);
+        water.setAmount(input.getIntOr("water", water.amount()));
     }
 }

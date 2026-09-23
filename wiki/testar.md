@@ -31,13 +31,23 @@ Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de dist
 
 Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer no slot de entrada e a água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
 
+## Teste da água encanada
+
+```mcfunction
+/give @s novadyne:water_sink
+/give @s novadyne:fluid_pipe 8
+/give @s novadyne:part_electronic_dirty_silicon_wafer
+```
+
+Coloque o Water Sink, uma linha contínua de cabos de fluido e a Lithography nas extremidades. O cabo encosta no sink e na máquina; curvas e subidas também funcionam. O tanque da Lithography recebe água em até 16 ticks (4.000 mB) e mostra seu volume na GUI. Com energia FE e saída livre, cada wafer consome 1.000 mB. O balde continua sendo uma alternativa; se houver água suficiente no tanque, ele não é consumido.
+
 ## Diagnóstico
 
 | Sintoma | O que conferir |
 | --- | --- |
 | Não processa | Energia suficiente, input correto e output livre |
 | Engraving ou reciclagem parou | Retire todo o conteúdo do output; ambos os resultados precisam poder caber |
-| Limpeza parou | Retire o balde vazio e coloque outro balde de água |
+| Limpeza parou | Confira o balde de água ou o tanque (mínimo de 1.000 mB); confirme cabos conectados e saída livre |
 | Não dropou ao minerar | Use picareta de pedra ou superior |
 | JAR não aparece em Artifacts | Confirme que a execução do workflow terminou com marca verde e que a conta está conectada ao GitHub |
 | Build verde, mas há erro visual | Os testes automatizados verificam o código e alguns processos; registre o erro visto no cliente |

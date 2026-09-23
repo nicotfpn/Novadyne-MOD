@@ -29,6 +29,10 @@ public final class ModItems {
             ITEMS.registerSimpleBlockItem("litografia", ModBlocks.LITOGRAFIA);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TEST_POWER_HUB =
             ITEMS.registerSimpleBlockItem("test_power_hub", ModBlocks.TEST_POWER_HUB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> WATER_SINK =
+            ITEMS.registerSimpleBlockItem("water_sink", ModBlocks.WATER_SINK);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> FLUID_PIPE =
+            ITEMS.registerSimpleBlockItem("fluid_pipe", ModBlocks.FLUID_PIPE);
 
     // Valve upgrades
     public static final DeferredItem<Item> VALVE_TIER_1 = ITEMS.registerSimpleItem("valve_tier_1");

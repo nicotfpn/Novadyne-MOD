@@ -3,7 +3,7 @@
     "ProcessorBlockEntity": "a0456cdd3021d015c4e7208dc663178013f3fc6c94c7fb5797e25000c34bb98c",
     "MaceratorBlockEntity": "d626060902a34f6355ee1ff1af318b450193e835ff360595f9fb46791a9b0d8d",
     "AbstractMachineBlockEntity": "fa1c30c7b55f83404a1fa4d4debcb3db14210e655c6d58ed373a7c49c4c738e8",
-    "LitografiaBlockEntity": "df3ab5a78c9bbb66f0891953bc8c785650dcb74ef6fb5783e205e0d2775fe703",
+    "LitografiaBlockEntity": "c3550c7412619d165a62336901ce4eb1303d43551862bd2dbee377b6ce65b487",
     "WaferPressBlockEntity": "99ee6dfc9dbcd0dc5c551414c88ea9da57168592a8ad9c0a42ce9985ba81ae2f"
   },
   "machines": {
@@ -141,12 +141,27 @@
         "novadyne:part_electronic_etched_silicon_wafer",
         "minecraft:bucket"
       ],
-      "note": "O wafer gravado vai para o output. **O balde vazio volta ao slot do balde**. Retire-o para inserir outro balde de água. A limpeza sempre dá o mesmo resultado.",
-      "short_note": "Balde vazio volta ao espaço da água, não à saída do wafer.",
+      "note": "O wafer limpo vai para o output. O balde vazio retorna ao slot de água. Se o reservatório tiver ao menos 1000 mB, a máquina usa primeiro a água encanada e preserva o balde.",
+      "short_note": "Usa 1 balde de água · balde vazio volta ao slot da água.",
       "labels": [
         "Slot de output",
         "Slot do balde"
       ]
+    },
+    {
+      "id": "limpar_wafer_cabo",
+      "machine": "litografia",
+      "title": "Limpar wafer com água encanada",
+      "inputs": [
+        "novadyne:part_electronic_dirty_silicon_wafer",
+        "novadyne:water_sink",
+        "novadyne:fluid_pipe"
+      ],
+      "outputs": [
+        "novadyne:part_electronic_etched_silicon_wafer"
+      ],
+      "note": "Instale o Water Sink e conecte uma linha de cabos de fluido à Lithography. Eles são infraestrutura e não são consumidos. O reservatório guarda até 4000 mB; cada wafer usa 1000 mB. A máquina ainda precisa de energia FE e espaço no output.",
+      "short_note": "Sink → cabo → tanque da Lithography · 1000 mB por wafer."
     }
   ]
 }

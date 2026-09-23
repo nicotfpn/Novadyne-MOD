@@ -5,6 +5,8 @@
     "novadyne:wafer_press",
     "novadyne:processor",
     "novadyne:litografia",
-    "novadyne:test_power_hub"
+    "novadyne:test_power_hub",
+    "novadyne:water_sink",
+    "novadyne:fluid_pipe"
   ]
 }

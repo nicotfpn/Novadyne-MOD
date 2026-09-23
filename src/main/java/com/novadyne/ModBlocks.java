@@ -5,6 +5,8 @@ import com.novadyne.common.block.MaceratorBlock;
 import com.novadyne.common.block.ProcessorBlock;
 import com.novadyne.common.block.TestPowerHubBlock;
 import com.novadyne.common.block.WaferPressBlock;
+import com.novadyne.common.block.WaterSinkBlock;
+import com.novadyne.common.block.FluidPipeBlock;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -26,6 +28,12 @@ public final class ModBlocks {
     public static final DeferredBlock<TestPowerHubBlock> TEST_POWER_HUB =
             BLOCKS.registerBlock("test_power_hub", TestPowerHubBlock::new,
                     props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
+    public static final DeferredBlock<WaterSinkBlock> WATER_SINK =
+            BLOCKS.registerBlock("water_sink", WaterSinkBlock::new,
+                    props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
+    public static final DeferredBlock<FluidPipeBlock> FLUID_PIPE =
+            BLOCKS.registerBlock("fluid_pipe", FluidPipeBlock::new,
+                    props -> props.strength(1.5F, 6.0F).noOcclusion().requiresCorrectToolForDrops());
 
     private ModBlocks() {}
 }

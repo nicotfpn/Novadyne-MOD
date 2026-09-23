@@ -34,6 +34,7 @@ A chance depende da Valve Tier (consulte o guia Valves na navegação). Sem valv
 ## Onde usar
 
 - Limpar wafer com água, em [Lithography](../itens/litografia.md).
+- Limpar wafer com água encanada, em [Lithography](../itens/litografia.md).
 
 <details>
 <summary>Pegar este item em criativo</summary>

@@ -22,10 +22,11 @@ BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 BG, PANEL, TEXT, MUTED, CYAN, GOLD = '#1b1e19', '#272b26', '#eeeadd', '#a9ad9c', '#bdcca8', '#d8b789'
 MACHINES = {'macerator':'MaceratorBlockEntity', 'wafer_press':'WaferPressBlockEntity', 'processor':'ProcessorBlockEntity', 'litografia':'LitografiaBlockEntity'}
 TEST_BLOCKS = {'test_power_hub'}
+UTILITY_BLOCKS = {'water_sink', 'fluid_pipe'}
 VANILLA = {'iron_ingot':'Barra de ferro','copper_ingot':'Barra de cobre','gold_ingot':'Barra de ouro','redstone':'Redstone','diamond':'Diamante','emerald':'Esmeralda','netherite_scrap':'Fragmento de netherita','netherite_ingot':'Barra de netherita','water_bucket':'Balde de água','bucket':'Balde vazio','quartz':'Quartzo','clay_ball':'Bola de argila','furnace':'Fornalha','piston':'Pistão','glass':'Vidro','redstone_block':'Bloco de redstone'}
 LANG = json.loads((ASSETS/'lang/en_us.json').read_text())
 REGISTERED = re.findall(r'registerSimple(?:Item|BlockItem)\("([^\"]+)"', (JAVA/'ModItems.java').read_text())
-MATERIALS = [s for s in REGISTERED if s not in MACHINES and s not in TEST_BLOCKS and not s.startswith('valve_')]
+MATERIALS = [s for s in REGISTERED if s not in MACHINES and s not in TEST_BLOCKS and s not in UTILITY_BLOCKS and not s.startswith('valve_')]
 CATALOG = json.loads((ROOT/'tools/wiki/processes.json').read_text())
 PROCESSES = CATALOG['processes']
 RECIPES = {p.stem:json.loads(p.read_text()) for p in sorted((DATA/'novadyne/recipe').glob('*.json'))}
@@ -72,6 +73,12 @@ def icon(item):
     if item.startswith('#'):item='minecraft:quartz'
     ns,key=item.split(':')
     def load(path):return Image.open(path).convert('RGBA')
+    if ns=='novadyne' and key in UTILITY_BLOCKS:
+        if key=='water_sink':
+            metal=load(ASSETS/'textures/block/machine_side.png')
+            return cube(metal,metal,load(WIKI/'assets/vanilla/water_bucket.png'))
+        copper=load(WIKI/'assets/vanilla/copper_ingot.png')
+        return cube(copper,copper,copper)
     if ns=='novadyne' and (key in MACHINES or key in TEST_BLOCKS):
         textures=json.loads((ASSETS/'models/block'/(key+'.json')).read_text())['textures']
         def face(k):return load(ASSETS/'textures'/(textures[k].split(':')[1]+'.png'))
@@ -260,6 +267,8 @@ def build():
             st=stats(key);s+='## Operação\n\n| Propriedade | Valor |\n| --- | --- |\n'+f'| Capacidade | {st["MAX_ENERGY"]:,} FE |\n| Consumo | {st["ENERGY_PER_TICK"]} FE/t |\n| Duração | {st["MAX_PROGRESS"]} ticks / {st["MAX_PROGRESS"]/20:g} s |\n| Energia por ciclo | {st["ENERGY_PER_TICK"]*st["MAX_PROGRESS"]:,} FE |\n'.replace(',','.')+'\nTempos consideram 20 ticks por segundo. Recebe energia, mas não fornece energia a outros blocos. Se faltar energia durante o trabalho, o progresso volta a zero.\n\n'+CATALOG['machines'][key]+'\n\n'
         elif key in TEST_BLOCKS:
             s+='**Bloco de teste em criativo.** Fornece até 1.000 FE por tick para cada máquina NovaDyne dentro de um quadrado 5 × 5, no mesmo nível do bloco. É uma fonte infinita para testar as GUIs e os processos; não possui receita de craft.\n\n'
+        elif key in UTILITY_BLOCKS:
+            s+=('**Fonte infinita de água.** Fornece água aos blocos vizinhos e por uma rede de até 128 cabos de fluido em chunks carregados. Não consome energia.\n\n' if key=='water_sink' else '**Cabo de água.** Conecta o Water Sink à entrada de fluidos da Lithography. Liga em todas as seis direções; não transporta energia.\n\n')
         elif key.startswith('valve_'):
             tier=int(key[-1]);s+=f'**Upgrade da Lithography.** Tier {tier}: {(0.70+(tier-1)*0.25/6)*100:.2f}% de sucesso e {(0.30-(tier-1)*0.25/6)*100:.2f}% de falha na gravação. A valve não é consumida.\n\n'.replace('.00%','%')
         else:s+=CATALOG['materials'][key]+'\n\n'
@@ -292,7 +301,7 @@ def build():
 3. **Faça a [Wafer Press](itens/wafer_press.md).** O craft consome um Macerator; construa outro para manter as duas máquinas. A prensa transforma Ceramic Powder em Base Wafer, cobre em Copper Layer e Pure Silicon em Silicon Wafer.
 4. **Faça o [Processor](itens/processor.md).** O craft consome uma Wafer Press. Construa outra para manter a produção dos componentes. Junte Silicon Wafer, Copper Layer e Base Wafer nos três slots, nessa ordem, para produzir Stacked Electronic Circuit.
 5. **Faça a [Lithography](itens/litografia.md).** O craft consome um Processor e um circuito; conserve materiais para reconstruir a linha. Grave o circuito: sai Dirty Silicon Wafer ou Failed Silicon Wafer.
-6. **Finalize ou recicle.** Limpe o wafer sujo com um balde de água. Recicle o wafer com falha no Macerator: 50% Copper Layer, 50% Base Wafer.
+6. **Finalize ou recicle.** Limpe o wafer sujo com um balde de água ou com água do Water Sink transportada por cabos de fluido. Recicle o wafer com falha no Macerator: 50% Copper Layer, 50% Base Wafer.
 
 Pure Silicon vem da fundição de quartzo. O wafer gravado é o final da cadeia implementada: ainda não tem aplicação posterior no mod.
 
@@ -344,13 +353,23 @@ Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de dist
 
 Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer no slot de entrada e a água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
 
+## Teste da água encanada
+
+```mcfunction
+/give @s novadyne:water_sink
+/give @s novadyne:fluid_pipe 8
+/give @s novadyne:part_electronic_dirty_silicon_wafer
+```
+
+Coloque o Water Sink, uma linha contínua de cabos de fluido e a Lithography nas extremidades. O cabo encosta no sink e na máquina; curvas e subidas também funcionam. O tanque da Lithography recebe água em até 16 ticks (4.000 mB) e mostra seu volume na GUI. Com energia FE e saída livre, cada wafer consome 1.000 mB. O balde continua sendo uma alternativa; se houver água suficiente no tanque, ele não é consumido.
+
 ## Diagnóstico
 
 | Sintoma | O que conferir |
 | --- | --- |
 | Não processa | Energia suficiente, input correto e output livre |
 | Engraving ou reciclagem parou | Retire todo o conteúdo do output; ambos os resultados precisam poder caber |
-| Limpeza parou | Retire o balde vazio e coloque outro balde de água |
+| Limpeza parou | Confira o balde de água ou o tanque (mínimo de 1.000 mB); confirme cabos conectados e saída livre |
 | Não dropou ao minerar | Use picareta de pedra ou superior |
 | JAR não aparece em Artifacts | Confirme que a execução do workflow terminou com marca verde e que a conta está conectada ao GitHub |
 | Build verde, mas há erro visual | Os testes automatizados verificam o código e alguns processos; registre o erro visto no cliente |

@@ -24,6 +24,8 @@ Argila vira **Ceramic Powder**; quartzo fundido vira **Pure Silicon**. A prensa 
 
 Cada etapa, com ingredientes e saídas ilustrados, está na [wiki visual](wiki/README.md). O **Etched Silicon Wafer** é o fim da cadeia disponível atualmente.
 
+A limpeza aceita um balde de água ou água encanada: construa um [Water Sink](wiki/itens/water_sink.md), conecte [cabos de fluido](wiki/itens/fluid_pipe.md) à Lithography e acompanhe o reservatório na GUI. Cada wafer usa 1.000 mB. O sink fornece água infinita; a máquina continua precisando de energia FE.
+
 ## Instalar e jogar
 
 1. Instale **Minecraft Java 26.1.2**, **NeoForge 26.1.2.76** e use **Java 25**.
