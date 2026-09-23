@@ -7,7 +7,7 @@
   "src/main/java/com/novadyne/common/blockentity/LitografiaBlockEntity.java": "c3550c7412619d165a62336901ce4eb1303d43551862bd2dbee377b6ce65b487",
   "src/main/java/com/novadyne/common/blockentity/MaceratorBlockEntity.java": "d626060902a34f6355ee1ff1af318b450193e835ff360595f9fb46791a9b0d8d",
   "src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java": "a0456cdd3021d015c4e7208dc663178013f3fc6c94c7fb5797e25000c34bb98c",
-  "src/main/java/com/novadyne/common/blockentity/SolarGeneratorBlockEntity.java": "e2e3367b6bba66f10b8203c198c2d7f1eb46bd1b879f360f78b6df4523f72d1e",
+  "src/main/java/com/novadyne/common/blockentity/SolarGeneratorBlockEntity.java": "ef3af54d2546b0edafd1406586a1fefb42659251dd51393d79d48f528d62e773",
   "src/main/java/com/novadyne/common/blockentity/TestPowerHubBlockEntity.java": "1239809f0b81379fe114cf6142ddf04c73e5d40c18aba9be2a3497c361d41e00",
   "src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java": "99ee6dfc9dbcd0dc5c551414c88ea9da57168592a8ad9c0a42ce9985ba81ae2f",
   "src/main/java/com/novadyne/common/blockentity/WaterSinkBlockEntity.java": "dc1c85ac8e4fe80274e1a83fd1da4770d63adb1243245e264f1881829c6017ea",

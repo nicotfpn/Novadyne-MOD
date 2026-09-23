@@ -5,6 +5,7 @@ import com.novadyne.ModBlocks;
 import com.novadyne.api.energy.Action;
 import com.novadyne.api.energy.AutomationType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SolarGeneratorBlockEntity extends AbstractGeneratorBlockEntity {
@@ -26,7 +27,8 @@ public class SolarGeneratorBlockEntity extends AbstractGeneratorBlockEntity {
     }
 
     @Override protected void generate() {
-        boolean day = Math.floorMod(level.getDayTime(), 24_000L) < 12_000L;
+        if (!(level instanceof ServerLevel server)) return;
+        boolean day = Math.floorMod(server.getDayTime(), 24_000L) < 12_000L;
         int production = outputFor(advanced, day, level.canSeeSky(worldPosition.above()));
         if (production > 0) energy.insert(production, Action.EXECUTE, AutomationType.INTERNAL);
     }
