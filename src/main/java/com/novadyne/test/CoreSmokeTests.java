@@ -205,6 +205,9 @@ public final class CoreSmokeTests {
                     "Piped water did not clean the wafer");
             check(cleaner.getWaterAmount() == 0 && stack(cleaner, 1).isEmpty(),
                     "Cleaning via tank consumed bucket or wrong water quantity");
+            cleaner.getWaterStorage().setAmount(3950);
+            sink.tickServer();
+            check(cleaner.getWaterAmount() == 4000, "Pipe could not top off a partially filled tank");
         });
     }
 }

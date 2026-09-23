@@ -7,7 +7,7 @@
   "src/main/java/com/novadyne/common/blockentity/ProcessorBlockEntity.java": "a0456cdd3021d015c4e7208dc663178013f3fc6c94c7fb5797e25000c34bb98c",
   "src/main/java/com/novadyne/common/blockentity/TestPowerHubBlockEntity.java": "1239809f0b81379fe114cf6142ddf04c73e5d40c18aba9be2a3497c361d41e00",
   "src/main/java/com/novadyne/common/blockentity/WaferPressBlockEntity.java": "99ee6dfc9dbcd0dc5c551414c88ea9da57168592a8ad9c0a42ce9985ba81ae2f",
-  "src/main/java/com/novadyne/common/blockentity/WaterSinkBlockEntity.java": "f98051f085d98e24e789a7f640897ed7b219f08feef5d4d98e71075c026c1e34",
+  "src/main/java/com/novadyne/common/blockentity/WaterSinkBlockEntity.java": "dc1c85ac8e4fe80274e1a83fd1da4770d63adb1243245e264f1881829c6017ea",
   "src/main/resources/assets/novadyne/lang/en_us.json": "2347dcfb860e3e13efa87946109bf6b45b6d3bc18f53c2b43d25582aced41e0d",
   "src/main/resources/assets/novadyne/models/block/fluid_pipe.json": "af5f33e84ace24e98cdd9c18700e27503bda63025a21d2b6ed57ee9807059f46",
   "src/main/resources/assets/novadyne/models/block/litografia.json": "742ddcc04235ef6548d354eea3e4c39a890bd617bcce77ec7665245affdd4d51",

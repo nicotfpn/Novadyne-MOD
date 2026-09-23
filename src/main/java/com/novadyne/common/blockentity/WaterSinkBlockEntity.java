@@ -52,13 +52,16 @@ public class WaterSinkBlockEntity extends BlockEntity {
                     if (visited.size() < MAX_PIPES + 1 && visited.add(next)) queue.addLast(next);
                     continue;
                 }
-                if (next.equals(worldPosition) || !targets.add(next)) continue;
+                if (next.equals(worldPosition) || targets.contains(next)) continue;
                 ResourceHandler<FluidResource> target = level.getCapability(Capabilities.Fluid.BLOCK, next, direction.getOpposite());
                 if (target == null) continue;
                 try (Transaction tx = Transaction.openRoot()) {
-                    int extracted = source.extract(WATER, WATER_PER_TICK, tx);
-                    int moved = target.insert(WATER, extracted, tx);
-                    if (moved == extracted && moved > 0) tx.commit();
+                    int moved = target.insert(WATER, WATER_PER_TICK, tx);
+                    int extracted = source.extract(WATER, moved, tx);
+                    if (moved == extracted && moved > 0) {
+                        tx.commit();
+                        targets.add(next);
+                    }
                 }
             }
         }

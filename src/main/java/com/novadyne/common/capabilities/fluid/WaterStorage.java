@@ -47,7 +47,7 @@ public final class WaterStorage extends SnapshotJournal<Integer> implements Reso
     }
     @Override public long getCapacityAsLong(int index, FluidResource resource) {
         Objects.checkIndex(index, 1);
-        return capacity;
+        return resource.isEmpty() || isValid(index, resource) ? capacity : 0;
     }
     @Override public boolean isValid(int index, FluidResource resource) {
         Objects.checkIndex(index, 1);
