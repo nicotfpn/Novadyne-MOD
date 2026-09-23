@@ -78,7 +78,7 @@
   "src/main/resources/data/novadyne/recipe/valve_tier_7.json": "8fccbc44112add31c244ca49c988b52cb8ce0ca2214e808ff07c72d1c3ab9306",
   "src/main/resources/data/novadyne/recipe/wafer_press.json": "c70863037bd0b18bce7d7e743148a15931618fc209569c26f7c4e21d40cfabec",
   "src/main/resources/data/novadyne/recipe/water_sink.json": "3b96ce514257fc415a8f60fcedac8919a3c40cecb5a7d74f38344fd032e39a6f",
-  "tools/wiki/generate.py": "bc89062ed9aa389faea6ea1b1f7fdaf15c23d145aea803767c50fbc9bfa2329b",
+  "tools/wiki/generate.py": "0fe305aa19c3cd0cb919b59f4b01730a5e22de8232eae69fdcbd6f6509b33c6b",
   "tools/wiki/processes.json": "0f8b1cd7d6b5fc79cd3f0a2b7004dfefd1e73b375885d12f21034064ff6d6152",
   "tools/wiki/requirements.txt": "41b54a6fb2918667ca47a61d73b522629d84490f3d78f0f20b21135faba10d35",
   "wiki/assets/vanilla/SOURCES.md": "e808be718b374960a340487201a4b270dfee33403be0090cc2f313992ed5ceb9",

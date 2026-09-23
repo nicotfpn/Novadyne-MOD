@@ -94,12 +94,17 @@ def icon(item):
             side=load(ASSETS/'textures/block/water_sink_side.png')
             return cube(side,side,load(ASSETS/'textures/block/water_sink_top.png'))
         if key=='fuel_generator':
-            return cube(load(WIKI/'assets/vanilla/furnace.png'),load(ASSETS/'textures/block/machine_side.png'),load(WIKI/'assets/vanilla/furnace_top.png'))
+            return cube(load(ASSETS/'textures/block/fuel_generator_front.png'),
+                        load(ASSETS/'textures/block/fuel_generator_side.png'),
+                        load(ASSETS/'textures/block/fuel_generator_top.png'))
         if key.endswith('solar_generator'):
+            if key.startswith('advanced'):
+                side=load(ASSETS/'textures/block/advanced_solar_side.png')
+                return cube(side,side,load(ASSETS/'textures/block/advanced_solar_top.png'))
             panel=Image.new('RGBA',(16,16),'#1c2639');draw=ImageDraw.Draw(panel)
             for px in (2,6,10):
-                for py in (2,7):draw.rectangle((px,py,px+3,py+4),fill='#376998' if key.startswith('basic') else '#63a8d1')
-            frame=load(ASSETS/'textures/block/machine_side.png') if key.startswith('basic') else load(WIKI/'assets/vanilla/copper_ingot.png')
+                for py in (2,7):draw.rectangle((px,py,px+3,py+4),fill='#376998')
+            frame=load(ASSETS/'textures/block/machine_side.png')
             return cube(frame,frame,panel)
         return pipe_icon()
     if ns=='novadyne' and (key in MACHINES or key in TEST_BLOCKS):
