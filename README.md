@@ -32,7 +32,7 @@ A limpeza aceita um balde de água ou água encanada: construa um [Water Sink](w
 2. Abra o [workflow Build](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows/build.yml), escolha uma execução verde da branch `main` e baixe o artifact **`novadyne-jar`**. É preciso entrar no GitHub para baixar artifacts.
 3. Extraia o ZIP e coloque o arquivo `.jar` na pasta `mods` da instalação NeoForge.
 
-As máquinas recebem **energia FE externa**. Para montar a linha em survival, use uma fonte de FE de outro mod. O NovaDyne ainda não tem geração de energia na progressão.
+As máquinas recebem **energia FE**: encoste um [Fuel Generator](wiki/itens/fuel_generator.md) na máquina para queimar combustíveis de fornalha, inclusive madeira. Há também o [Solar Generator básico](wiki/itens/basic_solar_generator.md), que produz apenas de dia, e o [avançado](wiki/itens/advanced_solar_generator.md), que produz 25% à noite. Também aceitam FE de fontes de outros mods. Por enquanto, a energia sai diretamente para blocos vizinhos; os cabos de energia virão depois.
 
 Quer experimentar as máquinas primeiro? Pegue o [Test Power Hub](wiki/itens/test_power_hub.md) no criativo ou com `/give @s novadyne:test_power_hub`. Coloque as máquinas no mesmo nível, até dois blocos para cada lado: ele alimenta cada uma dentro do quadrado 5 × 5. O bloco é exclusivo para testes e não tem receita de craft. Há um [guia rápido de instalação e testes](wiki/testar.md).
 

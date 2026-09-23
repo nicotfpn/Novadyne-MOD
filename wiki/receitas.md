@@ -8,6 +8,48 @@ As imagens mostram a disposição dos ingredientes e o resultado de cada operaç
 
 ## Bancada e fornos
 
+### Advanced Solar Generator
+
+![Grade ou processo para Advanced Solar Generator](assets/generated/advanced_solar_generator.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 2 | Vidro |
+| 1 | Diamante |
+| 2 | [Stacked Electronic Circuit](itens/stacked_electronic_circuit.md) |
+| 1 | [Basic Solar Generator](itens/basic_solar_generator.md) |
+| 2 | Barra de ferro |
+| 1 | Bloco de redstone |
+
+**Resultado:** 1 × [Advanced Solar Generator](itens/advanced_solar_generator.md).
+
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../src/main/resources/data/novadyne/recipe/advanced_solar_generator.json)
+
+</details>
+
+### Basic Solar Generator
+
+![Grade ou processo para Basic Solar Generator](assets/generated/basic_solar_generator.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 3 | Vidro |
+| 2 | Barra de cobre |
+| 1 | Redstone |
+| 3 | Barra de ferro |
+
+**Resultado:** 1 × [Basic Solar Generator](itens/basic_solar_generator.md).
+
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../src/main/resources/data/novadyne/recipe/basic_solar_generator.json)
+
+</details>
+
 ### Fluid Pipe
 
 ![Grade ou processo para Fluid Pipe](assets/generated/fluid_pipe.png)
@@ -23,6 +65,26 @@ As imagens mostram a disposição dos ingredientes e o resultado de cada operaç
 <summary>Ver no código</summary>
 
 [Receita JSON](../src/main/resources/data/novadyne/recipe/fluid_pipe.json)
+
+</details>
+
+### Fuel Generator
+
+![Grade ou processo para Fuel Generator](assets/generated/fuel_generator.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 4 | Barra de ferro |
+| 1 | Fornalha |
+| 3 | Barra de cobre |
+| 1 | Redstone |
+
+**Resultado:** 1 × [Fuel Generator](itens/fuel_generator.md).
+
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../src/main/resources/data/novadyne/recipe/fuel_generator.json)
 
 </details>
 

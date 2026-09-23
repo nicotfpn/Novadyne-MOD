@@ -31,6 +31,19 @@ Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de dist
 
 Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer no slot de entrada e a água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
 
+## Teste dos geradores
+
+```mcfunction
+/give @s novadyne:fuel_generator
+/give @s minecraft:oak_planks 16
+/give @s novadyne:basic_solar_generator
+/give @s novadyne:advanced_solar_generator
+```
+
+Encoste o Fuel Generator em uma máquina, abra a GUI e coloque tábuas no slot de combustível. Ele gera 80 FE/t e transfere até 80 FE/t para os blocos vizinhos. O slot da direita guarda recipientes vazios (por exemplo, um balde após queimar lava); se estiver ocupado, a máquina aguarda antes de consumir o combustível. Quando o armazenamento de energia enche, a queima pausa.
+
+Coloque os solares sob céu aberto: o básico gera 40 FE/t de dia e 0 à noite; o avançado, 100 FE/t de dia e 25 FE/t à noite. Clique com o botão direito para ver a energia guardada. Encoste a máquina no gerador para receber energia.
+
 ## Teste da água encanada
 
 ```mcfunction

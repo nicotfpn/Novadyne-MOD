@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "novadyne:block/advanced_solar_generator"
+    }
+  }
+}

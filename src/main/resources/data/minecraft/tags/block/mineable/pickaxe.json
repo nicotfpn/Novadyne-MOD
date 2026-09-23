@@ -7,6 +7,9 @@
     "novadyne:litografia",
     "novadyne:test_power_hub",
     "novadyne:water_sink",
-    "novadyne:fluid_pipe"
+    "novadyne:fluid_pipe",
+    "novadyne:fuel_generator",
+    "novadyne:basic_solar_generator",
+    "novadyne:advanced_solar_generator"
   ]
 }

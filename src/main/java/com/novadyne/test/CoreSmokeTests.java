@@ -11,6 +11,8 @@ import com.novadyne.common.blockentity.ProcessorBlockEntity;
 import com.novadyne.common.blockentity.TestPowerHubBlockEntity;
 import com.novadyne.common.blockentity.WaferPressBlockEntity;
 import com.novadyne.common.blockentity.WaterSinkBlockEntity;
+import com.novadyne.common.blockentity.FuelGeneratorBlockEntity;
+import com.novadyne.common.blockentity.SolarGeneratorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -37,6 +39,7 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("lithography", () -> CoreSmokeTests::lithography);
         FUNCTIONS.register("test_power_hub", () -> CoreSmokeTests::testPowerHub);
         FUNCTIONS.register("water_pipe_lithography", () -> CoreSmokeTests::waterPipeLithography);
+        FUNCTIONS.register("generators", () -> CoreSmokeTests::generators);
     }
 
     private CoreSmokeTests() {}
@@ -72,7 +75,8 @@ public final class CoreSmokeTests {
                     ModItems.VALVE_TIER_4.get(), ModItems.VALVE_TIER_5.get(), ModItems.VALVE_TIER_6.get(),
                     ModItems.VALVE_TIER_7.get(), ModItems.MACERATOR.get(), ModItems.WAFER_PRESS.get(),
                     ModItems.PROCESSOR.get(), ModItems.LITOGRAFIA.get(),
-                    ModItems.WATER_SINK.get(), ModItems.FLUID_PIPE.get()
+                    ModItems.WATER_SINK.get(), ModItems.FLUID_PIPE.get(), ModItems.FUEL_GENERATOR.get(),
+                    ModItems.BASIC_SOLAR_GENERATOR.get(), ModItems.ADVANCED_SOLAR_GENERATOR.get()
             };
             for (Item item : items) {
                 check(BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(NovaDyneMod.MODID),
@@ -81,7 +85,9 @@ public final class CoreSmokeTests {
             check(ModBlocks.MACERATOR.get() != null && ModBlocks.WAFER_PRESS.get() != null
                     && ModBlocks.PROCESSOR.get() != null && ModBlocks.LITOGRAFIA.get() != null
                     && ModBlocks.TEST_POWER_HUB.get() != null && ModBlocks.WATER_SINK.get() != null
-                    && ModBlocks.FLUID_PIPE.get() != null,
+                    && ModBlocks.FLUID_PIPE.get() != null && ModBlocks.FUEL_GENERATOR.get() != null
+                    && ModBlocks.BASIC_SOLAR_GENERATOR.get() != null
+                    && ModBlocks.ADVANCED_SOLAR_GENERATOR.get() != null,
                     "Missing machine block");
         });
     }
@@ -208,6 +214,68 @@ public final class CoreSmokeTests {
             cleaner.getWaterStorage().setAmount(3950);
             sink.tickServer();
             check(cleaner.getWaterAmount() == 4000, "Pipe could not top off a partially filled tank");
+        });
+    }
+
+    private static void generators(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos generatorPos = new BlockPos(1, 1, 1);
+            BlockPos machinePos = new BlockPos(2, 1, 1);
+            helper.setBlock(generatorPos, ModBlocks.FUEL_GENERATOR.get());
+            helper.setBlock(machinePos, ModBlocks.MACERATOR.get());
+            FuelGeneratorBlockEntity generator = helper.getBlockEntity(generatorPos, FuelGeneratorBlockEntity.class);
+            MaceratorBlockEntity machine = helper.getBlockEntity(machinePos, MaceratorBlockEntity.class);
+            try (Transaction tx = Transaction.openRoot()) {
+                check(generator.getInventory().insert(0, ItemResource.of(Items.OAK_PLANKS), 1, tx) == 1,
+                        "Wood was rejected as furnace fuel");
+                tx.commit();
+            }
+            generator.tickServer();
+            check(machine.getEnergy(0) == FuelGeneratorBlockEntity.FE_PER_TICK,
+                    "Fuel generator did not power an adjacent machine");
+            check(generator.getBurnRemaining() > 0 && generator.getEnergy(0) == 0,
+                    "Fuel generator burned without producing transferable energy");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(generator.getEnergyPort().insert(1000, tx) == 0, "Generator accepted external energy");
+            }
+
+            BlockPos pausedPos = new BlockPos(1, 1, 3);
+            helper.setBlock(pausedPos, ModBlocks.FUEL_GENERATOR.get());
+            FuelGeneratorBlockEntity paused = helper.getBlockEntity(pausedPos, FuelGeneratorBlockEntity.class);
+            paused.setEnergy(0, paused.getMaxEnergy(0));
+            try (Transaction tx = Transaction.openRoot()) {
+                paused.getInventory().insert(0, ItemResource.of(Items.OAK_PLANKS), 1, tx);
+                tx.commit();
+            }
+            paused.tickServer();
+            check(paused.getInventory().getAmountAsInt(0) == 1 && paused.getBurnRemaining() == 0,
+                    "Full generator wasted fuel");
+
+            BlockPos bucketPos = new BlockPos(3, 1, 3);
+            helper.setBlock(bucketPos, ModBlocks.FUEL_GENERATOR.get());
+            FuelGeneratorBlockEntity bucketGenerator = helper.getBlockEntity(bucketPos, FuelGeneratorBlockEntity.class);
+            try (Transaction tx = Transaction.openRoot()) {
+                check(bucketGenerator.getInventory().insert(0, ItemResource.of(Items.LAVA_BUCKET), 1, tx) == 1,
+                        "Lava bucket rejected as fuel");
+                bucketGenerator.getInventory().insert(1, ItemResource.of(Items.COBBLESTONE), 1, tx);
+                tx.commit();
+            }
+            bucketGenerator.tickServer();
+            check(bucketGenerator.getInventory().getResource(0).getItem() == Items.LAVA_BUCKET,
+                    "Generator burned lava bucket with blocked remainder slot");
+            try (Transaction tx = Transaction.openRoot()) {
+                bucketGenerator.getInventory().extract(1, ItemResource.of(Items.COBBLESTONE), 1, tx);
+                tx.commit();
+            }
+            bucketGenerator.tickServer();
+            check(bucketGenerator.getInventory().getResource(1).getItem() == Items.BUCKET,
+                    "Empty bucket was lost after burning lava");
+
+            check(SolarGeneratorBlockEntity.outputFor(false, true, true) == 40, "Basic solar daytime rate");
+            check(SolarGeneratorBlockEntity.outputFor(false, false, true) == 0, "Basic solar ran at night");
+            check(SolarGeneratorBlockEntity.outputFor(true, true, true) == 100, "Advanced solar daytime rate");
+            check(SolarGeneratorBlockEntity.outputFor(true, false, true) == 25, "Advanced solar night rate");
+            check(SolarGeneratorBlockEntity.outputFor(true, true, false) == 0, "Covered solar generated energy");
         });
     }
 }

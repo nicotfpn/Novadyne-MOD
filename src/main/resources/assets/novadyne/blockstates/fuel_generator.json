@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "novadyne:block/fuel_generator",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "novadyne:block/fuel_generator",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "novadyne:block/fuel_generator",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "novadyne:block/fuel_generator",
+      "y": 270
+    }
+  }
+}

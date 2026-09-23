@@ -4,6 +4,7 @@ import com.novadyne.common.menu.LitografiaMenu;
 import com.novadyne.common.menu.MaceratorMenu;
 import com.novadyne.common.menu.ProcessorMenu;
 import com.novadyne.common.menu.WaferPressMenu;
+import com.novadyne.common.menu.FuelGeneratorMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -25,6 +26,8 @@ public final class ModMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<LitografiaMenu>> LITOGRAFIA =
             MENU_TYPES.register("litografia", () -> IMenuTypeExtension.create(LitografiaMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<FuelGeneratorMenu>> FUEL_GENERATOR =
+            MENU_TYPES.register("fuel_generator", () -> IMenuTypeExtension.create(FuelGeneratorMenu::new));
 
     private ModMenuTypes() {}
 }

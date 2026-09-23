@@ -35,6 +35,7 @@ Coloque **Silicon Wafer, Copper Layer e Base Wafer nos três slots de entrada, d
 
 ## Onde usar
 
+- Craft de [Advanced Solar Generator](../itens/advanced_solar_generator.md).
 - Craft de [Lithography](../itens/litografia.md).
 - Gravar circuito, em [Lithography](../itens/litografia.md).
 

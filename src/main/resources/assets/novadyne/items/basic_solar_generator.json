@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "novadyne:block/basic_solar_generator"
+  }
+}
