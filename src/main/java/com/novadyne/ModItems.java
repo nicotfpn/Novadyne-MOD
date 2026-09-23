@@ -33,6 +33,12 @@ public final class ModItems {
             ITEMS.registerSimpleBlockItem("water_sink", ModBlocks.WATER_SINK);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> FLUID_PIPE =
             ITEMS.registerSimpleBlockItem("fluid_pipe", ModBlocks.FLUID_PIPE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> FUEL_GENERATOR =
+            ITEMS.registerSimpleBlockItem("fuel_generator", ModBlocks.FUEL_GENERATOR);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BASIC_SOLAR_GENERATOR =
+            ITEMS.registerSimpleBlockItem("basic_solar_generator", ModBlocks.BASIC_SOLAR_GENERATOR);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ADVANCED_SOLAR_GENERATOR =
+            ITEMS.registerSimpleBlockItem("advanced_solar_generator", ModBlocks.ADVANCED_SOLAR_GENERATOR);
 
     // Valve upgrades
     public static final DeferredItem<Item> VALVE_TIER_1 = ITEMS.registerSimpleItem("valve_tier_1");

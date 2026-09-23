@@ -17,6 +17,10 @@ Uma linha industrial que transforma argila, quartzo e cobre em circuitos e wafer
 
 **Primeira vez por aqui?** Siga a [progressão industrial](progressao.md) para montar a linha. Para consultar um craft específico, abra [todas as receitas](receitas.md).
 
+## Energia para a fábrica
+
+Comece com o [Fuel Generator](itens/fuel_generator.md): coloque combustível no slot e encoste uma máquina nele para receber FE. Depois, faça o [Basic Solar Generator](itens/basic_solar_generator.md) e avance para o [Advanced Solar Generator](itens/advanced_solar_generator.md), que funciona à noite com 25% da geração diurna. Os geradores transferem energia aos blocos vizinhos; cabos de energia são uma etapa futura.
+
 ## Explore
 
 | Guia | Conteúdo |
@@ -27,7 +31,7 @@ Uma linha industrial que transforma argila, quartzo e cobre em circuitos e wafer
 | [Valves](valves.md) | Tiers e chances da Lithography |
 | [Instalação e testes](testar.md) | Download do JAR e primeiros passos no jogo |
 
-> **Antes de começar:** as máquinas recebem energia FE de outros mods. Use uma picareta de pedra ou superior para recuperá-las.
+> **Para recuperar os blocos:** use uma picareta.
 
 ---
 

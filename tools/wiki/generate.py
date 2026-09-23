@@ -22,7 +22,7 @@ BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 BG, PANEL, TEXT, MUTED, CYAN, GOLD = '#1b1e19', '#272b26', '#eeeadd', '#a9ad9c', '#bdcca8', '#d8b789'
 MACHINES = {'macerator':'MaceratorBlockEntity', 'wafer_press':'WaferPressBlockEntity', 'processor':'ProcessorBlockEntity', 'litografia':'LitografiaBlockEntity'}
 TEST_BLOCKS = {'test_power_hub'}
-UTILITY_BLOCKS = {'water_sink', 'fluid_pipe'}
+UTILITY_BLOCKS = {'water_sink', 'fluid_pipe', 'fuel_generator', 'basic_solar_generator', 'advanced_solar_generator'}
 VANILLA = {'iron_ingot':'Barra de ferro','copper_ingot':'Barra de cobre','gold_ingot':'Barra de ouro','redstone':'Redstone','diamond':'Diamante','emerald':'Esmeralda','netherite_scrap':'Fragmento de netherita','netherite_ingot':'Barra de netherita','water_bucket':'Balde de água','bucket':'Balde vazio','quartz':'Quartzo','clay_ball':'Bola de argila','furnace':'Fornalha','piston':'Pistão','glass':'Vidro','redstone_block':'Bloco de redstone'}
 LANG = json.loads((ASSETS/'lang/en_us.json').read_text())
 REGISTERED = re.findall(r'registerSimple(?:Item|BlockItem)\("([^\"]+)"', (JAVA/'ModItems.java').read_text())
@@ -68,6 +68,22 @@ def cube(front, side, top):
     return result
 
 
+def pipe_icon():
+    """Small isometric sketch of the thin cross-shaped in-game pipe model."""
+    texture=Image.open(ASSETS/'textures/block/fluid_pipe.png').convert('RGBA')
+    dark=texture.getpixel((8,2));copper=texture.getpixel((8,5));water=texture.getpixel((8,8))
+    im=Image.new('RGBA',(192,200));d=ImageDraw.Draw(im)
+    for end in ((18,59),(173,59),(96,185)):
+        d.line(((96,103),end),fill=dark,width=27)
+        d.line(((96,103),end),fill=copper,width=18)
+        d.line(((96,103),end),fill=water,width=8)
+    d.polygon(((78,88),(96,78),(115,88),(96,100)),fill=copper)
+    d.polygon(((78,88),(96,100),(96,123),(78,111)),fill=dark)
+    d.polygon(((96,100),(115,88),(115,111),(96,123)),fill=copper)
+    d.polygon(((86,91),(96,86),(105,91),(96,97)),fill=water)
+    return im
+
+
 @lru_cache(maxsize=None)
 def icon(item):
     if item.startswith('#'):item='minecraft:quartz'
@@ -75,10 +91,17 @@ def icon(item):
     def load(path):return Image.open(path).convert('RGBA')
     if ns=='novadyne' and key in UTILITY_BLOCKS:
         if key=='water_sink':
-            metal=load(ASSETS/'textures/block/machine_side.png')
-            return cube(metal,metal,load(WIKI/'assets/vanilla/water_bucket.png'))
-        copper=load(WIKI/'assets/vanilla/copper_ingot.png')
-        return cube(copper,copper,copper)
+            side=load(ASSETS/'textures/block/water_sink_side.png')
+            return cube(side,side,load(ASSETS/'textures/block/water_sink_top.png'))
+        if key=='fuel_generator':
+            return cube(load(WIKI/'assets/vanilla/furnace.png'),load(ASSETS/'textures/block/machine_side.png'),load(WIKI/'assets/vanilla/furnace_top.png'))
+        if key.endswith('solar_generator'):
+            panel=Image.new('RGBA',(16,16),'#1c2639');draw=ImageDraw.Draw(panel)
+            for px in (2,6,10):
+                for py in (2,7):draw.rectangle((px,py,px+3,py+4),fill='#376998' if key.startswith('basic') else '#63a8d1')
+            frame=load(ASSETS/'textures/block/machine_side.png') if key.startswith('basic') else load(WIKI/'assets/vanilla/copper_ingot.png')
+            return cube(frame,frame,panel)
+        return pipe_icon()
     if ns=='novadyne' and (key in MACHINES or key in TEST_BLOCKS):
         textures=json.loads((ASSETS/'models/block'/(key+'.json')).read_text())['textures']
         def face(k):return load(ASSETS/'textures'/(textures[k].split(':')[1]+'.png'))
@@ -256,8 +279,9 @@ def build():
     im.save(OUT/'header.png')
     intro=nav()+'![As quatro máquinas do NovaDyne](assets/generated/header.png)\n\n# NovaDyne\n\nUma linha industrial que transforma argila, quartzo e cobre em circuitos e wafers. Esta wiki reúne as receitas, os processos e o caminho para montar cada máquina no survival.\n\n'
     intro+='## A linha de produção\n\n| 01 · Macerator | 02 · Wafer Press | 03 · Processor | 04 · Lithography |\n| :---: | :---: | :---: | :---: |\n| [<img src="assets/generated/icon_macerator.png" width="88" alt="Macerator">](itens/macerator.md) | [<img src="assets/generated/icon_wafer_press.png" width="88" alt="Wafer Press">](itens/wafer_press.md) | [<img src="assets/generated/icon_processor.png" width="88" alt="Processor">](itens/processor.md) | [<img src="assets/generated/icon_litografia.png" width="88" alt="Lithography">](itens/litografia.md) |\n| Moe argila e recicla wafers com falha | Prensa silício, cobre e cerâmica | Monta o circuito eletrônico | Grava e limpa o wafer |\n\n**Primeira vez por aqui?** Siga a [progressão industrial](progressao.md) para montar a linha. Para consultar um craft específico, abra [todas as receitas](receitas.md).\n\n'
+    intro+='## Energia para a fábrica\n\nComece com o [Fuel Generator](itens/fuel_generator.md): coloque combustível no slot e encoste uma máquina nele para receber FE. Depois, faça o [Basic Solar Generator](itens/basic_solar_generator.md) e avance para o [Advanced Solar Generator](itens/advanced_solar_generator.md), que funciona à noite com 25% da geração diurna. Os geradores transferem energia aos blocos vizinhos; cabos de energia são uma etapa futura.\n\n'
     intro+='## Explore\n\n| Guia | Conteúdo |\n| --- | --- |\n| [Receitas](receitas.md) | Crafts, fundição e processos ilustrados |\n| [Máquinas](maquinas.md) | Slots, energia e tempo de operação |\n| [Materiais](materiais.md) | Obtenção e usos de cada componente |\n| [Valves](valves.md) | Tiers e chances da Lithography |\n| [Instalação e testes](testar.md) | Download do JAR e primeiros passos no jogo |\n\n'
-    intro+='> **Antes de começar:** as máquinas recebem energia FE de outros mods. Use uma picareta de pedra ou superior para recuperá-las.\n\n---\n\n[Repositório](../README.md) · [Créditos das texturas vanilla](assets/vanilla/SOURCES.md) · [Contribuir com a wiki](manutencao.md)\n'
+    intro+='> **Para recuperar os blocos:** use uma picareta.\n\n---\n\n[Repositório](../README.md) · [Créditos das texturas vanilla](assets/vanilla/SOURCES.md) · [Contribuir com a wiki](manutencao.md)\n'
     write('README.md',intro)
     write('receitas.md',nav()+'# Receitas e processos\n\nAs imagens mostram a disposição dos ingredientes e o resultado de cada operação. Na bancada, siga a grade quando houver posição fixa; nas máquinas, confira as entradas e deixe espaço na saída.\n\n## Bancada e fornos\n\n'+''.join(recipe_section(k,r) for k,r in RECIPES.items())+'## Nas máquinas\n\n'+''.join(process_section(p) for p in PROCESSES))
     for key in REGISTERED:
@@ -268,7 +292,14 @@ def build():
         elif key in TEST_BLOCKS:
             s+='**Bloco de teste em criativo.** Fornece até 1.000 FE por tick para cada máquina NovaDyne dentro de um quadrado 5 × 5, no mesmo nível do bloco. É uma fonte infinita para testar as GUIs e os processos; não possui receita de craft.\n\n'
         elif key in UTILITY_BLOCKS:
-            s+=('**Fonte infinita de água.** Fornece água aos blocos vizinhos e por uma rede de até 128 cabos de fluido em chunks carregados. Não consome energia.\n\n' if key=='water_sink' else '**Cabo de água.** Conecta o Water Sink à entrada de fluidos da Lithography. Liga em todas as seis direções; não transporta energia.\n\n')
+            info={
+                'water_sink':'**Fonte infinita de água.** Fornece água aos blocos vizinhos e por uma rede de até 128 cabos de fluido em chunks carregados. Não consome energia.',
+                'fluid_pipe':'**Cabo de água.** Conecta o Water Sink à entrada de fluidos da Lithography. Liga em todas as seis direções; não transporta energia.',
+                'fuel_generator':'**Gerador a combustível.** Aceita madeira, carvão, balde de lava e outros combustíveis válidos da fornalha. Gera 80 FE/t enquanto queima; pausa ao encher o buffer de 40.000 FE. Recipientes vazios vão para o slot de saída.',
+                'basic_solar_generator':'**Gerador solar básico.** Céu aberto: 40 FE/t durante o dia e 0 FE/t à noite. Buffer de 40.000 FE.',
+                'advanced_solar_generator':'**Gerador solar avançado.** Céu aberto: 100 FE/t durante o dia e 25 FE/t à noite. Buffer de 40.000 FE.'
+            }
+            s+=info[key]+'\n\n'
         elif key.startswith('valve_'):
             tier=int(key[-1]);s+=f'**Upgrade da Lithography.** Tier {tier}: {(0.70+(tier-1)*0.25/6)*100:.2f}% de sucesso e {(0.30-(tier-1)*0.25/6)*100:.2f}% de falha na gravação. A valve não é consumida.\n\n'.replace('.00%','%')
         else:s+=CATALOG['materials'][key]+'\n\n'
@@ -296,7 +327,7 @@ def build():
     write('valves.md',valve)
     write('progressao.md',nav()+'''# Progressão industrial
 
-1. **Prepare energia externa.** As máquinas consomem FE e este mod ainda não tem gerador. Para testes em criativo, use o comando do [guia de testes](testar.md).
+1. **Prepare energia.** Construa o [Fuel Generator](itens/fuel_generator.md) para usar combustível de fornalha ou faça um [gerador solar](itens/basic_solar_generator.md). Coloque o gerador encostado na máquina. Para testes em criativo, use o comando do [guia de testes](testar.md).
 2. **Faça o [Macerator](itens/macerator.md).** Processe argila para obter Ceramic Powder.
 3. **Faça a [Wafer Press](itens/wafer_press.md).** O craft consome um Macerator; construa outro para manter as duas máquinas. A prensa transforma Ceramic Powder em Base Wafer, cobre em Copper Layer e Pure Silicon em Silicon Wafer.
 4. **Faça o [Processor](itens/processor.md).** O craft consome uma Wafer Press. Construa outra para manter a produção dos componentes. Junte Silicon Wafer, Copper Layer e Base Wafer nos três slots, nessa ordem, para produzir Stacked Electronic Circuit.
@@ -352,6 +383,19 @@ Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de dist
 ```
 
 Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer no slot de entrada e a água no slot do balde. Após 120 ticks, espere 1 Etched Silicon Wafer no output e 1 balde vazio no slot do balde.
+
+## Teste dos geradores
+
+```mcfunction
+/give @s novadyne:fuel_generator
+/give @s minecraft:oak_planks 16
+/give @s novadyne:basic_solar_generator
+/give @s novadyne:advanced_solar_generator
+```
+
+Encoste o Fuel Generator em uma máquina, abra a GUI e coloque tábuas no slot de combustível. Ele gera 80 FE/t e transfere até 80 FE/t para os blocos vizinhos. O slot da direita guarda recipientes vazios (por exemplo, um balde após queimar lava); se estiver ocupado, a máquina aguarda antes de consumir o combustível. Quando o armazenamento de energia enche, a queima pausa.
+
+Coloque os solares sob céu aberto: o básico gera 40 FE/t de dia e 0 à noite; o avançado, 100 FE/t de dia e 25 FE/t à noite. Clique com o botão direito para ver a energia guardada. Encoste a máquina no gerador para receber energia.
 
 ## Teste da água encanada
 

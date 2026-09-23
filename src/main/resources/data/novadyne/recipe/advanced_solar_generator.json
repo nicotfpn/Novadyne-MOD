@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GDG",
+    "CSC",
+    "IRI"
+  ],
+  "key": {
+    "G": "minecraft:glass",
+    "D": "minecraft:diamond",
+    "C": "novadyne:stacked_electronic_circuit",
+    "S": "novadyne:basic_solar_generator",
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone_block"
+  },
+  "result": {
+    "id": "novadyne:advanced_solar_generator",
+    "count": 1
+  }
+}

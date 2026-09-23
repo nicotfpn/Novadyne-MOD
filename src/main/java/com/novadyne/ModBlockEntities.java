@@ -6,6 +6,8 @@ import com.novadyne.common.blockentity.ProcessorBlockEntity;
 import com.novadyne.common.blockentity.TestPowerHubBlockEntity;
 import com.novadyne.common.blockentity.WaferPressBlockEntity;
 import com.novadyne.common.blockentity.WaterSinkBlockEntity;
+import com.novadyne.common.blockentity.FuelGeneratorBlockEntity;
+import com.novadyne.common.blockentity.SolarGeneratorBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -33,6 +35,15 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterSinkBlockEntity>> WATER_SINK =
             BLOCK_ENTITIES.register("water_sink", () ->
                     new BlockEntityType<>(WaterSinkBlockEntity::new, ModBlocks.WATER_SINK.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FuelGeneratorBlockEntity>> FUEL_GENERATOR =
+            BLOCK_ENTITIES.register("fuel_generator", () ->
+                    new BlockEntityType<>(FuelGeneratorBlockEntity::new, ModBlocks.FUEL_GENERATOR.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolarGeneratorBlockEntity>> BASIC_SOLAR_GENERATOR =
+            BLOCK_ENTITIES.register("basic_solar_generator", () ->
+                    new BlockEntityType<>(SolarGeneratorBlockEntity::new, ModBlocks.BASIC_SOLAR_GENERATOR.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolarGeneratorBlockEntity>> ADVANCED_SOLAR_GENERATOR =
+            BLOCK_ENTITIES.register("advanced_solar_generator", () ->
+                    new BlockEntityType<>(SolarGeneratorBlockEntity::new, ModBlocks.ADVANCED_SOLAR_GENERATOR.get()));
 
     private ModBlockEntities() {}
 }

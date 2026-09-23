@@ -21,6 +21,12 @@ public final class NovadyneCapabilities {
                 (be, direction) -> be.getWaterStorage());
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.WATER_SINK.get(),
                 (be, direction) -> be.getWaterSource());
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.FUEL_GENERATOR.get(),
+                (be, direction) -> be.getEnergyPort());
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.BASIC_SOLAR_GENERATOR.get(),
+                (be, direction) -> be.getEnergyPort());
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.ADVANCED_SOLAR_GENERATOR.get(),
+                (be, direction) -> be.getEnergyPort());
     }
 
     public static void registerBlockEntityEnergy(RegisterCapabilitiesEvent event,

@@ -4,7 +4,7 @@
 
 # Progressão industrial
 
-1. **Prepare energia externa.** As máquinas consomem FE e este mod ainda não tem gerador. Para testes em criativo, use o comando do [guia de testes](testar.md).
+1. **Prepare energia.** Construa o [Fuel Generator](itens/fuel_generator.md) para usar combustível de fornalha ou faça um [gerador solar](itens/basic_solar_generator.md). Coloque o gerador encostado na máquina. Para testes em criativo, use o comando do [guia de testes](testar.md).
 2. **Faça o [Macerator](itens/macerator.md).** Processe argila para obter Ceramic Powder.
 3. **Faça a [Wafer Press](itens/wafer_press.md).** O craft consome um Macerator; construa outro para manter as duas máquinas. A prensa transforma Ceramic Powder em Base Wafer, cobre em Copper Layer e Pure Silicon em Silicon Wafer.
 4. **Faça o [Processor](itens/processor.md).** O craft consome uma Wafer Press. Construa outra para manter a produção dos componentes. Junte Silicon Wafer, Copper Layer e Base Wafer nos três slots, nessa ordem, para produzir Stacked Electronic Circuit.

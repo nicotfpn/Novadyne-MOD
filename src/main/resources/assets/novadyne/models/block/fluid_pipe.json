@@ -1,7 +1,7 @@
 {
   "textures": {
-    "copper": "minecraft:block/copper_block",
-    "particle": "minecraft:block/copper_block"
+    "pipe": "novadyne:block/fluid_pipe",
+    "particle": "novadyne:block/fluid_pipe"
   },
   "elements": [
     {
@@ -17,22 +17,22 @@
       ],
       "faces": {
         "north": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "south": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "up": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "down": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "east": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "west": {
-          "texture": "#copper"
+          "texture": "#pipe"
         }
       }
     },
@@ -49,22 +49,22 @@
       ],
       "faces": {
         "north": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "south": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "up": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "down": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "east": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "west": {
-          "texture": "#copper"
+          "texture": "#pipe"
         }
       }
     },
@@ -81,22 +81,22 @@
       ],
       "faces": {
         "north": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "south": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "up": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "down": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "east": {
-          "texture": "#copper"
+          "texture": "#pipe"
         },
         "west": {
-          "texture": "#copper"
+          "texture": "#pipe"
         }
       }
     }
