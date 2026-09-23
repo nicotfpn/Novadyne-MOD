@@ -28,7 +28,7 @@ public class SolarGeneratorBlockEntity extends AbstractGeneratorBlockEntity {
 
     @Override protected void generate() {
         if (!(level instanceof ServerLevel server)) return;
-        boolean day = Math.floorMod(server.getLevelData().getDayTime(), 24_000L) < 12_000L;
+        boolean day = Math.floorMod(server.getDefaultClockTime(), 24_000L) < 12_000L;
         int production = outputFor(advanced, day, level.canSeeSky(worldPosition.above()));
         if (production > 0) energy.insert(production, Action.EXECUTE, AutomationType.INTERNAL);
     }
