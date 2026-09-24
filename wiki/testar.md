@@ -55,6 +55,17 @@ Coloque os solares sob céu aberto: o básico gera 40 FE/t de dia e 0 à noite; 
 
 Coloque o Water Sink, uma linha contínua de cabos de fluido e a Lithography nas extremidades. O cabo encosta no sink e na máquina; curvas e subidas também funcionam. O tanque da Lithography recebe água em até 16 ticks (4.000 mB) e mostra seu volume na GUI. Com energia FE e saída livre, cada wafer consome 1.000 mB. O balde continua sendo uma alternativa; se houver água suficiente no tanque, ele não é consumido.
 
+## Checklist visual dos conduítes
+
+1. Coloque um Fluid Pipe e um Energy Cable separados, no ar. Cada um deve mostrar só o núcleo central, sem braços.
+2. Faça `Water Sink → Fluid Pipe → Fluid Pipe → Lithography`. Cada tubo deve ter braços só na direção dos dois vizinhos. Observe a água subir na GUI da Lithography. Encoste um Macerator ao lado de um tubo: não deve surgir um braço para ele.
+3. Faça `Fuel Generator → Energy Cable → Energy Cable → Macerator`. Ponha carvão ou tábuas no gerador e abra a GUI do Macerator; a energia deve subir. Um bloco de pedra ao lado do cabo não deve receber um braço.
+4. Quebre o cabo do meio: os braços desse lado devem desaparecer e a energia deixar de chegar ao Macerator. Recoloque-o e teste curvas, subidas e descidas.
+5. Ponha um balde de lava no Fuel Generator. O balde vazio deve aparecer no slot de saída. O gerador não deve consumir outro balde se esse slot estiver ocupado por um item incompatível. Retire os itens e quebre o gerador: tudo que estava nos slots deve cair.
+6. Deixe cada Solar Generator sob céu aberto e clique com o botão direito para conferir a energia. O Basic gera de dia; o Advanced também gera à noite em taxa menor. Ligue cada um ao Macerator por Energy Cables.
+
+Use uma picareta de pedra ou superior para recolher os cabos. Verifique também se ambos parecem finos no mundo, no inventário e na barra de atalhos.
+
 ## Diagnóstico
 
 | Sintoma | O que conferir |
