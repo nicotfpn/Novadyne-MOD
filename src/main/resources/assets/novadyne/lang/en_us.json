@@ -30,5 +30,20 @@
   "gui.novadyne.water": "Water: %s mB",
   "gui.novadyne.fe_stored": "%s / %s FE",
   "message.novadyne.solar_energy": "Solar energy: %s / %s FE",
-  "block.novadyne.energy_cable": "Energy Cable"
+  "block.novadyne.energy_cable": "Energy Cable",
+  "gui.novadyne.side.front": "Front",
+  "gui.novadyne.side.back": "Back",
+  "gui.novadyne.side.left": "Left",
+  "gui.novadyne.side.right": "Right",
+  "gui.novadyne.side.top": "Top",
+  "gui.novadyne.side.bottom": "Bottom",
+  "gui.novadyne.mode.off": "Off",
+  "gui.novadyne.mode.input": "Input",
+  "gui.novadyne.mode.output": "Output",
+  "gui.novadyne.auto_output": "Auto output",
+  "gui.novadyne.on": "On",
+  "gui.novadyne.item_sides": "Item sides",
+  "gui.novadyne.off": "Off",
+  "gui.novadyne.mode.both": "Input/output",
+  "gui.novadyne.side_hint": "Click to change"
 }

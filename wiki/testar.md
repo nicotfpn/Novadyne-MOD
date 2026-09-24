@@ -21,6 +21,10 @@
 
 Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de distância nos eixos norte/sul e leste/oeste. O bloco fornece energia a cada máquina NovaDyne no quadrado 5 × 5 centrado nele. Abra a GUI do Macerator e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS) e produz 1 Ceramic Powder.
 
+## Teste visual dos lados
+
+Coloque um baú à direita de um Macerator que esteja virado para o norte. Na GUI, observe o mapa colorido: branco = nenhum, azul = entrada, laranja = saída, roxo = entrada/saída. Passe o mouse para ler a direção. Clique em **Dir.** até ficar laranja, ligue **Auto saída** e processe argila. O Ceramic Powder deve entrar no baú sem retirar a argila do input. Desligue Auto saída: o produto deve ficar na máquina. Troque o quadradinho para roxo: o lado deve permitir alimentar a máquina e retirar produtos. Quebre e recoloque a máquina apenas depois de conferir que a configuração persiste ao fechar e abrir a GUI e ao sair e entrar no mundo.
+
 ## Teste da limpeza
 
 ```mcfunction

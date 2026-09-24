@@ -5,7 +5,9 @@ import com.novadyne.api.energy.AutomationType;
 import com.novadyne.api.energy.IStrictEnergyHandler;
 import com.novadyne.api.machine.IUpgradeableMachine;
 import com.novadyne.common.capabilities.energy.MachineEnergyContainer;
+import com.novadyne.common.capabilities.item.SidedMachineItemHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -26,6 +28,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +38,12 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     protected static final String TAG_VALVE_TIER = "valve_tier";
     protected static final String TAG_PROGRESS = "progress";
     protected static final String TAG_INVENTORY = "inventory";
+    public static final int ITEM_DISABLED = 0;
+    public static final int ITEM_INPUT = 1;
+    public static final int ITEM_OUTPUT = 2;
+    public static final int ITEM_BOTH = 3;
+    private static final String TAG_AUTO_OUTPUT = "auto_output";
+    private static final String TAG_SIDE_PREFIX = "item_side_";
 
     @Override
     public Component getDisplayName() {
@@ -49,6 +59,40 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     protected int valveTier = 0;
     protected int progress = 0;
     protected int maxProgress = 100;
+    // Front, back, left, right, top, bottom, relative to the machine's front.
+    private final int[] itemModes = {ITEM_INPUT, ITEM_INPUT, ITEM_INPUT, ITEM_INPUT, ITEM_INPUT, ITEM_OUTPUT};
+    private boolean autoOutput;
+
+    public int getItemMode(int relativeSide) { return itemModes[relativeSide]; }
+    public boolean isAutoOutput() { return autoOutput; }
+    public int getItemOutputSlot() { return getOutputSlotIndex(); }
+    protected abstract int getOutputSlotIndex();
+
+    public void cycleItemMode(int relativeSide) {
+        if (relativeSide < 0 || relativeSide >= itemModes.length || level == null || level.isClientSide()) return;
+        itemModes[relativeSide] = (itemModes[relativeSide] + 1) % 4;
+        level.invalidateCapabilities(worldPosition);
+        sync();
+    }
+
+    public void toggleAutoOutput() {
+        if (level == null || level.isClientSide()) return;
+        autoOutput = !autoOutput;
+        sync();
+    }
+
+    public int getItemMode(Direction worldSide) {
+        Direction front = getBlockState().getValue(com.novadyne.common.block.AbstractMachineBlock.FACING);
+        if (worldSide == front) return itemModes[0];
+        if (worldSide == front.getOpposite()) return itemModes[1];
+        if (worldSide == front.getCounterClockWise()) return itemModes[2];
+        if (worldSide == front.getClockWise()) return itemModes[3];
+        return itemModes[worldSide == Direction.UP ? 4 : 5];
+    }
+
+    public @Nullable ResourceHandler<ItemResource> getSidedItemHandler(@Nullable Direction side) {
+        return side == null || getItemMode(side) == ITEM_DISABLED ? null : new SidedMachineItemHandler(this, side);
+    }
 
     public AbstractMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
                                        int inventorySlots, long maxEnergy, long energyPerTick) {
@@ -189,6 +233,7 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
     protected abstract void processComplete();
 
     public void tickServer() {
+        if (autoOutput && level != null) pushOutput();
         if (!hasEnoughEnergy()) {
             if (progress != 0) resetProgress();
             return;
@@ -200,6 +245,28 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
         } else {
             if (progress != 0) {
                 resetProgress();
+            }
+        }
+    }
+
+    private void pushOutput() {
+        int outputSlot = getOutputSlotIndex();
+        ItemResource resource = inventory.getResource(outputSlot);
+        if (resource.isEmpty()) return;
+        for (Direction side : Direction.values()) {
+            if (getItemMode(side) != ITEM_OUTPUT && getItemMode(side) != ITEM_BOTH) continue;
+            ResourceHandler<ItemResource> target = level.getCapability(Capabilities.Item.BLOCK,
+                    worldPosition.relative(side), side.getOpposite());
+            if (target == null) continue;
+            for (int index = 0; index < target.size(); index++) {
+                int available = Math.min(64, inventory.getAmountAsInt(outputSlot));
+                if (available == 0) return;
+                try (Transaction tx = Transaction.openRoot()) {
+                    int accepted = target.insert(index, resource, available, tx);
+                    if (accepted > 0 && inventory.extract(outputSlot, resource, accepted, tx) == accepted) {
+                        tx.commit();
+                    }
+                }
             }
         }
     }
@@ -241,6 +308,8 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
         output.putInt(TAG_VALVE_TIER, valveTier);
         output.putInt(TAG_PROGRESS, progress);
         inventory.serialize(output.child(TAG_INVENTORY));
+        output.putBoolean(TAG_AUTO_OUTPUT, autoOutput);
+        for (int i = 0; i < itemModes.length; i++) output.putInt(TAG_SIDE_PREFIX + i, itemModes[i]);
     }
 
     @Override
@@ -251,6 +320,11 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
         progress = input.getIntOr(TAG_PROGRESS, 0);
         ValueInput invInput = input.childOrEmpty(TAG_INVENTORY);
         inventory.deserialize(invInput);
+        autoOutput = input.getBooleanOr(TAG_AUTO_OUTPUT, false);
+        for (int i = 0; i < itemModes.length; i++) {
+            int value = input.getIntOr(TAG_SIDE_PREFIX + i, itemModes[i]);
+            itemModes[i] = Math.clamp(value, ITEM_DISABLED, ITEM_BOTH);
+        }
     }
 
     @Override

@@ -278,7 +278,8 @@ def process_section(p,prefix=''):
 
 def build():
     OUT.mkdir(parents=True,exist_ok=True)
-    for f in OUT.glob('*.png'):f.unlink()
+    for f in OUT.glob('*.png'):
+        if f.name != 'novadyne-logo.png': f.unlink()
     for key,r in RECIPES.items():render_recipe(key,r)
     for p in PROCESSES:render_process(p)
     for key in REGISTERED:
@@ -333,7 +334,7 @@ def build():
     def index(keys):
         return '| | Item |\n| --- | --- |\n'+''.join(f'| <img src="assets/generated/icon_{k}.png" width="48" alt="{name("novadyne:"+k)}"> | {link("novadyne:"+k)} |\n' for k in keys)
     write('materiais.md',nav()+'# Materiais\n\nClique no nome para ver obtenção, craft e usos.\n\n'+index(MATERIALS))
-    write('maquinas.md',nav()+'# Máquinas\n\nDo primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. Abra uma página para ver o craft, os slots e os processos disponíveis.\n\n'+index(MACHINES)+'\n## Energia para testar\n\n'+index(TEST_BLOCKS)+'\nO [Test Power Hub](itens/test_power_hub.md) alimenta as máquinas em um quadrado 5 × 5 no mesmo nível. Está disponível no criativo e facilita os [testes no jogo](testar.md).\n\n## Regras comuns\n\n- Todas recebem energia FE externa. Para testar em criativo, use o Test Power Hub.\n- Use picareta de pedra ou superior para recuperar os blocos. Os itens do inventário caem ao quebrá-los.\n- O processamento aguarda quando a saída está cheia ou contém outro item.\n- As valves alteram a chance de sucesso na Lithography. Nas demais máquinas, o slot de valve não oferece bônus.\n')
+    write('maquinas.md',nav()+'# Máquinas\n\nDo primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. Abra uma página para ver o craft, os slots e os processos disponíveis.\n\n'+index(MACHINES)+'\n## Energia para testar\n\n'+index(TEST_BLOCKS)+'\nO [Test Power Hub](itens/test_power_hub.md) alimenta as máquinas em um quadrado 5 × 5 no mesmo nível. Está disponível no criativo e facilita os [testes no jogo](testar.md).\n\n## Configurar os lados dos itens\n\nAbra a máquina e clique nos seis quadradinhos à direita. Eles representam frente, trás, esquerda, direita, cima e baixo em relação à frente da máquina. **Branco** desliga o lado; **azul** aceita itens nos slots de entrada; **laranja** permite extrair o produto; **roxo** aceita entrada e permite extrair o produto. Passe o cursor sobre um quadradinho para identificar o lado e a função.\n\n**Auto saída** ligada empurra itens do slot de produto para um inventário adjacente configurado como saída ou entrada/saída. Desligada, outros blocos ainda podem extrair pelo lado configurado. Por padrão, os lados aceitam entrada, exceto a parte inferior, que é saída; auto saída começa desligada. Energia e água continuam aceitas pelos lados atuais.\n\n## Regras comuns\n\n- Todas recebem energia FE externa. Para testar em criativo, use o Test Power Hub.\n- Use picareta de pedra ou superior para recuperar os blocos. Os itens do inventário caem ao quebrá-los.\n- O processamento aguarda quando a saída está cheia ou contém outro item.\n- As valves alteram a chance de sucesso na Lithography. Nas demais máquinas, o slot de valve não oferece bônus.\n')
     valve=nav()+'# Valves · tiers e chance de sucesso\n\nColoque uma valve no slot dedicado da Lithography. Ela permanece no slot após o processo. As porcentagens abaixo são do **engraving**; a limpeza com água não usa RNG.\n\n| Valve | Sucesso | Falha |\n| --- | ---: | ---: |\n| Sem valve | 70% | 30% |\n'
     for tier in range(1,8):valve+=f'| {link("novadyne:valve_tier_"+str(tier))} | {(0.70+(tier-1)*0.25/6)*100:.2f}% | {(0.30-(tier-1)*0.25/6)*100:.2f}% |\n'
     valve+='\nChance por tentativa, não uma garantia em lotes pequenos. Os sete crafts são sem posição fixa.\n\n'+index(['valve_tier_'+str(i) for i in range(1,8)])
@@ -386,6 +387,10 @@ flowchart TD
 ```
 
 Coloque o Test Power Hub e o Macerator no mesmo nível, até dois blocos de distância nos eixos norte/sul e leste/oeste. O bloco fornece energia a cada máquina NovaDyne no quadrado 5 × 5 centrado nele. Abra a GUI do Macerator e coloque argila no input. Cada unidade leva 120 ticks (6 s a 20 TPS) e produz 1 Ceramic Powder.
+
+## Teste visual dos lados
+
+Coloque um baú à direita de um Macerator que esteja virado para o norte. Na GUI, observe o mapa colorido: branco = nenhum, azul = entrada, laranja = saída, roxo = entrada/saída. Passe o mouse para ler a direção. Clique em **Dir.** até ficar laranja, ligue **Auto saída** e processe argila. O Ceramic Powder deve entrar no baú sem retirar a argila do input. Desligue Auto saída: o produto deve ficar na máquina. Troque o quadradinho para roxo: o lado deve permitir alimentar a máquina e retirar produtos. Quebre e recoloque a máquina apenas depois de conferir que a configuração persiste ao fechar e abrir a GUI e ao sair e entrar no mundo.
 
 ## Teste da limpeza
 
@@ -449,7 +454,7 @@ O [workflow de build](https://github.com/nicotfpn/Novadyne-MOD/actions/workflows
 ''')
     write('manutencao.md',nav()+'''# Como manter esta wiki
 
-A wiki é um conjunto de páginas Markdown neste repositório, acessível pelo GitHub sem publicar um site. O índice é `wiki/README.md`.
+A documentação nasce em `wiki/` neste repositório e é publicada na Wiki nativa do GitHub pelo workflow **Publish GitHub Wiki**. O índice fonte é `wiki/README.md` e vira a página Home.
 
 ## Atualizar
 

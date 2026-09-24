@@ -4,7 +4,7 @@
 
 # Como manter esta wiki
 
-A wiki é um conjunto de páginas Markdown neste repositório, acessível pelo GitHub sem publicar um site. O índice é `wiki/README.md`.
+A documentação nasce em `wiki/` neste repositório e é publicada na Wiki nativa do GitHub pelo workflow **Publish GitHub Wiki**. O índice fonte é `wiki/README.md` e vira a página Home.
 
 ## Atualizar
 
