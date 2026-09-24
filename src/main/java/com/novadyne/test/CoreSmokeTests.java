@@ -16,6 +16,7 @@ import com.novadyne.common.blockentity.SolarGeneratorBlockEntity;
 import com.novadyne.common.block.DirectionalConduitBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Item;
@@ -26,6 +27,7 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.function.Consumer;
 
@@ -46,6 +48,7 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("energy_cable_network", () -> CoreSmokeTests::energyCableNetwork);
         FUNCTIONS.register("fuel_inventory_edge_cases", () -> CoreSmokeTests::fuelInventoryEdgeCases);
         FUNCTIONS.register("solar_cable_network", () -> CoreSmokeTests::solarCableNetwork);
+        FUNCTIONS.register("external_cable_insert", () -> CoreSmokeTests::externalCableInsert);
     }
 
     private CoreSmokeTests() {}
@@ -370,6 +373,37 @@ public final class CoreSmokeTests {
             solar.tickServer();
             check(machine.getEnergy(0) == SolarGeneratorBlockEntity.BASIC_FE_PER_TICK,
                     "Solar generator did not feed the machine through a cable");
+        });
+    }
+
+    private static void externalCableInsert(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos sourcePos = new BlockPos(1, 1, 1);
+            BlockPos cablePos = new BlockPos(2, 1, 1);
+            BlockPos nextPos = new BlockPos(3, 1, 1);
+            BlockPos machinePos = new BlockPos(4, 1, 1);
+            helper.setBlock(sourcePos, ModBlocks.FUEL_GENERATOR.get());
+            helper.setBlock(cablePos, ModBlocks.ENERGY_CABLE.get());
+            helper.setBlock(nextPos, ModBlocks.ENERGY_CABLE.get());
+            helper.setBlock(machinePos, ModBlocks.MACERATOR.get());
+            FuelGeneratorBlockEntity source = helper.getBlockEntity(sourcePos, FuelGeneratorBlockEntity.class);
+            MaceratorBlockEntity machine = helper.getBlockEntity(machinePos, MaceratorBlockEntity.class);
+            var port = source.getLevel().getCapability(Capabilities.Energy.BLOCK,
+                    source.getBlockPos().relative(Direction.EAST), Direction.WEST);
+            check(port != null, "Cable does not expose NeoForge energy capability");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(port.insert(75, tx) == 75, "Cable rejected an external energy push");
+            }
+            check(machine.getEnergy(0) == 0, "Uncommitted cable transfer changed energy");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(port.insert(75, tx) == 75, "Cable rejected committed push");
+                tx.commit();
+            }
+            check(machine.getEnergy(0) == 75 && source.getEnergy(0) == 0,
+                    "Cable push duplicated energy or fed its sender");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(port.extract(50, tx) == 0, "Cable exposed consumer energy for extraction");
+            }
         });
     }
 }

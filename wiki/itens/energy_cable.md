@@ -8,7 +8,7 @@
 
 `novadyne:energy_cable`
 
-**Cabo de energia.** Fuel Generator ou gerador solar → Energy Cable → Macerator ou outra máquina com capability de energia. Os braços apontam apenas para outros cabos e blocos com capability de energia. Cada gerador percorre até 128 cabos carregados e transfere até sua taxa de geração por tick, com transações.
+**Cabo de energia.** Fuel Generator ou gerador solar → Energy Cable → Macerator ou outra máquina com capability de energia. Os braços apontam apenas para outros cabos e blocos com capability de energia. Cada gerador percorre até 128 cabos carregados e transfere até sua taxa de geração por tick. Blocos externos também podem inserir FE pela capability do cabo. Cada transferência respeita a transação de origem.
 
 ## Como obter
 

@@ -18,4 +18,16 @@ public class EnergyCableBlock extends DirectionalConduitBlock {
         return level.getBlockState(neighbor).is(ModBlocks.ENERGY_CABLE.get())
                 || level.getCapability(Capabilities.Energy.BLOCK, neighbor, side) != null;
     }
+
+    @Override protected void onPlace(net.minecraft.world.level.block.state.BlockState state, Level level,
+            BlockPos pos, net.minecraft.world.level.block.state.BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (!oldState.is(this)) level.invalidateCapabilities(pos);
+    }
+
+    @Override protected void onRemove(net.minecraft.world.level.block.state.BlockState state, Level level,
+            BlockPos pos, net.minecraft.world.level.block.state.BlockState newState, boolean movedByPiston) {
+        if (!newState.is(this)) level.invalidateCapabilities(pos);
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
 }
