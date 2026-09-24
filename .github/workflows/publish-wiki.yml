@@ -1,6 +1,12 @@
 name: Publish GitHub Wiki
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'wiki/**'
+      - 'tools/wiki/export_github_wiki.py'
+      - '.github/workflows/publish-wiki.yml'
   workflow_dispatch:
 
 permissions:
