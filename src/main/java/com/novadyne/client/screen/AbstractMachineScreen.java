@@ -31,9 +31,8 @@ public abstract class AbstractMachineScreen<T extends AbstractMachineMenu<?>> ex
     private static final int[] SIDE_Y = {48, 98, 48, 48, 23, 73};
 
     public AbstractMachineScreen(T menu, Inventory playerInventory, Component title, Identifier texture) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, 310, 166);
         this.texture = texture;
-        this.imageWidth = 310;
     }
 
     @Override
