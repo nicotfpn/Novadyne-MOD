@@ -25,9 +25,4 @@ public class EnergyCableBlock extends DirectionalConduitBlock {
         if (!oldState.is(this)) level.invalidateCapabilities(pos);
     }
 
-    @Override protected void onRemove(net.minecraft.world.level.block.state.BlockState state, Level level,
-            BlockPos pos, net.minecraft.world.level.block.state.BlockState newState, boolean movedByPiston) {
-        if (!newState.is(this)) level.invalidateCapabilities(pos);
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
 }
