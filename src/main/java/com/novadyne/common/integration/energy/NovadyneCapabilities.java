@@ -18,6 +18,14 @@ public final class NovadyneCapabilities {
                 be -> (IStrictEnergyHandler) be);
         registerBlockEntityEnergy(event, ModBlockEntities.LITOGRAFIA.get(),
                 be -> (IStrictEnergyHandler) be);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.MACERATOR.get(),
+                (be, direction) -> be.getSidedItemHandler(direction));
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.WAFER_PRESS.get(),
+                (be, direction) -> be.getSidedItemHandler(direction));
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.PROCESSOR.get(),
+                (be, direction) -> be.getSidedItemHandler(direction));
+        event.registerBlockEntity(Capabilities.Item.BLOCK, ModBlockEntities.LITOGRAFIA.get(),
+                (be, direction) -> be.getSidedItemHandler(direction));
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.LITOGRAFIA.get(),
                 (be, direction) -> be.getWaterStorage());
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, ModBlockEntities.WATER_SINK.get(),

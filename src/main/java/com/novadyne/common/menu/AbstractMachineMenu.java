@@ -23,6 +23,8 @@ public abstract class AbstractMachineMenu<T extends AbstractMachineBlockEntity> 
     private int clientMaxProgress;
     private long clientEnergy;
     private long clientMaxEnergy;
+    private final int[] clientItemModes = new int[6];
+    private boolean clientAutoOutput;
 
     protected AbstractMachineMenu(MenuType<?> menuType, int containerId, Inventory playerInv, T blockEntity, ContainerLevelAccess access, Supplier<? extends Block> blockSupplier, int machineSlotsCount) {
         super(menuType, containerId);
@@ -60,6 +62,8 @@ public abstract class AbstractMachineMenu<T extends AbstractMachineBlockEntity> 
                     case 3 -> (int) (blockEntity.getEnergy(0) & 0xFFFFFFFFL);
                     case 4 -> (int) (blockEntity.getMaxEnergy(0) >> 32);
                     case 5 -> (int) (blockEntity.getMaxEnergy(0) & 0xFFFFFFFFL);
+                    case 12 -> blockEntity.isAutoOutput() ? 1 : 0;
+                    case 6, 7, 8, 9, 10, 11 -> blockEntity.getItemMode(index - 6);
                     default -> 0;
                 };
             }
@@ -73,12 +77,14 @@ public abstract class AbstractMachineMenu<T extends AbstractMachineBlockEntity> 
                     case 3 -> clientEnergy = (clientEnergy & 0xFFFFFFFF00000000L) | (value & 0xFFFFFFFFL);
                     case 4 -> clientMaxEnergy = ((long) value << 32) | (clientMaxEnergy & 0xFFFFFFFFL);
                     case 5 -> clientMaxEnergy = (clientMaxEnergy & 0xFFFFFFFF00000000L) | (value & 0xFFFFFFFFL);
+                    case 12 -> clientAutoOutput = value != 0;
+                    case 6, 7, 8, 9, 10, 11 -> clientItemModes[index - 6] = value;
                 }
             }
 
             @Override
             public int getCount() {
-                return 6;
+                return 13;
             }
         });
     }
@@ -101,6 +107,25 @@ public abstract class AbstractMachineMenu<T extends AbstractMachineBlockEntity> 
 
     public long getMaxEnergy() {
         return blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide() ? blockEntity.getMaxEnergy(0) : clientMaxEnergy;
+    }
+
+    public int getItemMode(int side) {
+        return blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide()
+                ? blockEntity.getItemMode(side) : clientItemModes[side];
+    }
+
+    public boolean isAutoOutput() {
+        return blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide()
+                ? blockEntity.isAutoOutput() : clientAutoOutput;
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (id < 0 || id > 6 || !stillValid(player)) return false;
+        if (id == 6) blockEntity.toggleAutoOutput();
+        else blockEntity.cycleItemMode(id);
+        broadcastChanges();
+        return true;
     }
 
     @Override

@@ -1,10 +1,10 @@
 {
   "source_sha256": {
-    "ProcessorBlockEntity": "a0456cdd3021d015c4e7208dc663178013f3fc6c94c7fb5797e25000c34bb98c",
-    "MaceratorBlockEntity": "d626060902a34f6355ee1ff1af318b450193e835ff360595f9fb46791a9b0d8d",
-    "AbstractMachineBlockEntity": "fa1c30c7b55f83404a1fa4d4debcb3db14210e655c6d58ed373a7c49c4c738e8",
-    "LitografiaBlockEntity": "c3550c7412619d165a62336901ce4eb1303d43551862bd2dbee377b6ce65b487",
-    "WaferPressBlockEntity": "99ee6dfc9dbcd0dc5c551414c88ea9da57168592a8ad9c0a42ce9985ba81ae2f"
+    "ProcessorBlockEntity": "0c42453f615d8d0a0525ae75344e4b07050e0a95f8577b46df824f4b1be34d0d",
+    "MaceratorBlockEntity": "e9fd99d1ae0cf68fd17782b9819355db93c26f98950c71624e14e78127ace5a8",
+    "AbstractMachineBlockEntity": "215b87f3d8ef034e22d87fe599ad4adb40dd0afd4da382f1276a33cafb003d7e",
+    "LitografiaBlockEntity": "0be5ad9d9b697087a6e536df552da1b9d94f7893004c12873f56d22f5737263c",
+    "WaferPressBlockEntity": "2f5614cd48febcec66b607454e170528a60c903c1f5636f44413a3c1868a2a50"
   },
   "machines": {
     "macerator": "**Slots:** entrada, saída e valve. A valve ainda não aplica bônus nesta máquina. A reciclagem exige output vazio.",

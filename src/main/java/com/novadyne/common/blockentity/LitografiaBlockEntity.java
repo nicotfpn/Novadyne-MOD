@@ -51,6 +51,8 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
         return SLOT_VALVE;
     }
 
+    @Override protected int getOutputSlotIndex() { return SLOT_OUTPUT; }
+
     @Override
     protected boolean canProcess() {
         updateValveTierFromSlot();

@@ -21,6 +21,12 @@ Do primeiro material ao wafer gravado, cada máquina prepara a próxima etapa. A
 
 O [Test Power Hub](itens/test_power_hub.md) alimenta as máquinas em um quadrado 5 × 5 no mesmo nível. Está disponível no criativo e facilita os [testes no jogo](testar.md).
 
+## Configurar os lados dos itens
+
+Abra a máquina e clique nos seis quadradinhos à direita. Eles representam frente, trás, esquerda, direita, cima e baixo em relação à frente da máquina. **Branco** desliga o lado; **azul** aceita itens nos slots de entrada; **laranja** permite extrair o produto; **roxo** aceita entrada e permite extrair o produto. Passe o cursor sobre um quadradinho para identificar o lado e a função.
+
+**Auto saída** ligada empurra itens do slot de produto para um inventário adjacente configurado como saída ou entrada/saída. Desligada, outros blocos ainda podem extrair pelo lado configurado. Por padrão, os lados aceitam entrada, exceto a parte inferior, que é saída; auto saída começa desligada. Energia e água continuam aceitas pelos lados atuais.
+
 ## Regras comuns
 
 - Todas recebem energia FE externa. Para testar em criativo, use o Test Power Hub.

@@ -49,6 +49,7 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("fuel_inventory_edge_cases", () -> CoreSmokeTests::fuelInventoryEdgeCases);
         FUNCTIONS.register("solar_cable_network", () -> CoreSmokeTests::solarCableNetwork);
         FUNCTIONS.register("external_cable_insert", () -> CoreSmokeTests::externalCableInsert);
+        FUNCTIONS.register("machine_item_sides", () -> CoreSmokeTests::machineItemSides);
     }
 
     private CoreSmokeTests() {}
@@ -404,6 +405,59 @@ public final class CoreSmokeTests {
             try (Transaction tx = Transaction.openRoot()) {
                 check(port.extract(50, tx) == 0, "Cable exposed consumer energy for extraction");
             }
+        });
+    }
+
+    private static void machineItemSides(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos pos = new BlockPos(1, 1, 1);
+            BlockPos chestPos = pos.relative(Direction.EAST);
+            helper.setBlock(pos, ModBlocks.MACERATOR.get());
+            helper.setBlock(chestPos, Blocks.CHEST);
+            MaceratorBlockEntity machine = helper.getBlockEntity(pos, MaceratorBlockEntity.class);
+            var front = machine.getLevel().getCapability(Capabilities.Item.BLOCK, machine.getBlockPos(), Direction.NORTH);
+            check(front != null, "Front input capability missing");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(front.insert(0, ItemResource.of(Items.CLAY_BALL), 2, tx) == 2, "Front refused input");
+                check(front.insert(1, ItemResource.of(Items.COBBLESTONE), 1, tx) == 0, "Output accepted input");
+                check(front.extract(0, ItemResource.of(Items.CLAY_BALL), 1, tx) == 0, "Input side allowed extraction");
+                tx.commit();
+            }
+            check(stack(machine, 0).getCount() == 2, "Input amount changed");
+            // Right is east when the machine faces north.
+            machine.cycleItemMode(3);
+            var right = machine.getLevel().getCapability(Capabilities.Item.BLOCK, machine.getBlockPos(), Direction.EAST);
+            check(right != null, "Configured output capability missing");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(right.insert(0, ItemResource.of(Items.CLAY_BALL), 1, tx) == 0, "Output side allowed input");
+                check(right.extract(0, ItemResource.of(Items.CLAY_BALL), 1, tx) == 0, "Output side exposed an input slot");
+            }
+            put(machine, 1, Items.COBBLESTONE);
+            machine.tickServer();
+            check(stack(machine, 1).is(Items.COBBLESTONE), "Auto output started while off");
+            machine.toggleAutoOutput();
+            machine.tickServer();
+            check(stack(machine, 1).isEmpty(), "Auto output did not empty output slot");
+            var chest = machine.getLevel().getCapability(Capabilities.Item.BLOCK, machine.getBlockPos().relative(Direction.EAST), Direction.WEST);
+            check(chest != null && chest.getResource(0).getItem() == Items.COBBLESTONE,
+                    "Neighbor chest did not receive output");
+            machine.cycleItemMode(3);
+            check(machine.getItemMode(Direction.EAST) == AbstractMachineBlockEntity.ITEM_BOTH,
+                    "Purple mode did not enable input/output");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(right.insert(0, ItemResource.of(Items.CLAY_BALL), 1, tx) == 1,
+                        "Input/output side refused input");
+                tx.commit();
+            }
+            put(machine, 1, Items.DIRT);
+            try (Transaction tx = Transaction.openRoot()) {
+                check(right.extract(1, ItemResource.of(Items.DIRT), 1, tx) == 1,
+                        "Input/output side refused output extraction");
+                tx.commit();
+            }
+            machine.cycleItemMode(3);
+            check(machine.getLevel().getCapability(Capabilities.Item.BLOCK, machine.getBlockPos(), Direction.EAST) == null,
+                    "Disabled side still exposed an item capability");
         });
     }
 }
