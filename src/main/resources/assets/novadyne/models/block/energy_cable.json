@@ -1,7 +1,7 @@
 {
   "textures": {
-    "conduit": "novadyne:block/fluid_pipe",
-    "particle": "novadyne:block/fluid_pipe"
+    "conduit": "novadyne:block/energy_cable",
+    "particle": "novadyne:block/energy_cable"
   },
   "elements": [
     {

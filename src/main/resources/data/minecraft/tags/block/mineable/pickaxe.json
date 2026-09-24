@@ -10,6 +10,7 @@
     "novadyne:fluid_pipe",
     "novadyne:fuel_generator",
     "novadyne:basic_solar_generator",
-    "novadyne:advanced_solar_generator"
+    "novadyne:advanced_solar_generator",
+    "novadyne:energy_cable"
   ]
 }

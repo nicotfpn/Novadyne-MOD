@@ -7,6 +7,7 @@ import com.novadyne.common.block.TestPowerHubBlock;
 import com.novadyne.common.block.WaferPressBlock;
 import com.novadyne.common.block.WaterSinkBlock;
 import com.novadyne.common.block.FluidPipeBlock;
+import com.novadyne.common.block.EnergyCableBlock;
 import com.novadyne.common.block.FuelGeneratorBlock;
 import com.novadyne.common.block.SolarGeneratorBlock;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -35,6 +36,9 @@ public final class ModBlocks {
                     props -> props.strength(3.5F, 6.0F).requiresCorrectToolForDrops());
     public static final DeferredBlock<FluidPipeBlock> FLUID_PIPE =
             BLOCKS.registerBlock("fluid_pipe", FluidPipeBlock::new,
+                    props -> props.strength(1.5F, 6.0F).noOcclusion().requiresCorrectToolForDrops());
+    public static final DeferredBlock<EnergyCableBlock> ENERGY_CABLE =
+            BLOCKS.registerBlock("energy_cable", EnergyCableBlock::new,
                     props -> props.strength(1.5F, 6.0F).noOcclusion().requiresCorrectToolForDrops());
     public static final DeferredBlock<FuelGeneratorBlock> FUEL_GENERATOR =
             BLOCKS.registerBlock("fuel_generator", FuelGeneratorBlock::new,

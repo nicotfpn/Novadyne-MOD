@@ -8,16 +8,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
-/** Passive water conduit. The sink discovers loaded, connected pipes when pumping. */
-public class FluidPipeBlock extends DirectionalConduitBlock {
-    public static final MapCodec<FluidPipeBlock> CODEC = simpleCodec(FluidPipeBlock::new);
-
-    public FluidPipeBlock(Properties properties) { super(properties); }
-
+/** Passive cable; generators push energy along a bounded network. */
+public class EnergyCableBlock extends DirectionalConduitBlock {
+    public static final MapCodec<EnergyCableBlock> CODEC = simpleCodec(EnergyCableBlock::new);
+    public EnergyCableBlock(Properties properties) { super(properties); }
     @Override protected MapCodec<? extends Block> codec() { return CODEC; }
 
     @Override protected boolean connectsTo(Level level, BlockPos neighbor, Direction side) {
-        return level.getBlockState(neighbor).is(ModBlocks.FLUID_PIPE.get())
-                || level.getCapability(Capabilities.Fluid.BLOCK, neighbor, side) != null;
+        return level.getBlockState(neighbor).is(ModBlocks.ENERGY_CABLE.get())
+                || level.getCapability(Capabilities.Energy.BLOCK, neighbor, side) != null;
     }
 }

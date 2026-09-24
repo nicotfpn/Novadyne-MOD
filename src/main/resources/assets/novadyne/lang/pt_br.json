@@ -1,6 +1,5 @@
 {
   "itemGroup.novadyne.novadyne": "NovaDyne",
-
   "block.novadyne.macerator": "Macerador",
   "block.novadyne.wafer_press": "Prensa de Wafers",
   "block.novadyne.processor": "Processador",
@@ -11,7 +10,6 @@
   "block.novadyne.fuel_generator": "Gerador a Combustível",
   "block.novadyne.basic_solar_generator": "Gerador Solar Básico",
   "block.novadyne.advanced_solar_generator": "Gerador Solar Avançado",
-
   "item.novadyne.pure_silicon": "Silício Puro",
   "item.novadyne.part_silicon_wafer": "Wafer de Silício",
   "item.novadyne.ceramic_powder": "Pó de Cerâmica",
@@ -28,9 +26,9 @@
   "item.novadyne.valve_tier_5": "Válvula (nível 5)",
   "item.novadyne.valve_tier_6": "Válvula (nível 6)",
   "item.novadyne.valve_tier_7": "Válvula (nível 7)",
-
   "tooltip.novadyne.energy": "Energia: %s / %s FE",
   "gui.novadyne.water": "Água: %s mB",
   "gui.novadyne.fe_stored": "%s / %s FE",
-  "message.novadyne.solar_energy": "Energia solar: %s / %s FE"
+  "message.novadyne.solar_energy": "Energia solar: %s / %s FE",
+  "block.novadyne.energy_cable": "Cabo de Energia"
 }

@@ -22,7 +22,7 @@ BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 BG, PANEL, TEXT, MUTED, CYAN, GOLD = '#1b1e19', '#272b26', '#eeeadd', '#a9ad9c', '#bdcca8', '#d8b789'
 MACHINES = {'macerator':'MaceratorBlockEntity', 'wafer_press':'WaferPressBlockEntity', 'processor':'ProcessorBlockEntity', 'litografia':'LitografiaBlockEntity'}
 TEST_BLOCKS = {'test_power_hub'}
-UTILITY_BLOCKS = {'water_sink', 'fluid_pipe', 'fuel_generator', 'basic_solar_generator', 'advanced_solar_generator'}
+UTILITY_BLOCKS = {'water_sink', 'fluid_pipe', 'energy_cable', 'fuel_generator', 'basic_solar_generator', 'advanced_solar_generator'}
 VANILLA = {'iron_ingot':'Barra de ferro','copper_ingot':'Barra de cobre','gold_ingot':'Barra de ouro','redstone':'Redstone','diamond':'Diamante','emerald':'Esmeralda','netherite_scrap':'Fragmento de netherita','netherite_ingot':'Barra de netherita','water_bucket':'Balde de água','bucket':'Balde vazio','quartz':'Quartzo','clay_ball':'Bola de argila','furnace':'Fornalha','piston':'Pistão','glass':'Vidro','redstone_block':'Bloco de redstone'}
 LANG = json.loads((ASSETS/'lang/en_us.json').read_text())
 REGISTERED = re.findall(r'registerSimple(?:Item|BlockItem)\("([^\"]+)"', (JAVA/'ModItems.java').read_text())
@@ -112,7 +112,8 @@ def icon(item):
                 for py in (2,7):draw.rectangle((px,py,px+3,py+4),fill='#376998')
             frame=load(ASSETS/'textures/block/machine_side.png')
             return cube(frame,frame,panel)
-        return pipe_icon()
+        # Show the actual pixel texture from the mod, not an outdated six-way junction drawing.
+        return load(ASSETS/f'textures/block/{key}.png').resize((192,192),Image.Resampling.NEAREST)
     if ns=='novadyne' and (key in MACHINES or key in TEST_BLOCKS):
         textures=json.loads((ASSETS/'models/block'/(key+'.json')).read_text())['textures']
         def face(k):return load(ASSETS/'textures'/(textures[k].split(':')[1]+'.png'))
@@ -290,7 +291,7 @@ def build():
     im.save(OUT/'header.png')
     intro=nav()+'![As quatro máquinas do NovaDyne](assets/generated/header.png)\n\n# NovaDyne\n\nUma linha industrial que transforma argila, quartzo e cobre em circuitos e wafers. Esta wiki reúne as receitas, os processos e o caminho para montar cada máquina no survival.\n\n'
     intro+='## A linha de produção\n\n| 01 · Macerator | 02 · Wafer Press | 03 · Processor | 04 · Lithography |\n| :---: | :---: | :---: | :---: |\n| [<img src="assets/generated/icon_macerator.png" width="88" alt="Macerator">](itens/macerator.md) | [<img src="assets/generated/icon_wafer_press.png" width="88" alt="Wafer Press">](itens/wafer_press.md) | [<img src="assets/generated/icon_processor.png" width="88" alt="Processor">](itens/processor.md) | [<img src="assets/generated/icon_litografia.png" width="88" alt="Lithography">](itens/litografia.md) |\n| Moe argila e recicla wafers com falha | Prensa silício, cobre e cerâmica | Monta o circuito eletrônico | Grava e limpa o wafer |\n\n**Primeira vez por aqui?** Siga a [progressão industrial](progressao.md) para montar a linha. Para consultar um craft específico, abra [todas as receitas](receitas.md).\n\n'
-    intro+='## Energia para a fábrica\n\nComece com o [Fuel Generator](itens/fuel_generator.md): coloque combustível no slot e encoste uma máquina nele para receber FE. Depois, faça o [Basic Solar Generator](itens/basic_solar_generator.md) e avance para o [Advanced Solar Generator](itens/advanced_solar_generator.md), que funciona à noite com 25% da geração diurna. Os geradores transferem energia aos blocos vizinhos; cabos de energia são uma etapa futura.\n\n'
+    intro+='## Energia para a fábrica\n\nComece com o [Fuel Generator](itens/fuel_generator.md): coloque combustível no slot e ligue uma máquina diretamente ou com [Energy Cables](itens/energy_cable.md). Depois, faça o [Basic Solar Generator](itens/basic_solar_generator.md) e avance para o [Advanced Solar Generator](itens/advanced_solar_generator.md), que funciona à noite com 25% da geração diurna.\n\n'
     intro+='## Explore\n\n| Guia | Conteúdo |\n| --- | --- |\n| [Receitas](receitas.md) | Crafts, fundição e processos ilustrados |\n| [Máquinas](maquinas.md) | Slots, energia e tempo de operação |\n| [Materiais](materiais.md) | Obtenção e usos de cada componente |\n| [Valves](valves.md) | Tiers e chances da Lithography |\n| [Instalação e testes](testar.md) | Download do JAR e primeiros passos no jogo |\n\n'
     intro+='> **Para recuperar os blocos:** use uma picareta.\n\n---\n\n[Repositório](../README.md) · [Créditos das texturas vanilla](assets/vanilla/SOURCES.md) · [Contribuir com a wiki](manutencao.md)\n'
     write('README.md',intro)
@@ -305,7 +306,8 @@ def build():
         elif key in UTILITY_BLOCKS:
             info={
                 'water_sink':'**Fonte infinita de água.** Fornece água aos blocos vizinhos e por uma rede de até 128 cabos de fluido em chunks carregados. Não consome energia.',
-                'fluid_pipe':'**Cabo de água.** Conecta o Water Sink à entrada de fluidos da Lithography. Liga em todas as seis direções; não transporta energia.',
+                'fluid_pipe':'**Tubo de água.** Water Sink → Fluid Pipe → Lithography. O núcleo aparece isolado; os braços aparecem apenas ao lado de outros pipes ou de blocos com capability de fluido na face adjacente. Suporta curvas e até 128 pipes por sink.',
+                'energy_cable':'**Cabo de energia.** Fuel Generator ou gerador solar → Energy Cable → Macerator ou outra máquina com capability de energia. Os braços apontam apenas para outros cabos e blocos com capability de energia. Cada gerador percorre até 128 cabos carregados e transfere até sua taxa de geração por tick, com transações.',
                 'fuel_generator':'**Gerador a combustível.** Aceita madeira, carvão, balde de lava e outros combustíveis válidos da fornalha. Gera 80 FE/t enquanto queima; pausa ao encher o buffer de 40.000 FE. Recipientes vazios vão para o slot de saída.',
                 'basic_solar_generator':'**Gerador solar básico.** Céu aberto: 40 FE/t durante o dia e 0 FE/t à noite. Buffer de 40.000 FE.',
                 'advanced_solar_generator':'**Gerador solar avançado.** Céu aberto: 100 FE/t durante o dia e 25 FE/t à noite. Buffer de 40.000 FE.'
@@ -399,14 +401,15 @@ Coloque a Lithography no mesmo quadrado 5 × 5 do Test Power Hub. Insira o wafer
 
 ```mcfunction
 /give @s novadyne:fuel_generator
+/give @s novadyne:energy_cable 8
 /give @s minecraft:oak_planks 16
 /give @s novadyne:basic_solar_generator
 /give @s novadyne:advanced_solar_generator
 ```
 
-Encoste o Fuel Generator em uma máquina, abra a GUI e coloque tábuas no slot de combustível. Ele gera 80 FE/t e transfere até 80 FE/t para os blocos vizinhos. O slot da direita guarda recipientes vazios (por exemplo, um balde após queimar lava); se estiver ocupado, a máquina aguarda antes de consumir o combustível. Quando o armazenamento de energia enche, a queima pausa.
+Ligue o Fuel Generator à máquina com até 128 Energy Cables, abra a GUI e coloque tábuas no slot de combustível. Ele gera 80 FE/t e transfere até 80 FE/t para a rede. O slot da direita guarda recipientes vazios (por exemplo, um balde após queimar lava); se estiver ocupado, a máquina aguarda antes de consumir o combustível. Quando o armazenamento de energia enche, a queima pausa.
 
-Coloque os solares sob céu aberto: o básico gera 40 FE/t de dia e 0 à noite; o avançado, 100 FE/t de dia e 25 FE/t à noite. Clique com o botão direito para ver a energia guardada. Encoste a máquina no gerador para receber energia.
+Coloque os solares sob céu aberto: o básico gera 40 FE/t de dia e 0 à noite; o avançado, 100 FE/t de dia e 25 FE/t à noite. Clique com o botão direito para ver a energia guardada. Conecte a máquina diretamente ou por Energy Cables.
 
 ## Teste da água encanada
 
