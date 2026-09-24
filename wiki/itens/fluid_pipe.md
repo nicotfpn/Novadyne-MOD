@@ -8,7 +8,7 @@
 
 `novadyne:fluid_pipe`
 
-**Cabo de água.** Conecta o Water Sink à entrada de fluidos da Lithography. Liga em todas as seis direções; não transporta energia.
+**Tubo de água.** Water Sink → Fluid Pipe → Lithography. O núcleo aparece isolado; os braços aparecem apenas ao lado de outros pipes ou de blocos com capability de fluido na face adjacente. Suporta curvas e até 128 pipes por sink.
 
 ## Como obter
 

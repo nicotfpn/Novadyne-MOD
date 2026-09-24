@@ -50,6 +50,25 @@ As imagens mostram a disposição dos ingredientes e o resultado de cada operaç
 
 </details>
 
+### Energy Cable
+
+![Grade ou processo para Energy Cable](assets/generated/energy_cable.png)
+
+| Quantidade | Ingrediente |
+| ---: | --- |
+| 4 | Barra de ferro |
+| 4 | Redstone |
+| 1 | [Copper Layer](itens/part_copper_layer.md) |
+
+**Resultado:** 8 × [Energy Cable](itens/energy_cable.md).
+
+<details>
+<summary>Ver no código</summary>
+
+[Receita JSON](../src/main/resources/data/novadyne/recipe/energy_cable.json)
+
+</details>
+
 ### Fluid Pipe
 
 ![Grade ou processo para Fluid Pipe](assets/generated/fluid_pipe.png)

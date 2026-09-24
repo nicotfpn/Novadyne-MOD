@@ -1,28 +1,23 @@
 package com.novadyne.common.block;
 
 import com.mojang.serialization.MapCodec;
+import com.novadyne.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 /** Passive water conduit. The sink discovers loaded, connected pipes when pumping. */
-public class FluidPipeBlock extends Block {
+public class FluidPipeBlock extends DirectionalConduitBlock {
     public static final MapCodec<FluidPipeBlock> CODEC = simpleCodec(FluidPipeBlock::new);
-    private static final VoxelShape SHAPE = Shapes.or(
-            box(0, 6, 6, 16, 10, 10),
-            box(6, 0, 6, 10, 16, 10),
-            box(6, 6, 0, 10, 10, 16));
 
     public FluidPipeBlock(Properties properties) { super(properties); }
 
     @Override protected MapCodec<? extends Block> codec() { return CODEC; }
 
-    @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+    @Override protected boolean connectsTo(Level level, BlockPos neighbor, Direction side) {
+        return level.getBlockState(neighbor).is(ModBlocks.FLUID_PIPE.get())
+                || level.getCapability(Capabilities.Fluid.BLOCK, neighbor, side) != null;
     }
 }

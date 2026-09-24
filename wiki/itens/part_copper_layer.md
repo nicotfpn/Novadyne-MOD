@@ -52,6 +52,7 @@ Conversão 1:1. A saída deve estar vazia ou conter o mesmo resultado com espaç
 
 ## Onde usar
 
+- Craft de [Energy Cable](../itens/energy_cable.md).
 - Craft de [Processor](../itens/processor.md).
 - Montar circuito eletrônico, em [Processor](../itens/processor.md).
 

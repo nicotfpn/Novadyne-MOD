@@ -1,6 +1,7 @@
 package com.novadyne.common.integration.energy;
 
 import com.novadyne.ModBlockEntities;
+import com.novadyne.ModBlocks;
 import com.novadyne.api.energy.IStrictEnergyHandler;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -27,6 +28,9 @@ public final class NovadyneCapabilities {
                 (be, direction) -> be.getEnergyPort());
         event.registerBlockEntity(Capabilities.Energy.BLOCK, ModBlockEntities.ADVANCED_SOLAR_GENERATOR.get(),
                 (be, direction) -> be.getEnergyPort());
+        event.registerBlock(Capabilities.Energy.BLOCK,
+                (level, pos, state, be, direction) -> new EnergyCablePort(level, pos, direction),
+                ModBlocks.ENERGY_CABLE.get());
     }
 
     public static void registerBlockEntityEnergy(RegisterCapabilitiesEvent event,

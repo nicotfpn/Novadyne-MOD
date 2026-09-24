@@ -23,6 +23,7 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.TEST_POWER_HUB.get());
                         output.accept(ModBlocks.WATER_SINK.get());
                         output.accept(ModBlocks.FLUID_PIPE.get());
+                        output.accept(ModBlocks.ENERGY_CABLE.get());
                         output.accept(ModBlocks.FUEL_GENERATOR.get());
                         output.accept(ModBlocks.BASIC_SOLAR_GENERATOR.get());
                         output.accept(ModBlocks.ADVANCED_SOLAR_GENERATOR.get());

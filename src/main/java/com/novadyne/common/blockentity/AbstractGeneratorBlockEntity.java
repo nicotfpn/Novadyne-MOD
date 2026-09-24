@@ -3,8 +3,12 @@ package com.novadyne.common.blockentity;
 import com.novadyne.api.energy.Action;
 import com.novadyne.api.energy.AutomationType;
 import com.novadyne.api.energy.IStrictEnergyHandler;
+import com.novadyne.ModBlocks;
 import com.novadyne.common.capabilities.energy.BasicEnergyContainer;
 import com.novadyne.common.integration.energy.NovadyneEnergyHandler;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,19 +43,32 @@ public abstract class AbstractGeneratorBlockEntity extends BlockEntity implement
 
     private void pushEnergy() {
         int remaining = maxTransferPerTick();
-        for (Direction direction : Direction.values()) {
-            if (remaining == 0 || energy.isEmpty()) break;
-            BlockPos neighbor = worldPosition.relative(direction);
-            if (!level.hasChunkAt(neighbor)) continue;
-            EnergyHandler target = level.getCapability(Capabilities.Energy.BLOCK, neighbor, direction.getOpposite());
-            if (target == null) continue;
-            try (Transaction tx = Transaction.openRoot()) {
-                int offered = (int) Math.min(remaining, energy.getEnergy());
-                int inserted = target.insert(offered, tx);
-                int extracted = energyPort.extract(inserted, tx);
-                if (inserted > 0 && extracted == inserted) {
-                    tx.commit();
-                    remaining -= inserted;
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        Set<BlockPos> visited = new HashSet<>();
+        Set<BlockPos> supplied = new HashSet<>();
+        queue.add(worldPosition);
+        visited.add(worldPosition);
+        while (!queue.isEmpty() && remaining > 0 && !energy.isEmpty()) {
+            BlockPos current = queue.removeFirst();
+            for (Direction direction : Direction.values()) {
+                BlockPos neighbor = current.relative(direction);
+                if (!level.hasChunkAt(neighbor)) continue;
+                if (level.getBlockState(neighbor).is(ModBlocks.ENERGY_CABLE.get())) {
+                    if (visited.size() < 129 && visited.add(neighbor)) queue.addLast(neighbor);
+                    continue;
+                }
+                if (neighbor.equals(worldPosition) || supplied.contains(neighbor)) continue;
+                EnergyHandler target = level.getCapability(Capabilities.Energy.BLOCK, neighbor, direction.getOpposite());
+                if (target == null) continue;
+                try (Transaction tx = Transaction.openRoot()) {
+                    int offered = (int) Math.min(remaining, energy.getEnergy());
+                    int inserted = target.insert(offered, tx);
+                    int extracted = energyPort.extract(inserted, tx);
+                    if (inserted > 0 && extracted == inserted) {
+                        tx.commit();
+                        remaining -= inserted;
+                        supplied.add(neighbor);
+                    }
                 }
             }
         }

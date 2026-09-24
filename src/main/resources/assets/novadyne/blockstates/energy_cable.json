@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "novadyne:block/fluid_pipe_center"
+        "model": "novadyne:block/energy_cable_center"
       }
     },
     {
@@ -10,7 +10,7 @@
         "down": "true"
       },
       "apply": {
-        "model": "novadyne:block/fluid_pipe_down"
+        "model": "novadyne:block/energy_cable_down"
       }
     },
     {
@@ -18,7 +18,7 @@
         "up": "true"
       },
       "apply": {
-        "model": "novadyne:block/fluid_pipe_up"
+        "model": "novadyne:block/energy_cable_up"
       }
     },
     {
@@ -26,7 +26,7 @@
         "north": "true"
       },
       "apply": {
-        "model": "novadyne:block/fluid_pipe_north"
+        "model": "novadyne:block/energy_cable_north"
       }
     },
     {
@@ -34,7 +34,7 @@
         "south": "true"
       },
       "apply": {
-        "model": "novadyne:block/fluid_pipe_south"
+        "model": "novadyne:block/energy_cable_south"
       }
     },
     {
@@ -42,7 +42,7 @@
         "west": "true"
       },
       "apply": {
-        "model": "novadyne:block/fluid_pipe_west"
+        "model": "novadyne:block/energy_cable_west"
       }
     },
     {
@@ -50,7 +50,7 @@
         "east": "true"
       },
       "apply": {
-        "model": "novadyne:block/fluid_pipe_east"
+        "model": "novadyne:block/energy_cable_east"
       }
     }
   ]

@@ -13,7 +13,10 @@ import com.novadyne.common.blockentity.WaferPressBlockEntity;
 import com.novadyne.common.blockentity.WaterSinkBlockEntity;
 import com.novadyne.common.blockentity.FuelGeneratorBlockEntity;
 import com.novadyne.common.blockentity.SolarGeneratorBlockEntity;
+import com.novadyne.common.block.DirectionalConduitBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Item;
@@ -24,6 +27,7 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.function.Consumer;
 
@@ -40,6 +44,11 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("test_power_hub", () -> CoreSmokeTests::testPowerHub);
         FUNCTIONS.register("water_pipe_lithography", () -> CoreSmokeTests::waterPipeLithography);
         FUNCTIONS.register("generators", () -> CoreSmokeTests::generators);
+        FUNCTIONS.register("conduit_connections", () -> CoreSmokeTests::conduitConnections);
+        FUNCTIONS.register("energy_cable_network", () -> CoreSmokeTests::energyCableNetwork);
+        FUNCTIONS.register("fuel_inventory_edge_cases", () -> CoreSmokeTests::fuelInventoryEdgeCases);
+        FUNCTIONS.register("solar_cable_network", () -> CoreSmokeTests::solarCableNetwork);
+        FUNCTIONS.register("external_cable_insert", () -> CoreSmokeTests::externalCableInsert);
     }
 
     private CoreSmokeTests() {}
@@ -75,7 +84,7 @@ public final class CoreSmokeTests {
                     ModItems.VALVE_TIER_4.get(), ModItems.VALVE_TIER_5.get(), ModItems.VALVE_TIER_6.get(),
                     ModItems.VALVE_TIER_7.get(), ModItems.MACERATOR.get(), ModItems.WAFER_PRESS.get(),
                     ModItems.PROCESSOR.get(), ModItems.LITOGRAFIA.get(),
-                    ModItems.WATER_SINK.get(), ModItems.FLUID_PIPE.get(), ModItems.FUEL_GENERATOR.get(),
+                    ModItems.WATER_SINK.get(), ModItems.FLUID_PIPE.get(), ModItems.ENERGY_CABLE.get(), ModItems.FUEL_GENERATOR.get(),
                     ModItems.BASIC_SOLAR_GENERATOR.get(), ModItems.ADVANCED_SOLAR_GENERATOR.get()
             };
             for (Item item : items) {
@@ -85,7 +94,7 @@ public final class CoreSmokeTests {
             check(ModBlocks.MACERATOR.get() != null && ModBlocks.WAFER_PRESS.get() != null
                     && ModBlocks.PROCESSOR.get() != null && ModBlocks.LITOGRAFIA.get() != null
                     && ModBlocks.TEST_POWER_HUB.get() != null && ModBlocks.WATER_SINK.get() != null
-                    && ModBlocks.FLUID_PIPE.get() != null && ModBlocks.FUEL_GENERATOR.get() != null
+                    && ModBlocks.FLUID_PIPE.get() != null && ModBlocks.ENERGY_CABLE.get() != null && ModBlocks.FUEL_GENERATOR.get() != null
                     && ModBlocks.BASIC_SOLAR_GENERATOR.get() != null
                     && ModBlocks.ADVANCED_SOLAR_GENERATOR.get() != null,
                     "Missing machine block");
@@ -276,6 +285,125 @@ public final class CoreSmokeTests {
             check(SolarGeneratorBlockEntity.outputFor(true, true, true) == 100, "Advanced solar daytime rate");
             check(SolarGeneratorBlockEntity.outputFor(true, false, true) == 25, "Advanced solar night rate");
             check(SolarGeneratorBlockEntity.outputFor(true, true, false) == 0, "Covered solar generated energy");
+        });
+    }
+
+    private static void conduitConnections(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos sink = new BlockPos(1, 1, 1);
+            BlockPos first = new BlockPos(2, 1, 1);
+            BlockPos second = new BlockPos(3, 1, 1);
+            BlockPos machine = new BlockPos(4, 1, 1);
+            helper.setBlock(first, ModBlocks.FLUID_PIPE.get());
+            check(!helper.getBlockState(first).getValue(DirectionalConduitBlock.WEST)
+                    && !helper.getBlockState(first).getValue(DirectionalConduitBlock.EAST), "Isolated pipe has arms");
+            helper.setBlock(sink, ModBlocks.WATER_SINK.get());
+            helper.setBlock(second, ModBlocks.FLUID_PIPE.get());
+            helper.setBlock(machine, ModBlocks.LITOGRAFIA.get());
+            check(helper.getBlockState(first).getValue(DirectionalConduitBlock.WEST)
+                    && helper.getBlockState(first).getValue(DirectionalConduitBlock.EAST), "Pipe missed sink or pipe");
+            check(helper.getBlockState(second).getValue(DirectionalConduitBlock.EAST), "Pipe missed fluid machine");
+            WaterSinkBlockEntity water = helper.getBlockEntity(sink, WaterSinkBlockEntity.class);
+            water.tickServer();
+            check(helper.getBlockEntity(machine, LitografiaBlockEntity.class).getWaterAmount() == 250,
+                    "Two pipes did not carry water");
+            helper.setBlock(machine, ModBlocks.MACERATOR.get());
+            check(!helper.getBlockState(second).getValue(DirectionalConduitBlock.EAST), "Pipe joined dry machine");
+            helper.setBlock(sink, Blocks.STONE);
+            check(!helper.getBlockState(first).getValue(DirectionalConduitBlock.WEST), "Pipe joined solid block");
+        });
+    }
+
+    private static void energyCableNetwork(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos generatorPos = new BlockPos(1, 1, 1);
+            BlockPos first = new BlockPos(2, 1, 1);
+            BlockPos second = new BlockPos(3, 1, 1);
+            BlockPos machinePos = new BlockPos(4, 1, 1);
+            helper.setBlock(first, ModBlocks.ENERGY_CABLE.get());
+            check(!helper.getBlockState(first).getValue(DirectionalConduitBlock.WEST), "Isolated cable has an arm");
+            helper.setBlock(generatorPos, ModBlocks.FUEL_GENERATOR.get());
+            helper.setBlock(second, ModBlocks.ENERGY_CABLE.get());
+            helper.setBlock(machinePos, ModBlocks.MACERATOR.get());
+            check(helper.getBlockState(first).getValue(DirectionalConduitBlock.WEST)
+                    && helper.getBlockState(first).getValue(DirectionalConduitBlock.EAST)
+                    && helper.getBlockState(second).getValue(DirectionalConduitBlock.EAST), "Cable connections missing");
+            FuelGeneratorBlockEntity generator = helper.getBlockEntity(generatorPos, FuelGeneratorBlockEntity.class);
+            MaceratorBlockEntity machine = helper.getBlockEntity(machinePos, MaceratorBlockEntity.class);
+            generator.setEnergy(0, 200);
+            generator.tickServer();
+            check(generator.getEnergy(0) == 120 && machine.getEnergy(0) == 80, "Cable lost or duplicated energy");
+            try (Transaction tx = Transaction.openRoot()) {
+                generator.getEnergyPort().extract(30, tx);
+            }
+            check(generator.getEnergy(0) == 120, "Cancelled transaction consumed energy");
+            check(machine.extractExternalEnergy(0, 50, Action.EXECUTE) == 0, "Cable drained consumer");
+            helper.setBlock(machinePos, Blocks.STONE);
+            check(!helper.getBlockState(second).getValue(DirectionalConduitBlock.EAST), "Cable joined solid block");
+        });
+    }
+
+    private static void fuelInventoryEdgeCases(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos pos = new BlockPos(1, 1, 1);
+            helper.setBlock(pos, ModBlocks.FUEL_GENERATOR.get());
+            FuelGeneratorBlockEntity generator = helper.getBlockEntity(pos, FuelGeneratorBlockEntity.class);
+            try (Transaction tx = Transaction.openRoot()) {
+                check(generator.getInventory().insert(0, ItemResource.of(Items.COAL), 1, tx) == 1, "Coal rejected");
+                tx.commit();
+            }
+            generator.tickServer();
+            check(generator.getBurnRemaining() > 0 && generator.getInventory().getAmountAsInt(0) == 0,
+                    "Coal did not burn");
+            check(generator.getInventory().getAmountAsInt(1) == 0, "Fuel created a bogus remainder");
+        });
+    }
+
+    private static void solarCableNetwork(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos generatorPos = new BlockPos(1, 1, 1);
+            BlockPos cablePos = new BlockPos(2, 1, 1);
+            BlockPos machinePos = new BlockPos(3, 1, 1);
+            helper.setBlock(generatorPos, ModBlocks.BASIC_SOLAR_GENERATOR.get());
+            helper.setBlock(cablePos, ModBlocks.ENERGY_CABLE.get());
+            helper.setBlock(machinePos, ModBlocks.MACERATOR.get());
+            SolarGeneratorBlockEntity solar = helper.getBlockEntity(generatorPos, SolarGeneratorBlockEntity.class);
+            MaceratorBlockEntity machine = helper.getBlockEntity(machinePos, MaceratorBlockEntity.class);
+            solar.setEnergy(0, 100);
+            solar.tickServer();
+            check(machine.getEnergy(0) == SolarGeneratorBlockEntity.BASIC_FE_PER_TICK,
+                    "Solar generator did not feed the machine through a cable");
+        });
+    }
+
+    private static void externalCableInsert(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos sourcePos = new BlockPos(1, 1, 1);
+            BlockPos cablePos = new BlockPos(2, 1, 1);
+            BlockPos nextPos = new BlockPos(3, 1, 1);
+            BlockPos machinePos = new BlockPos(4, 1, 1);
+            helper.setBlock(sourcePos, ModBlocks.FUEL_GENERATOR.get());
+            helper.setBlock(cablePos, ModBlocks.ENERGY_CABLE.get());
+            helper.setBlock(nextPos, ModBlocks.ENERGY_CABLE.get());
+            helper.setBlock(machinePos, ModBlocks.MACERATOR.get());
+            FuelGeneratorBlockEntity source = helper.getBlockEntity(sourcePos, FuelGeneratorBlockEntity.class);
+            MaceratorBlockEntity machine = helper.getBlockEntity(machinePos, MaceratorBlockEntity.class);
+            var port = source.getLevel().getCapability(Capabilities.Energy.BLOCK,
+                    source.getBlockPos().relative(Direction.EAST), Direction.WEST);
+            check(port != null, "Cable does not expose NeoForge energy capability");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(port.insert(75, tx) == 75, "Cable rejected an external energy push");
+            }
+            check(machine.getEnergy(0) == 0, "Uncommitted cable transfer changed energy");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(port.insert(75, tx) == 75, "Cable rejected committed push");
+                tx.commit();
+            }
+            check(machine.getEnergy(0) == 75 && source.getEnergy(0) == 0,
+                    "Cable push duplicated energy or fed its sender");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(port.extract(50, tx) == 0, "Cable exposed consumer energy for extraction");
+            }
         });
     }
 }
