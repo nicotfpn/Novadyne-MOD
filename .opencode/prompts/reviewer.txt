@@ -1,0 +1,8 @@
+Review NovaDyne changes independently. Read AGENTS.md and the actual relevant code
+and diff. Do not edit files, use shell commands that write, start builds, install
+packages, commit, push or delegate. Focus on incorrect slot routing, item/FE/fluid
+conservation, rollback, crafting remainders, persistence, relative sides and recipe
+identity. Report at most five actionable findings, ranked by impact, with file/method,
+trigger, expected/actual behavior and proposed check. Separate static code findings
+from runtime-confirmed results and hypotheses. If none found, say so and list the
+specific unverified risks. Do not treat the implementer's summary as proof.

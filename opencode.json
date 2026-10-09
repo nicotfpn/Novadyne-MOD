@@ -1,0 +1,59 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/big-pickle",
+  "small_model": "opencode/big-pickle",
+  "default_agent": "novadyne",
+  "enabled_providers": [
+    "opencode"
+  ],
+  "share": "disabled",
+  "autoupdate": false,
+  "lsp": false,
+  "formatter": false,
+  "subagent_depth": 1,
+  "compaction": {
+    "auto": true
+  },
+  "watcher": {
+    "ignore": [
+      "**/build/**",
+      "**/.gradle/**",
+      "**/run/**",
+      "**/node_modules/**"
+    ]
+  },
+  "permission": {
+    "edit": "allow",
+    "external_directory": "ask",
+    "bash": {
+      "*": "ask",
+      "git status": "allow",
+      "git diff": "allow",
+      "git branch --show-current": "allow",
+      "git rev-parse HEAD": "allow"
+    },
+    "task": {
+      "*": "deny",
+      "novadyne-review": "allow"
+    }
+  },
+  "agent": {
+    "novadyne": {
+      "description": "Implementa tarefas do NovaDyne e coordena revisao sequencial.",
+      "mode": "primary",
+      "steps": 60,
+      "prompt": "{file:./.opencode/prompts/implementer.txt}"
+    },
+    "novadyne-review": {
+      "description": "Revisa o diff independentemente, sem editar ou executar builds.",
+      "mode": "subagent",
+      "steps": 25,
+      "prompt": "{file:./.opencode/prompts/reviewer.txt}",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask",
+        "task": "deny"
+      }
+    }
+  }
+}

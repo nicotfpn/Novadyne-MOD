@@ -46,3 +46,8 @@ Primeira vez? A [Wiki do GitHub](https://github.com/nicotfpn/Novadyne-MOD/wiki) 
 ```
 
 O projeto está em desenvolvimento. O [código fonte](src/main/java/com/novadyne) e a [documentação da Wiki](wiki) estão neste repositório; atualizações da documentação são publicadas na Wiki do GitHub.
+
+## Desenvolvimento com IA
+
+O repositório inclui configuração do OpenCode, agentes de implementação e revisão,
+checkpoint e launcher para Windows. Veja o [tutorial por etapas](docs/OPENCODE.md).
