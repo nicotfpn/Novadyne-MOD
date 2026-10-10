@@ -12,11 +12,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
 
@@ -52,6 +54,21 @@ public class LitografiaBlockEntity extends AbstractMachineBlockEntity {
     }
 
     @Override protected int getOutputSlotIndex() { return SLOT_OUTPUT; }
+
+    @Override
+    protected boolean isItemValidForSlot(int slot, ItemResource resource) {
+        if (slot == SLOT_INPUT) {
+            Item item = resource.getItem();
+            return item == ModItems.STACKED_ELECTRONIC_CIRCUIT.get()
+                    || item == ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get();
+        }
+        if (slot == SLOT_BUCKET) {
+            // The empty bucket is the leftover of a consumed water bucket.
+            Item item = resource.getItem();
+            return item == Items.WATER_BUCKET || item == Items.BUCKET;
+        }
+        return super.isItemValidForSlot(slot, resource);
+    }
 
     @Override
     protected boolean canProcess() {

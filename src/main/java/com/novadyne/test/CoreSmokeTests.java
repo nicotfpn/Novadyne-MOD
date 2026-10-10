@@ -14,14 +14,18 @@ import com.novadyne.common.blockentity.WaterSinkBlockEntity;
 import com.novadyne.common.blockentity.FuelGeneratorBlockEntity;
 import com.novadyne.common.blockentity.SolarGeneratorBlockEntity;
 import com.novadyne.common.block.DirectionalConduitBlock;
+import com.novadyne.common.menu.ProcessorMenu;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
@@ -50,6 +54,9 @@ public final class CoreSmokeTests {
         FUNCTIONS.register("solar_cable_network", () -> CoreSmokeTests::solarCableNetwork);
         FUNCTIONS.register("external_cable_insert", () -> CoreSmokeTests::externalCableInsert);
         FUNCTIONS.register("machine_item_sides", () -> CoreSmokeTests::machineItemSides);
+        FUNCTIONS.register("slot_input_filters", () -> CoreSmokeTests::slotInputFilters);
+        FUNCTIONS.register("sided_input_filters", () -> CoreSmokeTests::sidedInputFilters);
+        FUNCTIONS.register("processor_shift_click", () -> CoreSmokeTests::processorShiftClick);
     }
 
     private CoreSmokeTests() {}
@@ -458,6 +465,118 @@ public final class CoreSmokeTests {
             machine.cycleItemMode(3);
             check(machine.getLevel().getCapability(Capabilities.Item.BLOCK, machine.getBlockPos(), Direction.EAST) == null,
                     "Disabled side still exposed an item capability");
+        });
+    }
+
+    private static void assertRejected(AbstractMachineBlockEntity machine, int slot, Item item) {
+        try (Transaction tx = Transaction.openRoot()) {
+            check(machine.getInventory().insert(slot, ItemResource.of(new ItemStack(item)), 1, tx) == 0,
+                    "Wrong ingredient slipped into slot " + slot);
+            tx.commit();
+        }
+    }
+
+    private static void extract(AbstractMachineBlockEntity machine, int slot, Item item) {
+        try (Transaction tx = Transaction.openRoot()) {
+            machine.getInventory().extract(slot, ItemResource.of(new ItemStack(item)), 1, tx);
+            tx.commit();
+        }
+    }
+
+    private static void slotInputFilters(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            MaceratorBlockEntity macerator = new MaceratorBlockEntity(BlockPos.ZERO, ModBlocks.MACERATOR.get().defaultBlockState());
+            assertRejected(macerator, 0, Items.COBBLESTONE);
+            put(macerator, 0, Items.CLAY_BALL);
+
+            WaferPressBlockEntity press = new WaferPressBlockEntity(BlockPos.ZERO, ModBlocks.WAFER_PRESS.get().defaultBlockState());
+            assertRejected(press, 0, Items.IRON_INGOT);
+            put(press, 0, ModItems.PURE_SILICON.get());
+            extract(press, 0, ModItems.PURE_SILICON.get());
+            put(press, 0, Items.COPPER_INGOT);
+            extract(press, 0, Items.COPPER_INGOT);
+            put(press, 0, ModItems.CERAMIC_POWDER.get());
+
+            ProcessorBlockEntity processor = new ProcessorBlockEntity(BlockPos.ZERO, ModBlocks.PROCESSOR.get().defaultBlockState());
+            assertRejected(processor, 0, ModItems.PART_COPPER_LAYER.get());
+            assertRejected(processor, 1, ModItems.PART_SILICON_WAFER.get());
+            assertRejected(processor, 2, ModItems.STACKED_ELECTRONIC_CIRCUIT.get());
+            put(processor, 0, ModItems.PART_SILICON_WAFER.get());
+            put(processor, 1, ModItems.PART_COPPER_LAYER.get());
+            put(processor, 2, ModItems.PART_BASE_WAFER.get());
+            put(processor, 3, Items.COBBLESTONE); // Output must stay permissive for internal result insertion.
+
+            LitografiaBlockEntity litho = new LitografiaBlockEntity(BlockPos.ZERO, ModBlocks.LITOGRAFIA.get().defaultBlockState());
+            assertRejected(litho, 0, Items.CLAY_BALL);
+            assertRejected(litho, 1, Items.CLAY_BALL);
+            put(litho, 0, ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get());
+            extract(litho, 0, ModItems.PART_ELECTRONIC_DIRTY_SILICON_WAFER.get());
+            put(litho, 0, ModItems.STACKED_ELECTRONIC_CIRCUIT.get());
+            put(litho, 1, Items.WATER_BUCKET);
+            extract(litho, 1, Items.WATER_BUCKET);
+            put(litho, 1, Items.BUCKET); // Cleaning leaves the empty bucket in the bucket slot.
+        });
+    }
+
+    private static void sidedInputFilters(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos macPos = new BlockPos(1, 1, 1);
+            BlockPos procPos = new BlockPos(3, 1, 1);
+            helper.setBlock(macPos, ModBlocks.MACERATOR.get());
+            helper.setBlock(procPos, ModBlocks.PROCESSOR.get());
+            MaceratorBlockEntity macerator = helper.getBlockEntity(macPos, MaceratorBlockEntity.class);
+            ProcessorBlockEntity processor = helper.getBlockEntity(procPos, ProcessorBlockEntity.class);
+
+            var macFront = macerator.getLevel().getCapability(Capabilities.Item.BLOCK, macerator.getBlockPos(), Direction.NORTH);
+            check(macFront != null, "Macerator front capability missing");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(macFront.insert(0, ItemResource.of(new ItemStack(Items.COBBLESTONE)), 1, tx) == 0,
+                        "Macerator accepted an unknown input");
+                check(macFront.insert(0, ItemResource.of(new ItemStack(Items.CLAY_BALL)), 1, tx) == 1,
+                        "Macerator refused clay ball");
+                tx.commit();
+            }
+
+            var procFront = processor.getLevel().getCapability(Capabilities.Item.BLOCK, processor.getBlockPos(), Direction.NORTH);
+            check(procFront != null, "Processor front capability missing");
+            try (Transaction tx = Transaction.openRoot()) {
+                check(procFront.insert(1, ItemResource.of(new ItemStack(ModItems.PART_SILICON_WAFER.get())), 1, tx) == 0,
+                        "Processor put silicon wafer in the copper layer slot");
+                check(procFront.insert(0, ItemResource.of(new ItemStack(ModItems.PART_SILICON_WAFER.get())), 1, tx) == 1,
+                        "Processor refused silicon in its own slot");
+                tx.commit();
+            }
+        });
+    }
+
+    private static void processorShiftClick(GameTestHelper helper) {
+        helper.succeedIf(() -> {
+            BlockPos pos = new BlockPos(1, 1, 1);
+            helper.setBlock(pos, ModBlocks.PROCESSOR.get());
+            ProcessorBlockEntity processor = helper.getBlockEntity(pos, ProcessorBlockEntity.class);
+            Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+            ProcessorMenu menu = new ProcessorMenu(0, player.getInventory(), processor, ContainerLevelAccess.NULL);
+
+            // Reverse insertion order: each ingredient must still land in its own slot.
+            player.getInventory().setItem(0, new ItemStack(ModItems.PART_BASE_WAFER.get()));
+            player.getInventory().setItem(1, new ItemStack(ModItems.PART_COPPER_LAYER.get()));
+            player.getInventory().setItem(2, new ItemStack(ModItems.PART_SILICON_WAFER.get()));
+            player.getInventory().setItem(3, new ItemStack(ModItems.VALVE_TIER_1.get()));
+            player.getInventory().setItem(4, new ItemStack(Items.COBBLESTONE));
+
+            // Menu layout: machine slots 0..4, player main inventory 5..31, hotbar 32..40.
+            menu.quickMoveStack(player, 32); // base wafer -> slot 2
+            menu.quickMoveStack(player, 33); // copper layer -> slot 1
+            menu.quickMoveStack(player, 34); // silicon wafer -> slot 0
+            menu.quickMoveStack(player, 35); // valve -> slot 4
+            menu.quickMoveStack(player, 36); // cobblestone must not enter the machine
+
+            check(stack(processor, 0).is(ModItems.PART_SILICON_WAFER.get()), "Silicon did not land in input 1");
+            check(stack(processor, 1).is(ModItems.PART_COPPER_LAYER.get()), "Copper layer did not land in input 2");
+            check(stack(processor, 2).is(ModItems.PART_BASE_WAFER.get()), "Base wafer did not land in input 3");
+            check(stack(processor, 4).is(ModItems.VALVE_TIER_1.get()), "Valve did not land in the valve slot");
+            check(stack(processor, 3).isEmpty(), "Shift-click wrote into the output slot");
+            check(player.getInventory().countItem(Items.COBBLESTONE) == 1, "Foreign item was lost by shift-click");
         });
     }
 }

@@ -51,7 +51,7 @@ public class LitografiaMenu extends AbstractMachineMenu<LitografiaBlockEntity> {
         if (AbstractMachineBlockEntity.isValveItem(stack)) {
             if (this.moveItemStackTo(stack, 2, 3, false)) return true;
         }
-        if (stack.is(Items.WATER_BUCKET)) {
+        if (stack.is(Items.WATER_BUCKET) || stack.is(Items.BUCKET)) {
             if (this.moveItemStackTo(stack, 1, 2, false)) return true;
         }
         return this.moveItemStackTo(stack, 0, 1, false);
