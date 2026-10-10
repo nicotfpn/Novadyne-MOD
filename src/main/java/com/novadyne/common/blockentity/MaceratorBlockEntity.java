@@ -8,9 +8,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -63,6 +65,16 @@ public class MaceratorBlockEntity extends AbstractMachineBlockEntity {
     }
 
     @Override protected int getOutputSlotIndex() { return SLOT_OUTPUT; }
+
+    @Override
+    protected boolean isItemValidForSlot(int slot, ItemResource resource) {
+        if (slot == SLOT_INPUT) {
+            Item item = resource.getItem();
+            return item == Items.CLAY_BALL
+                    || item == ModItems.PART_ELECTRONIC_FAILED_SILICON_WAFER.get();
+        }
+        return super.isItemValidForSlot(slot, resource);
+    }
 
     @Override
     protected boolean canProcess() {

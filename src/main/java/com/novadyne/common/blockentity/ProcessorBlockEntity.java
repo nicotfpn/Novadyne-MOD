@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
 
@@ -42,6 +43,20 @@ public class ProcessorBlockEntity extends AbstractMachineBlockEntity {
     }
 
     @Override protected int getOutputSlotIndex() { return SLOT_OUTPUT; }
+
+    @Override
+    protected boolean isItemValidForSlot(int slot, ItemResource resource) {
+        if (slot == SLOT_INPUT_1) {
+            return resource.getItem() == ModItems.PART_SILICON_WAFER.get();
+        }
+        if (slot == SLOT_INPUT_2) {
+            return resource.getItem() == ModItems.PART_COPPER_LAYER.get();
+        }
+        if (slot == SLOT_INPUT_3) {
+            return resource.getItem() == ModItems.PART_BASE_WAFER.get();
+        }
+        return super.isItemValidForSlot(slot, resource);
+    }
 
     @Override
     protected boolean canProcess() {

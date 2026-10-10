@@ -14,12 +14,15 @@ Verify current HEAD and source before acting; this file does not update itself.
 
 ## Evidence
 - Historical PR #16 Build run 36029499769 passed build and server tests.
-- Log: 14 required tests passed; 13 NovaDyne test functions are registered.
+- Log: 14 required tests passed; 13 NovaDyne test functions were registered at audit.
 - Wiki check passed during audit: 27 items, 19 crafts/furnaces, 9 processes.
-- No fresh local Java build or client reproduction performed in audit.
+- Local worktree 2026-10-09: 16 functions registered (3 added). No local build or
+  client reproduction performed (machine has no Gradle cache; builds need approval).
+- Independent static review by novadyne-review on the local diff: filter/recipe matrix
+  exact, shift-click no loss/duplication, existing tests compatible. Runtime pending CI.
 
 ## Prioritized work (code inspection findings)
-1. Filter each machine input slot and route Processor shift-click by ingredient.
+1. Filter each machine input slot and route Processor shift-click by ingredient. (done, local)
 2. Bind progress to recipe identity; decide pause behavior for insufficient FE.
 3. Add sided item capability to Fuel Generator, including remainder extraction.
 4. Permit safe empty-bucket extraction from Lithography auxiliary slot.
@@ -27,15 +30,17 @@ Verify current HEAD and source before acting; this file does not update itself.
 6. Profile repeated per-tick network discovery before optimizing networks.
 
 ## Current task
-None. Setup only; no gameplay files modified.
+Input filters per slot (BlockEntity isItemValidForSlot overrides) and Processor
+shift-click routing by ingredient, implemented locally on main (HEAD ae9901e, dirty).
+Changed: Macerator/WaferPress/Processor/Litografia BlockEntities, ProcessorMenu,
+LitografiaMenu (bucket routing), CoreSmokeTests (+3 functions). Output slots stay
+permissive at inventory level (insertResult + existing tests depend on it); external
+output protection remains at SidedMachineItemHandler/menu layer. Litografia bucket
+slot accepts WATER_BUCKET and empty BUCKET (processCleaning returns it via insertResult).
 
 ## Next suggested task
-Only input filters and shift-click. Preserve internal output insertion.
-Regression: wrong ingredient rejected by sided capability; shift-click each Processor
-ingredient into correct slot regardless of insertion order; output cannot accept
-external input; valve slot preserved; no item loss or duplication.
-
-## Last task result
-OpenCode configuration, Windows launcher and tutorial prepared for this approved main
-submission. No gameplay changes. Config schema and prompt paths validated; Windows
-launcher not executed on a Windows host. Fresh runtime tests not run.
+Progress bound to recipe identity (task 2). Task 1 runtime confirmation depends on
+the next approved push/PR run; migration note below still applies.
+- Migration note: saves from before the filters may hold an invalid item in an input
+  slot; deserialization does not re-filter, and shift-click merges same-item stacks
+  past mayPlace. Item is never lost and canProcess still blocks; clear manually.

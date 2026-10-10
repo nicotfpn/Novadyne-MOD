@@ -1,6 +1,7 @@
 package com.novadyne.common.menu;
 
 import com.novadyne.ModBlocks;
+import com.novadyne.ModItems;
 import com.novadyne.ModMenuTypes;
 import com.novadyne.common.blockentity.AbstractMachineBlockEntity;
 import com.novadyne.common.blockentity.ProcessorBlockEntity;
@@ -38,6 +39,15 @@ public class ProcessorMenu extends AbstractMachineMenu<ProcessorBlockEntity> {
         if (AbstractMachineBlockEntity.isValveItem(stack)) {
             if (this.moveItemStackTo(stack, 4, 5, false)) return true;
         }
-        return this.moveItemStackTo(stack, 0, 3, false);
+        if (stack.is(ModItems.PART_SILICON_WAFER.get())) {
+            if (this.moveItemStackTo(stack, 0, 1, false)) return true;
+        }
+        if (stack.is(ModItems.PART_COPPER_LAYER.get())) {
+            if (this.moveItemStackTo(stack, 1, 2, false)) return true;
+        }
+        if (stack.is(ModItems.PART_BASE_WAFER.get())) {
+            if (this.moveItemStackTo(stack, 2, 3, false)) return true;
+        }
+        return false;
     }
 }
