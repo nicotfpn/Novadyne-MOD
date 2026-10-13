@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "unit": "minecraft_gui_logical_pixel",
+  "main": {
+    "width": 176,
+    "height": 166
+  },
+  "envelope": {
+    "width": 296,
+    "height": 166
+  },
+  "colors": {
+    "off": "#DEDEDE",
+    "input": "#D76565",
+    "output": "#64A8D8",
+    "both": "#B08ACB",
+    "energy": "#D8AD36",
+    "water_fallback": "#4C92C7"
+  },
+  "slots": {
+    "frame_size": 18,
+    "item_size": 16,
+    "item_inset": 1,
+    "input": [
+      26,
+      36
+    ],
+    "output": [
+      82,
+      36
+    ],
+    "bucket": [
+      124,
+      36
+    ],
+    "player_item_origin": [
+      9,
+      86
+    ],
+    "player_pitch": 18,
+    "hotbar_item_origin": [
+      9,
+      144
+    ]
+  },
+  "gauges": {
+    "fluid": [
+      146,
+      24,
+      10,
+      56
+    ],
+    "energy": [
+      158,
+      24,
+      10,
+      56
+    ],
+    "inner_inset": 2,
+    "inner_size": [
+      6,
+      52
+    ]
+  },
+  "tabs": {
+    "origin": [
+      182,
+      4
+    ],
+    "size": 18,
+    "gap": 3,
+    "order": [
+      "energy",
+      "fluid",
+      "items",
+      "valves"
+    ]
+  },
+  "drawer": {
+    "origin": [
+      204,
+      4
+    ],
+    "width": 92,
+    "sides_height": 146,
+    "valves_height": 90,
+    "valve_slots": [
+      [
+        16,
+        32
+      ],
+      [
+        42,
+        32
+      ]
+    ],
+    "faces": {
+      "front": [
+        32,
+        52
+      ],
+      "back": [
+        52,
+        72
+      ],
+      "left": [
+        12,
+        52
+      ],
+      "right": [
+        52,
+        52
+      ],
+      "top": [
+        32,
+        32
+      ],
+      "bottom": [
+        32,
+        72
+      ]
+    },
+    "face_size": 14
+  },
+  "progress": [
+    50,
+    36,
+    24,
+    17
+  ],
+  "visual_transition": {
+    "duration_ms": 50,
+    "large_jump_ratio": 0.25,
+    "snap_on_boundary": true,
+    "tooltip_uses_authoritative_values": true
+  },
+  "native_font_required": true
+}
